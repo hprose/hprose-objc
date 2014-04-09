@@ -1,0 +1,313 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9B3E98F2111C9DF300C617E2 /* HproseTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B3E98E9111C9DF300C617E2 /* HproseTags.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9B9AF6B710F607B20043DFBD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B9AF6B610F607B20043DFBD /* Foundation.framework */; };
+		D81BDA0C18F1091100EDE818 /* HproseClassManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D81BDA0A18F1091100EDE818 /* HproseClassManager.h */; };
+		D81BDA0D18F1091100EDE818 /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D81BDA0B18F1091100EDE818 /* HproseClassManager.m */; };
+		D81BDA1018F11EE400EDE818 /* HproseException.h in Headers */ = {isa = PBXBuildFile; fileRef = D81BDA0E18F11EE400EDE818 /* HproseException.h */; };
+		D81BDA1118F11EE400EDE818 /* HproseException.m in Sources */ = {isa = PBXBuildFile; fileRef = D81BDA0F18F11EE400EDE818 /* HproseException.m */; };
+		D81BDA1418F11F8F00EDE818 /* HproseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = D81BDA1218F11F8F00EDE818 /* HproseHelper.h */; };
+		D81BDA1518F11F8F00EDE818 /* HproseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D81BDA1318F11F8F00EDE818 /* HproseHelper.m */; };
+		D81BDA1818F1422100EDE818 /* HproseWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = D81BDA1618F1422100EDE818 /* HproseWriter.h */; };
+		D81BDA1918F1422100EDE818 /* HproseWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = D81BDA1718F1422100EDE818 /* HproseWriter.m */; };
+		D81BDA1C18F1906600EDE818 /* HproseReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D81BDA1A18F1906600EDE818 /* HproseReader.h */; };
+		D81BDA1D18F1906600EDE818 /* HproseReader.m in Sources */ = {isa = PBXBuildFile; fileRef = D81BDA1B18F1906600EDE818 /* HproseReader.m */; };
+		D81CBBB918F0342A000B4EE3 /* HproseResultMode.h in Headers */ = {isa = PBXBuildFile; fileRef = D81CBBB818F0342A000B4EE3 /* HproseResultMode.h */; };
+		D81CBBBB18F037AA000B4EE3 /* HproseProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = D81CBBBA18F037AA000B4EE3 /* HproseProperty.h */; };
+		D81CBBBD18F037DD000B4EE3 /* HproseProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D81CBBBC18F037DD000B4EE3 /* HproseProperty.m */; };
+		D81CBBBF18F03895000B4EE3 /* Hprose_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = D81CBBBE18F03895000B4EE3 /* Hprose_Prefix.pch */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8DC2EF5B0486A6940098B216 /* Hprose.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Hprose.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3E98E9111C9DF300C617E2 /* HproseTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseTags.h; path = src/HproseTags.h; sourceTree = "<group>"; };
+		9B9AF6B610F607B20043DFBD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		D81BDA0A18F1091100EDE818 /* HproseClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClassManager.h; path = src/HproseClassManager.h; sourceTree = "<group>"; };
+		D81BDA0B18F1091100EDE818 /* HproseClassManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseClassManager.m; path = src/HproseClassManager.m; sourceTree = "<group>"; };
+		D81BDA0E18F11EE400EDE818 /* HproseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseException.h; path = src/HproseException.h; sourceTree = "<group>"; };
+		D81BDA0F18F11EE400EDE818 /* HproseException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseException.m; path = src/HproseException.m; sourceTree = "<group>"; };
+		D81BDA1218F11F8F00EDE818 /* HproseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHelper.h; path = src/HproseHelper.h; sourceTree = "<group>"; };
+		D81BDA1318F11F8F00EDE818 /* HproseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseHelper.m; path = src/HproseHelper.m; sourceTree = "<group>"; };
+		D81BDA1618F1422100EDE818 /* HproseWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseWriter.h; path = src/HproseWriter.h; sourceTree = "<group>"; };
+		D81BDA1718F1422100EDE818 /* HproseWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseWriter.m; path = src/HproseWriter.m; sourceTree = "<group>"; };
+		D81BDA1A18F1906600EDE818 /* HproseReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseReader.h; path = src/HproseReader.h; sourceTree = "<group>"; };
+		D81BDA1B18F1906600EDE818 /* HproseReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseReader.m; path = src/HproseReader.m; sourceTree = "<group>"; };
+		D81CBBB818F0342A000B4EE3 /* HproseResultMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseResultMode.h; path = src/HproseResultMode.h; sourceTree = "<group>"; };
+		D81CBBBA18F037AA000B4EE3 /* HproseProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseProperty.h; path = src/HproseProperty.h; sourceTree = "<group>"; };
+		D81CBBBC18F037DD000B4EE3 /* HproseProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseProperty.m; path = src/HproseProperty.m; sourceTree = "<group>"; };
+		D81CBBBE18F03895000B4EE3 /* Hprose_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hprose_Prefix.pch; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B9AF6B710F607B20043DFBD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* Hprose.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* Hprose */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = Hprose;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9B9AF6B610F607B20043DFBD /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D81BDA1A18F1906600EDE818 /* HproseReader.h */,
+				D81BDA1B18F1906600EDE818 /* HproseReader.m */,
+				D81BDA1618F1422100EDE818 /* HproseWriter.h */,
+				D81BDA1718F1422100EDE818 /* HproseWriter.m */,
+				D81BDA1218F11F8F00EDE818 /* HproseHelper.h */,
+				D81BDA1318F11F8F00EDE818 /* HproseHelper.m */,
+				D81BDA0E18F11EE400EDE818 /* HproseException.h */,
+				D81BDA0F18F11EE400EDE818 /* HproseException.m */,
+				D81BDA0A18F1091100EDE818 /* HproseClassManager.h */,
+				D81BDA0B18F1091100EDE818 /* HproseClassManager.m */,
+				D81CBBBC18F037DD000B4EE3 /* HproseProperty.m */,
+				D81CBBBA18F037AA000B4EE3 /* HproseProperty.h */,
+				D81CBBB818F0342A000B4EE3 /* HproseResultMode.h */,
+				9B3E98E9111C9DF300C617E2 /* HproseTags.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D81CBBBE18F03895000B4EE3 /* Hprose_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D81BDA1418F11F8F00EDE818 /* HproseHelper.h in Headers */,
+				D81CBBBF18F03895000B4EE3 /* Hprose_Prefix.pch in Headers */,
+				D81BDA1C18F1906600EDE818 /* HproseReader.h in Headers */,
+				D81BDA1818F1422100EDE818 /* HproseWriter.h in Headers */,
+				D81CBBBB18F037AA000B4EE3 /* HproseProperty.h in Headers */,
+				D81CBBB918F0342A000B4EE3 /* HproseResultMode.h in Headers */,
+				D81BDA0C18F1091100EDE818 /* HproseClassManager.h in Headers */,
+				9B3E98F2111C9DF300C617E2 /* HproseTags.h in Headers */,
+				D81BDA1018F11EE400EDE818 /* HproseException.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* Hprose */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Hprose" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hprose;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = Hprose;
+			productReference = 8DC2EF5B0486A6940098B216 /* Hprose.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Hprose" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0867D691FE84028FC02AAC07 /* Hprose */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* Hprose */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D81CBBBD18F037DD000B4EE3 /* HproseProperty.m in Sources */,
+				D81BDA1918F1422100EDE818 /* HproseWriter.m in Sources */,
+				D81BDA0D18F1091100EDE818 /* HproseClassManager.m in Sources */,
+				D81BDA1D18F1906600EDE818 /* HproseReader.m in Sources */,
+				D81BDA1518F11F8F00EDE818 /* HproseHelper.m in Sources */,
+				D81BDA1118F11EE400EDE818 /* HproseException.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Hprose_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				PRODUCT_NAME = Hprose;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Hprose_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				PRODUCT_NAME = Hprose;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../$(EXECUTABLE_PATH)";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Hprose" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Hprose" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
