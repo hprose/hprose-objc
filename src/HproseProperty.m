@@ -13,8 +13,8 @@
  *                                                        *
  * hprose property class for Objective-C.                 *
  *                                                        *
- * LastModified: May 16, 2010                             *
- * Author: Ma Bingyao <andot@hprfc.com>                   *
+ * LastModified: Apr 10, 2014                             *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 

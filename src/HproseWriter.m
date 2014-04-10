@@ -13,8 +13,8 @@
  *                                                        *
  * hprose writer class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 9, 2014                              *
- * Author: Ma Bingyao <andot@hprfc.com>                   *
+ * LastModified: Apr 10, 2014                             *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
@@ -400,8 +400,8 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 @implementation HproseWriter
 
 @synthesize stream;
-@synthesize utc;
 
+static NSTimeZone *utcTimeZone;
 static NSDateFormatter *gDateFormatter;
 static NSDateFormatter *gTimeFormatter;
 static NSDateFormatter *gUTCDateFormatter;
@@ -410,14 +410,15 @@ static Class classOfNSCFBoolean;
 
 + (void) initialize {
     if (self == [HproseWriter class]) {
+        utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
         gDateFormatter = [[NSDateFormatter alloc] init];
         gTimeFormatter = [[NSDateFormatter alloc] init];
         gUTCDateFormatter = [[NSDateFormatter alloc] init];
         gUTCTimeFormatter = [[NSDateFormatter alloc] init];
-        [gDateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
-        [gTimeFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
-        [gUTCDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        [gUTCTimeFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [gDateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+        [gTimeFormatter setTimeZone:[NSTimeZone localTimeZone]];
+        [gUTCDateFormatter setTimeZone:utcTimeZone];
+        [gUTCTimeFormatter setTimeZone:utcTimeZone];
         [gDateFormatter setDateFormat:@"yyyyMMdd"];
         [gTimeFormatter setDateFormat:@"HHmmss.SSS"];
         [gUTCDateFormatter setDateFormat:@"yyyyMMdd"];
@@ -462,7 +463,7 @@ static Class classOfNSCFBoolean;
         [self writeNumber:(NSNumber *)obj];
     }
     else if ([c isSubclassOfClass:[NSDate class]]) {
-        if (utc) {
+        if ([[NSTimeZone defaultTimeZone] isEqual:utcTimeZone]) {
             [self writeUTCDateWithRef:(NSDate *)obj];
         }
         else {

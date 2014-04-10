@@ -9,9 +9,9 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseHelper.h                                         *
+ * HproseClientProxy.h                                    *
  *                                                        *
- * hprose helper class header for Objective-C.            *
+ * hprose client proxy header for Objective-C.            *
  *                                                        *
  * LastModified: Apr 10, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
@@ -20,29 +20,19 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HproseHelper : NSObject
+@class HproseClient;
 
-+ (BOOL) isSerializableType:(char)type;
-+ (NSDictionary *) getHproseProperties:(Class)cls;
-+ (NSString *) getClassName:(Class)cls;
-+ (Class) getClass:(NSString *)className;
-+ (Class) createClass:(NSString *)className withPropNames:(NSArray *)propNames;
+@interface HproseClientProxy : NSProxy {
+    @private
+    Protocol *protocol;
+    HproseClient *client;
+    NSString *ns;
+}
 
-@end
+@property Protocol *protocol;
+@property HproseClient *client;
+@property (copy) NSString *ns;
 
-
-@interface NSInputStream(HproseHelper)
-
-- (int) readByte;
-- (void) readBuffer:(uint8_t *)buffer maxLength:(NSUInteger)length;
-
-@end
-
-@interface NSOutputStream(HproseHelper)
-
-- (NSInteger) writeByte:(uint8_t)b;
-- (void) writeBuffer:(const uint8_t *)buffer maxLength:(NSUInteger)length;
-- (void) copyFrom:(NSInputStream *)source maxLength:(NSUInteger)length;
+- init:(Protocol *)aProtocol withClient:(HproseClient *)aClient withNameSpace:(NSString *)aNameSpace;
 
 @end
-

@@ -13,8 +13,8 @@
  *                                                        *
  * hprose helper class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 6, 2014                              *
- * Author: Ma Bingyao <andot@hprfc.com>                   *
+ * LastModified: Apr 10, 2014                             *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 

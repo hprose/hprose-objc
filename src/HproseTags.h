@@ -13,8 +13,8 @@
  *                                                        *
  * hprose tags header for Objective-C.                    *
  *                                                        *
- * LastModified: Aug 1, 2010                              *
- * Author: Ma Bingyao <andot@hprfc.com>                   *
+ * LastModified: Apr 10, 2014                             *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 

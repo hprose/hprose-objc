@@ -9,9 +9,9 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseHelper.h                                         *
+ * HproseHttpClient.h                                     *
  *                                                        *
- * hprose helper class header for Objective-C.            *
+ * hprose http client header for Objective-C.             *
  *                                                        *
  * LastModified: Apr 10, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
@@ -19,30 +19,17 @@
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
+#import "HproseClient.h"
 
-@interface HproseHelper : NSObject
+@interface HproseHttpClient : HproseClient {
+    NSURL *url;
+}
 
-+ (BOOL) isSerializableType:(char)type;
-+ (NSDictionary *) getHproseProperties:(Class)cls;
-+ (NSString *) getClassName:(Class)cls;
-+ (Class) getClass:(NSString *)className;
-+ (Class) createClass:(NSString *)className withPropNames:(NSArray *)propNames;
+@property NSTimeInterval timeout;
+@property BOOL keepAlive;
+@property int keepAliveTimeout;
+@property (readonly) NSMutableDictionary *header;
 
-@end
-
-
-@interface NSInputStream(HproseHelper)
-
-- (int) readByte;
-- (void) readBuffer:(uint8_t *)buffer maxLength:(NSUInteger)length;
+- (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 
 @end
-
-@interface NSOutputStream(HproseHelper)
-
-- (NSInteger) writeByte:(uint8_t)b;
-- (void) writeBuffer:(const uint8_t *)buffer maxLength:(NSUInteger)length;
-- (void) copyFrom:(NSInputStream *)source maxLength:(NSUInteger)length;
-
-@end
-

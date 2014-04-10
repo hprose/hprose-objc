@@ -13,8 +13,8 @@
  *                                                        *
  * hprose reader class header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 9, 2014                              *
- * Author: Ma Bingyao <andot@hprfc.com>                   *
+ * LastModified: Apr 10, 2014                             *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 

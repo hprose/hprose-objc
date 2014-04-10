@@ -9,9 +9,9 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseHelper.h                                         *
+ * HproseFilter.h                                         *
  *                                                        *
- * hprose helper class header for Objective-C.            *
+ * hprose filter protocol for Objective-C.                *
  *                                                        *
  * LastModified: Apr 10, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
@@ -20,29 +20,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HproseHelper : NSObject
+@protocol HproseFilter
 
-+ (BOOL) isSerializableType:(char)type;
-+ (NSDictionary *) getHproseProperties:(Class)cls;
-+ (NSString *) getClassName:(Class)cls;
-+ (Class) getClass:(NSString *)className;
-+ (Class) createClass:(NSString *)className withPropNames:(NSArray *)propNames;
+- (NSData *) inputFilter:(NSData *) data withContext:(id) context;
+- (NSData *) outputFilter:(NSData *) data withContext:(id) context;
 
 @end
-
-
-@interface NSInputStream(HproseHelper)
-
-- (int) readByte;
-- (void) readBuffer:(uint8_t *)buffer maxLength:(NSUInteger)length;
-
-@end
-
-@interface NSOutputStream(HproseHelper)
-
-- (NSInteger) writeByte:(uint8_t)b;
-- (void) writeBuffer:(const uint8_t *)buffer maxLength:(NSUInteger)length;
-- (void) copyFrom:(NSInputStream *)source maxLength:(NSUInteger)length;
-
-@end
-
