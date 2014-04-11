@@ -13,7 +13,7 @@
  *                                                        *
  * hprose writer class header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 11, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -27,13 +27,15 @@
 @end
 
 @interface HproseWriter : NSObject {
-    NSOutputStream *stream;
+    @protected
+    NSOutputStream *__weak stream;
+    @private
     NSMutableArray *classref;
     id<HproseWriterRefer> refer;
     uint8_t buf[20];
 }
 
-@property NSOutputStream *stream;
+@property (weak) NSOutputStream *stream;
 
 + (id) writerWithStream:(NSOutputStream *)dataStream simple:(BOOL)b;
 + (id) writerWithStream:(NSOutputStream *)dataStream;

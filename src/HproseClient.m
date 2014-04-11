@@ -13,7 +13,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 11, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -83,7 +83,7 @@
 
 - (id) init:(NSString *)aUri {
     if (self = [self init]) {
-        _uri = aUri;
+        [self setUri:aUri];
     }
     return self;
 }
@@ -526,23 +526,29 @@
 }
 
 - (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple {
-    NSOutputStream *ostream = [[NSOutputStream alloc] initToMemory];
-    HproseWriter *writer = [HproseWriter writerWithStream:ostream simple:simple];
-    [ostream writeByte:HproseTagCall];
-    [writer writeString:name];
-    if (args != nil && ([args count] > 0 || byRef)) {
-        [writer reset];
-        [writer writeArray:args];
-        if (byRef) {
-            [writer writeBoolean:YES];
+    NSOutputStream *ostream = [NSOutputStream outputStreamToMemory];
+    [ostream open];
+    @try {
+        HproseWriter *writer = [HproseWriter writerWithStream:ostream simple:simple];
+        [ostream writeByte:HproseTagCall];
+        [writer writeString:name];
+        if (args != nil && ([args count] > 0 || byRef)) {
+            [writer reset];
+            [writer writeArray:args];
+            if (byRef) {
+                [writer writeBoolean:YES];
+            }
         }
+        [ostream writeByte:HproseTagEnd];
+        NSData *data = [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+        for (int i = 0, n = filters.count; i < n; ++i) {
+            data = [filters[i] outputFilter:data withContext:self];
+        }
+        return data;
     }
-    [ostream writeByte:HproseTagEnd];
-    NSData *data = [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    for (int i = 0, n = filters.count; i < n; ++i) {
-        data = [filters[i] outputFilter:data withContext:self];
+    @finally {
+        [ostream close];
     }
-    return data;
 }
 
 - (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode {
@@ -560,43 +566,49 @@
         return data;
     }
     id result = nil;
-    NSInputStream *istream = [[NSInputStream alloc] initWithData:data];
-    HproseReader *reader = [HproseReader readerWithStream:istream];
-    while ((tag = [istream readByte]) != HproseTagEnd) {
-        switch (tag) {
-            case HproseTagResult: {
-                if (mode == HproseResultMode_Normal) {
+    NSInputStream *istream = [NSInputStream inputStreamWithData:data];
+    [istream open];
+    @try {
+        HproseReader *reader = [HproseReader readerWithStream:istream];
+        while ((tag = [istream readByte]) != HproseTagEnd) {
+            switch (tag) {
+                case HproseTagResult: {
+                    if (mode == HproseResultMode_Normal) {
+                        [reader reset];
+                        result = [reader unserialize:cls withType:type];
+                    }
+                    else {
+                        result = [reader readRaw];
+                    }
+                    break;
+                }
+                case HproseTagArgument: {
                     [reader reset];
-                    result = [reader unserialize:cls withType:type];
-                }
-                else {
-                    result = [reader readRaw];
-                }
-                break;
-            }
-            case HproseTagArgument: {
-                [reader reset];
-                NSArray *arguments = [reader readArray];
-                if (args != nil) {
-                    int n = [arguments count];
-                    if (n > [args count]) {
-                        n = [args count];
+                    NSArray *arguments = [reader readArray];
+                    if (args != nil) {
+                        int n = [arguments count];
+                        if (n > [args count]) {
+                            n = [args count];
+                        }
+                        for (int i = 0; i < n; i++) {
+                            args[i] = arguments[i];
+                        }
                     }
-                    for (int i = 0; i < n; i++) {
-                        args[i] = arguments[i];
-                    }
+                    break;
                 }
-                break;
-            }
-            case HproseTagError: {
-                [reader reset];
-                result = [HproseException exceptionWithReason:[reader readString]];
-                break;
-            }
-            default: {
-                @throw [self wrongResponse:data];
+                case HproseTagError: {
+                    [reader reset];
+                    result = [HproseException exceptionWithReason:[reader readString]];
+                    break;
+                }
+                default: {
+                    @throw [self wrongResponse:data];
+                }
             }
         }
+    }
+    @finally {
+        [istream close];
     }
     return result;
 }

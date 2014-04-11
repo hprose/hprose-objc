@@ -22,6 +22,7 @@
 #import "HproseClient.h"
 
 @interface HproseHttpClient : HproseClient {
+    @private
     NSURL *url;
 }
 

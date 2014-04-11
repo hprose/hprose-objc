@@ -28,9 +28,9 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 
 @interface HproseExceptionHandler: NSObject;
 
-@property HproseClient* client;
+@property (weak) HproseClient* client;
 @property (copy) NSString *name;
-@property (assign, nonatomic) id delegate;
+@property (weak, nonatomic) id delegate;
 
 - (oneway void) doErrorCallback:(NSException *)e;
 
@@ -51,8 +51,8 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 }
 
 @property (copy) NSString *uri;
-@property (getter = getFilter, setter = setFilter:)id<HproseFilter> filter;
-@property (assign, nonatomic) id delegate;
+@property (weak, getter = getFilter, setter = setFilter:)id<HproseFilter> filter;
+@property (weak, nonatomic) id delegate;
 @property (assign, nonatomic) SEL onError;
 @property (copy, nonatomic) HproseErrorEvent errorHandler;
 

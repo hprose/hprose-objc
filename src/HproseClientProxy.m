@@ -13,7 +13,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 11, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -27,7 +27,7 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
     NSMutableArray *args = [NSMutableArray arrayWithCapacity:count - 2];
     for (NSUInteger i = 2; i < count; i++) {
         const char *type = [methodSignature getArgumentTypeAtIndex:i];
-        id arg;
+        __unsafe_unretained id arg;
         int j = 0;
         char t = type[j];
         switch (t) {
@@ -597,7 +597,7 @@ void setArguments(NSUInteger count, NSMethodSignature *methodSignature, NSInvoca
     }
 }
 
-void setReturnValue(char type, id result, NSInvocation *anInvocation) {
+void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anInvocation) {
     switch (type) {
         case _C_ID: {
             [anInvocation setReturnValue:&result];
@@ -682,30 +682,26 @@ void setReturnValue(char type, id result, NSInvocation *anInvocation) {
 
 @implementation HproseClientProxy
 
-@synthesize protocol;
-@synthesize client;
-@synthesize ns;
-
 - init:(Protocol *)aProtocol withClient:(HproseClient *)aClient withNameSpace:(NSString *)aNameSpace {
     [self setProtocol:aProtocol];
     [self setClient:aClient];
     [self setNs:aNameSpace];
-    return (self);
+    return self;
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation {
     NSString *selname = NSStringFromSelector([anInvocation selector]);
     NSString *name = [selname componentsSeparatedByString:@":"][0];
-    if (ns != nil) {
-        name = [NSString stringWithFormat:@"%@_%@", ns, name];
+    if (_ns != nil) {
+        name = [NSString stringWithFormat:@"%@_%@", _ns, name];
     }
     NSMethodSignature *methodSignature = [anInvocation methodSignature];
     NSUInteger count = [methodSignature numberOfArguments];
     const char *type = [methodSignature methodReturnType];
     HproseCallback callback = NULL;
-    HproseBlock block = nil;
+    HproseBlock __unsafe_unretained block = nil;
     SEL selector = NULL;
-    id delegate = nil;
+    id __unsafe_unretained delegate = nil;
     BOOL async = NO;
     if (type[0] == 'V' && type[1] == _C_VOID) {
         async = YES;
@@ -739,19 +735,19 @@ void setReturnValue(char type, id result, NSInvocation *anInvocation) {
     NSMutableArray *args = getArguments(count, methodSignature, anInvocation, &byRef);
     if (async) {
         if (callback != NULL) {
-            [client invoke:name
+            [_client invoke:name
                   withArgs:args
                      byRef:byRef
                   callback:callback];
         }
         else if (block != nil) {
-            [client invoke:name
+            [_client invoke:name
                   withArgs:args
                      byRef:byRef
                      block:block];
         }
         else {
-            [client invoke:name
+            [_client invoke:name
                   withArgs:args
                      byRef:byRef
                   selector:selector
@@ -768,13 +764,13 @@ void setReturnValue(char type, id result, NSInvocation *anInvocation) {
                                        substringWithRange:
                                        NSMakeRange(2, strlen(type) - 3)];
                 Class cls = objc_getClass([className UTF8String]);
-                result = [client invoke:name
+                result = [_client invoke:name
                                withArgs:args
                                   byRef:byRef
                             resultClass:cls];
             }
             else {
-                result = [client invoke:name
+                result = [_client invoke:name
                                withArgs:args
                                   byRef:byRef];
             }
@@ -791,7 +787,7 @@ void setReturnValue(char type, id result, NSInvocation *anInvocation) {
                     t = type[1];
                     break;
             }
-            result = [client invoke:name
+            result = [_client invoke:name
                            withArgs:args
                               byRef:byRef
                          resultType:t];
@@ -804,7 +800,7 @@ void setReturnValue(char type, id result, NSInvocation *anInvocation) {
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    const char *types = protocol_getMethodDescription(protocol, aSelector, YES, YES).types;
+    const char *types = protocol_getMethodDescription(_protocol, aSelector, YES, YES).types;
     return [NSMethodSignature signatureWithObjCTypes:types];
 }
 

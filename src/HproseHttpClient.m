@@ -13,7 +13,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 11, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -22,6 +22,7 @@
 #import "HproseHttpClient.h"
 
 @interface AsyncInvokeContext: NSObject {
+    @private
     NSMutableData *_buffer;
     void (^_callback)(NSData *);
     HproseExceptionHandler *_exceptionHandler;
@@ -78,11 +79,11 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setTimeoutInterval:_timeout];
     for (id field in _header) {
-        [request setValue:[_header objectForKey:field] forHTTPHeaderField:field];
+        [request setValue:_header[field] forHTTPHeaderField:field];
     }
     if (_keepAlive) {
         [request setValue:@"keep-alive" forHTTPHeaderField:@"Connection"];
-        [request setValue:[[NSNumber numberWithInt:_keepAliveTimeout] stringValue] forHTTPHeaderField:@"Keep-Alive"];
+        [request setValue:[@(_keepAliveTimeout) stringValue] forHTTPHeaderField:@"Keep-Alive"];
     }
     else {
         [request setValue:@"close" forHTTPHeaderField:@"Connection"];
@@ -111,11 +112,11 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setTimeoutInterval:_timeout];
     for (id field in _header) {
-        [request setValue:[_header objectForKey:field] forHTTPHeaderField:field];
+        [request setValue:_header[field] forHTTPHeaderField:field];
     }
     if (_keepAlive) {
         [request setValue:@"keep-alive" forHTTPHeaderField:@"Connection"];
-        [request setValue:[[NSNumber numberWithInt:_keepAliveTimeout] stringValue] forHTTPHeaderField:@"Keep-Alive"];
+        [request setValue:[@(_keepAliveTimeout) stringValue] forHTTPHeaderField:@"Keep-Alive"];
     }
     else {
         [request setValue:@"close" forHTTPHeaderField:@"Connection"];
@@ -137,9 +138,9 @@
 
 - (id) init {
     if (self = [super init]) {
-        _timeout = 30.0;
-        _keepAlive = YES;
-        _keepAliveTimeout = 300;
+        [self setTimeout:30.0];
+        [self setKeepAlive:YES];
+        [self setKeepAliveTimeout:300];
         _header = [NSMutableDictionary new];
     }
     return self;
@@ -148,7 +149,7 @@
 - (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {
     if (field != nil) {
          if (value != nil) {
-            [_header setObject:value forKey:field];
+            _header[field] = value;
          }
         else {
             [_header removeObjectForKey:field];

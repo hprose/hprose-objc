@@ -252,13 +252,13 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 
 - (id) initWithStream:(NSInputStream *)dataStream {
     if ((self = [super init])) {
-        stream = dataStream;
+        [self setStream:dataStream];
     }
     return self;
 }
 
 - (NSData *) readRaw {
-    NSOutputStream *ostream = [[NSOutputStream alloc] initToMemory];
+    NSOutputStream *ostream = [NSOutputStream outputStreamToMemory];
     [ostream open];
     NSData *data = nil;
     @try {

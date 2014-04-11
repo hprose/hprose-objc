@@ -282,7 +282,7 @@ static NSMutableDictionary *gPropertiesCache;
 
 + (void) initialize {
     if (self == [HproseHelper class]) {
-        gPropertiesCache = [[NSMutableDictionary alloc] init];
+        gPropertiesCache = [NSMutableDictionary new];
     }
 }
 

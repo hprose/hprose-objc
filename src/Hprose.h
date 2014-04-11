@@ -9,26 +9,22 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseProperty.h                                       *
+ * Hprose.h                                               *
  *                                                        *
- * hprose property class header for Objective-C.          *
+ * hprose header for Objective-C.                         *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 11, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
-#import <objc/runtime.h>
-#import <Foundation/Foundation.h>
-
-@interface HproseProperty : NSObject
-
-@property (copy) NSString *name;
-@property char type;
-@property (weak) Class class;
-@property SEL getter;
-@property IMP getterImp;
-@property SEL setter;
-@property IMP setterImp;
-
-@end
+#import "HproseTags.h"
+#import "HproseReader.h"
+#import "HproseWriter.h"
+#import "HproseException.h"
+#import "HproseHelper.h"
+#import "HproseClassManager.h"
+#import "HproseResultMode.h"
+#import "HproseFilter.h"
+#import "HproseClient.h"
+#import "HproseHttpClient.h"

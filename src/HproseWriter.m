@@ -435,9 +435,9 @@ static Class classOfNSCFBoolean;
 
 - (id) initWithStream:(NSOutputStream *)dataStream simple:(BOOL)b {
     if (self = [super init]) {
-        stream = dataStream;
-        classref = [[NSMutableArray alloc] init];
-        refer = b ? [[HproseFakeWriterRefer alloc] init] : [[HproseRealWriterRefer alloc] init: self];
+        [self setStream:dataStream];
+        classref = [NSMutableArray new];
+        refer = b ? [HproseFakeWriterRefer new] : [[HproseRealWriterRefer alloc] init:self];
     }
     return self;
 }

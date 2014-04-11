@@ -23,6 +23,7 @@
 		D81CBBBB18F037AA000B4EE3 /* HproseProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = D81CBBBA18F037AA000B4EE3 /* HproseProperty.h */; };
 		D81CBBBD18F037DD000B4EE3 /* HproseProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D81CBBBC18F037DD000B4EE3 /* HproseProperty.m */; };
 		D81CBBBF18F03895000B4EE3 /* Hprose_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = D81CBBBE18F03895000B4EE3 /* Hprose_Prefix.pch */; };
+		D824A65F18F78F9C004ED013 /* Hprose.h in Headers */ = {isa = PBXBuildFile; fileRef = D824A65E18F78F9C004ED013 /* Hprose.h */; };
 		D8AAED8C18F64C7000E81B25 /* HproseFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D8AAED8A18F64C7000E81B25 /* HproseFilter.h */; };
 		D8AAED8D18F64C7000E81B25 /* HproseInvoker.h in Headers */ = {isa = PBXBuildFile; fileRef = D8AAED8B18F64C7000E81B25 /* HproseInvoker.h */; };
 		D8AAED9018F6738100E81B25 /* HproseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D8AAED8E18F6738100E81B25 /* HproseClient.h */; };
@@ -51,6 +52,7 @@
 		D81CBBBA18F037AA000B4EE3 /* HproseProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseProperty.h; path = src/HproseProperty.h; sourceTree = "<group>"; };
 		D81CBBBC18F037DD000B4EE3 /* HproseProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseProperty.m; path = src/HproseProperty.m; sourceTree = "<group>"; };
 		D81CBBBE18F03895000B4EE3 /* Hprose_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hprose_Prefix.pch; sourceTree = "<group>"; };
+		D824A65E18F78F9C004ED013 /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hprose.h; path = src/Hprose.h; sourceTree = "<group>"; };
 		D8AAED8A18F64C7000E81B25 /* HproseFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseFilter.h; path = src/HproseFilter.h; sourceTree = "<group>"; };
 		D8AAED8B18F64C7000E81B25 /* HproseInvoker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvoker.h; path = src/HproseInvoker.h; sourceTree = "<group>"; };
 		D8AAED8E18F6738100E81B25 /* HproseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClient.h; path = src/HproseClient.h; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D824A65E18F78F9C004ED013 /* Hprose.h */,
 				D8AAED9618F6E96A00E81B25 /* HproseHttpClient.h */,
 				D8AAED9718F6E96A00E81B25 /* HproseHttpClient.m */,
 				D8AAED9218F6761700E81B25 /* HproseClientProxy.h */,
@@ -161,6 +164,7 @@
 				D8AAED9818F6E96A00E81B25 /* HproseHttpClient.h in Headers */,
 				D81BDA0C18F1091100EDE818 /* HproseClassManager.h in Headers */,
 				9B3E98F2111C9DF300C617E2 /* HproseTags.h in Headers */,
+				D824A65F18F78F9C004ED013 /* Hprose.h in Headers */,
 				D8AAED9018F6738100E81B25 /* HproseClient.h in Headers */,
 				D81BDA1018F11EE400EDE818 /* HproseException.h in Headers */,
 				D8AAED8D18F64C7000E81B25 /* HproseInvoker.h in Headers */,
