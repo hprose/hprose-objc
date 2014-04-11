@@ -2,8 +2,8 @@
 //  IphoneExamAppDelegate.m
 //  IphoneExam
 //
-//  Created by andot on 10-5-17.
-//  Copyright hprfc 2010. All rights reserved.
+//  Created by Ma Bingyao on Apr 11, 2014.
+//  Copyright hprose.com 2014. All rights reserved.
 //
 
 #import "IphoneExamAppDelegate.h"
