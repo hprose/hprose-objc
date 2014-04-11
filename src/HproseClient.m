@@ -368,11 +368,11 @@
         return;
     }
     if (selector == NULL) {
-        selector = @selector(callback);
+        selector = sel_registerName("callback");
         if (![delegate respondsToSelector:selector]) {
-            selector = @selector(callback:);
+            selector = sel_registerName("callback:");
             if (![delegate respondsToSelector:selector]) {
-                selector = @selector(callback:withArgs:);
+                selector = sel_registerName("callback:withArgs:");
             }
         }
     }
@@ -541,7 +541,7 @@
         }
         [ostream writeByte:HproseTagEnd];
         NSData *data = [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-        for (int i = 0, n = filters.count; i < n; ++i) {
+        for (NSUInteger i = 0, n = filters.count; i < n; ++i) {
             data = [filters[i] outputFilter:data withContext:self];
         }
         return data;
@@ -552,7 +552,7 @@
 }
 
 - (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode {
-    for (int i = filters.count - 1; i >= 0; --i) {
+    for (int i = (int)filters.count - 1; i >= 0; --i) {
         data = [filters[i] inputFilter:data withContext:self];
     }
     int tag = ((uint8_t *)[data bytes])[[data length] - 1];
@@ -586,11 +586,11 @@
                     [reader reset];
                     NSArray *arguments = [reader readArray];
                     if (args != nil) {
-                        int n = [arguments count];
+                        NSUInteger n = [arguments count];
                         if (n > [args count]) {
                             n = [args count];
                         }
-                        for (int i = 0; i < n; i++) {
+                        for (NSUInteger i = 0; i < n; i++) {
                             args[i] = arguments[i];
                         }
                     }

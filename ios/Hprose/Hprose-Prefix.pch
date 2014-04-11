@@ -1,0 +1,27 @@
+/**********************************************************\
+|                                                          |
+|                          hprose                          |
+|                                                          |
+| Official WebSite: http://www.hprose.com/                 |
+|                   http://www.hprose.net/                 |
+|                   http://www.hprose.org/                 |
+|                                                          |
+\**********************************************************/
+/**********************************************************\
+ *                                                        *
+ * Hprose_Prefix.pch                                      *
+ *                                                        *
+ * hprose prefix header for Objective-C.                  *
+ *                                                        *
+ * LastModified: Apr 5, 2014                              *
+ * Author: Ma Bingyao <andot@hprose.com>                  *
+ *                                                        *
+\**********************************************************/
+
+//
+// Prefix header for all source files of the 'Hprose' target in the 'Hprose' project.
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#endif

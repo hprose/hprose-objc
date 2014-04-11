@@ -384,7 +384,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
     NSUInteger r = [ref indexOfObject:obj];
     if (r != NSNotFound) {
         [w.stream writeByte:HproseTagRef];
-        [w writeInt32:r withStream:w.stream];
+        [w writeInt32:(int)r withStream:w.stream];
         [w.stream writeByte:HproseTagSemicolon];
         return YES;
     }
