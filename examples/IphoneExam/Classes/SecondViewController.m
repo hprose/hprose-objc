@@ -61,18 +61,16 @@
 }
 
 -(IBAction) sumIntClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
-    [exam sum:[[int_a text] intValue]
-          and:[[int_b text] intValue]
+    [[delegate exam] sum:[[int_a text] intValue]
+                     and:[[int_b text] intValue]
      selector:@selector(sumIntCallback:)
      delegate:self];
 }
 
 -(IBAction) sumDoubleClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
-    [exam sum:[[double_a text] doubleValue]
-          and:[[double_b text] doubleValue]
-          and:[[double_c text] doubleValue]
+    [[delegate exam] sum:[[double_a text] doubleValue]
+                     and:[[double_b text] doubleValue]
+                     and:[[double_c text] doubleValue]
      selector:@selector(sumDoubleCallback:)
      delegate:self];
 }

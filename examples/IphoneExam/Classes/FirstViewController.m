@@ -57,8 +57,7 @@
 }
 
 -(IBAction) helloClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
-    [exam hello:[text text] selector:@selector(helloCallback:) delegate:self];
+    [[delegate exam] hello:[text text] selector:@selector(helloCallback:) delegate:self];
 }
 
 -(void) helloCallback:(NSString *)result {

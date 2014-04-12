@@ -57,14 +57,13 @@
 }
 
 -(IBAction) swapClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:4];
     dict[@"Jan"] = @"January";
     dict[@"Feb"] = @"February";
     dict[@"Mar"] = @"March";
     dict[@"Apr"] = @"April";
     [label setText:[dict description]];
-    [exam swapKeyAndValue:dict selector:@selector(swapCallback:withArgs:) delegate:self];
+    [[delegate exam] swapKeyAndValue:dict selector:@selector(swapCallback:withArgs:) delegate:self];
 }
 
 -(void) swapCallback:(NSDictionary *)result withArgs:(NSArray *)args {

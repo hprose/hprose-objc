@@ -57,8 +57,7 @@
 }
 
 -(IBAction) showClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
-    [exam thisMethodNotExist:@selector(showCallback) delegate:self];
+    [[delegate exam] thisMethodNotExist:@selector(showCallback) delegate:self];
 }
 
 -(void) showCallback {

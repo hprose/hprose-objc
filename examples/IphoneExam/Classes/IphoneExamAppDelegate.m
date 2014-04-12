@@ -7,21 +7,23 @@
 //
 
 #import "IphoneExamAppDelegate.h"
+#import "Exam.h"
 
 
 @implementation IphoneExamAppDelegate
 
 @synthesize window;
 @synthesize tabBarController;
-@synthesize client;
+@synthesize exam;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     // Add the tab bar controller's current view as a subview of the window
     [window addSubview:tabBarController.view];
     [window makeKeyAndVisible];
-    client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
+    HproseClient *client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
     [client setDelegate:self];
     [client setOnError:@selector(errorHandler:withException:)];
+    exam = [client useService:@protocol(Exam)];
     return YES;
 }
 

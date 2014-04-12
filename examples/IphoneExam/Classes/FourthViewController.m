@@ -57,8 +57,7 @@
 }
 
 -(IBAction) getUserListClick:(id)sender {
-    id<Exam> exam = [[delegate client] useService:@protocol(Exam)];
-    [exam getUserList:@selector(getUserListCallback:)
+    [[delegate exam] getUserList:@selector(getUserListCallback:)
        delegate:self];
 }
 

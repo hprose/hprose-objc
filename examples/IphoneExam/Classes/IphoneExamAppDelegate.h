@@ -8,16 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "Hprose.h"
+#import "Exam.h"
 
 @interface IphoneExamAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> {
     UIWindow *window;
     UITabBarController *__weak tabBarController;
-    HproseHttpClient *client;
+    id<Exam> exam;
 }
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (weak, nonatomic, readonly) IBOutlet UITabBarController *tabBarController;
-@property (nonatomic, strong) IBOutlet HproseHttpClient *client;
+@property (nonatomic, strong) IBOutlet id<Exam> exam;
 
 -(IBAction) didEndOnExit:(id)sender;
 
