@@ -9,9 +9,9 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseHttpClient.h                                     *
+ * HproseFormatter.h                                      *
  *                                                        *
- * hprose http client header for Objective-C.             *
+ * hprose formatter class header for Objective-C.         *
  *                                                        *
  * LastModified: Apr 12, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
@@ -19,19 +19,19 @@
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
-#import "HproseClient.h"
 
-@interface HproseHttpClient : HproseClient {
-    @private
-    NSURL *url;
-}
+@interface HproseFormatter : NSObject;
 
-@property NSTimeInterval timeout;
-@property BOOL keepAlive;
-@property int keepAliveTimeout;
-@property (readonly) NSMutableDictionary *header;
-@property id<NSURLConnectionDelegate> URLConnectionDelegate;
++ (NSData *) serialize:(id)obj;
++ (NSData *) serialize:(id)obj simple:(BOOL)simple;
 
-- (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
++ (id) unserialize:(NSData *)data;
++ (id) unserialize:(NSData *)data withClass:(Class)cls;
++ (id) unserialize:(NSData *)data withType:(char)type;
++ (id) unserialize:(NSData *)data withClass:(Class)cls withType:(char)type;
++ (id) unserialize:(NSData *)data simple:(BOOL)simple;
++ (id) unserialize:(NSData *)data withClass:(Class)cls simple:(BOOL)simple;
++ (id) unserialize:(NSData *)data withType:(char)type simple:(BOOL)simple;
++ (id) unserialize:(NSData *)data withClass:(Class)cls withType:(char)type simple:(BOOL)simple;
 
 @end

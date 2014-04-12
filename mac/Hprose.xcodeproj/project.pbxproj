@@ -32,6 +32,8 @@
 		D824A68C18F79822004ED013 /* HproseWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = D824A67518F79822004ED013 /* HproseWriter.h */; };
 		D824A68D18F79822004ED013 /* HproseWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A67618F79822004ED013 /* HproseWriter.m */; };
 		D824A69118F798DA004ED013 /* Hprose_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = D824A69018F798DA004ED013 /* Hprose_Prefix.pch */; };
+		D8258B3418F8E4F40049E92C /* HproseFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = D8258B3218F8E4F40049E92C /* HproseFormatter.h */; };
+		D8258B3518F8E4F40049E92C /* HproseFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = D8258B3318F8E4F40049E92C /* HproseFormatter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +63,8 @@
 		D824A67518F79822004ED013 /* HproseWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseWriter.h; path = ../src/HproseWriter.h; sourceTree = "<group>"; };
 		D824A67618F79822004ED013 /* HproseWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseWriter.m; path = ../src/HproseWriter.m; sourceTree = "<group>"; };
 		D824A69018F798DA004ED013 /* Hprose_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hprose_Prefix.pch; sourceTree = "<group>"; };
+		D8258B3218F8E4F40049E92C /* HproseFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseFormatter.h; path = ../src/HproseFormatter.h; sourceTree = "<group>"; };
+		D8258B3318F8E4F40049E92C /* HproseFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseFormatter.m; path = ../src/HproseFormatter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 				D824A66718F79822004ED013 /* HproseException.h */,
 				D824A66818F79822004ED013 /* HproseException.m */,
 				D824A66918F79822004ED013 /* HproseFilter.h */,
+				D8258B3218F8E4F40049E92C /* HproseFormatter.h */,
+				D8258B3318F8E4F40049E92C /* HproseFormatter.m */,
 				D824A66A18F79822004ED013 /* HproseHelper.h */,
 				D824A66B18F79822004ED013 /* HproseHelper.m */,
 				D824A66C18F79822004ED013 /* HproseHttpClient.h */,
@@ -167,6 +173,7 @@
 				D824A68018F79822004ED013 /* HproseFilter.h in Headers */,
 				D824A68818F79822004ED013 /* HproseReader.h in Headers */,
 				D824A68118F79822004ED013 /* HproseHelper.h in Headers */,
+				D8258B3418F8E4F40049E92C /* HproseFormatter.h in Headers */,
 				D824A69118F798DA004ED013 /* Hprose_Prefix.pch in Headers */,
 				D824A67818F79822004ED013 /* HproseClassManager.h in Headers */,
 				D824A67E18F79822004ED013 /* HproseException.h in Headers */,
@@ -236,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D824A67F18F79822004ED013 /* HproseException.m in Sources */,
+				D8258B3518F8E4F40049E92C /* HproseFormatter.m in Sources */,
 				D824A67D18F79822004ED013 /* HproseClientProxy.m in Sources */,
 				D824A68218F79822004ED013 /* HproseHelper.m in Sources */,
 				D824A68718F79822004ED013 /* HproseProperty.m in Sources */,

@@ -13,7 +13,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 12, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -28,7 +28,7 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 
 @interface HproseExceptionHandler: NSObject;
 
-@property (weak) HproseClient* client;
+@property HproseClient* client;
 @property (copy) NSString *name;
 @property (weak, nonatomic) id delegate;
 

@@ -13,7 +13,7 @@
  *                                                        *
  * hprose client proxy header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 11, 2014                             *
+ * LastModified: Apr 12, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -24,8 +24,8 @@
 
 @interface HproseClientProxy : NSProxy;
 
-@property (weak) Protocol *protocol;
-@property (weak) HproseClient *client;
+@property Protocol *protocol;
+@property HproseClient *client;
 @property (copy) NSString *ns;
 
 - init:(Protocol *)aProtocol withClient:(HproseClient *)aClient withNameSpace:(NSString *)aNameSpace;
