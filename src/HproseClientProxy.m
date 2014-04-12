@@ -13,7 +13,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 11, 2014                             *
+ * LastModified: Apr 12, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -137,7 +137,7 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
             case _C_PTR: {
                 switch (type[++j]) {
                     case _C_ID: {
-                        id __strong *value;
+                        __unsafe_unretained id *value;
                         [anInvocation getArgument:&value atIndex:i];
                         arg = *value;
                         if (arg == nil) arg = [NSNull null];
@@ -239,7 +239,7 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
                 for (++j; isdigit(type[j]); ++j) n = n * 10 + (type[j] - '0');
                 switch (type[j]) {
                     case _C_ID: {
-                        id __strong *value;
+                        __unsafe_unretained id *value;
                         [anInvocation getArgument:&value atIndex:i];
                         arg = [NSMutableArray arrayWithCapacity:n];
                         for (int k = 0; k < n; ++k) [arg addObject:value[k]];
@@ -392,7 +392,7 @@ void setArguments(NSUInteger count, NSMethodSignature *methodSignature, NSInvoca
                 if (!byRef) break;
                 switch (type[++j]) {
                     case _C_ID: {
-                        id __strong *value;
+                        __unsafe_unretained id *value;
                         [anInvocation getArgument:&value atIndex:i];
                         *value = arg;
                         break;
@@ -493,7 +493,7 @@ void setArguments(NSUInteger count, NSMethodSignature *methodSignature, NSInvoca
                 for (++j; isdigit(type[j]); ++j) n = n * 10 + (type[j] - '0');
                 switch (type[j]) {
                     case _C_ID: {
-                        id __strong *value;
+                        __unsafe_unretained id *value;
                         [anInvocation getArgument:&value atIndex:i];
                         for (int k = 0; k < n; ++k) value[k] = arg[k];
                         break;
