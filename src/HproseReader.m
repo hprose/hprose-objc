@@ -13,7 +13,7 @@
  *                                                        *
  * hprose reader class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 17, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -660,7 +660,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (int8_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int8_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"int8_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int8_t"];
     }
@@ -693,7 +693,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (int16_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int16_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"int16_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int16_t"];
     }
@@ -726,7 +726,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int32_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"int32_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int32_t"];
     }
@@ -759,7 +759,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref longLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int64_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"int64_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int64_t"];
     }
@@ -792,7 +792,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint8_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint8_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"uint8_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint8_t"];
     }
@@ -825,7 +825,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint16_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint16_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"uint16_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint16_t"];
     }
@@ -858,7 +858,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint32_t)[ref longLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint32_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"uint32_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint32_t"];
     }
@@ -891,7 +891,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [[[NSNumberFormatter new] numberFromString:ref] unsignedLongLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint64_t"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"uint64_t"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint64_t"];
     }
@@ -925,7 +925,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref floatValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"float"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"float"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"float"];
     }
@@ -964,7 +964,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [ref timeIntervalSince1970];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"double"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"double"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"double"];
     }
@@ -1003,7 +1003,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref boolValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"BOOL"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"BOOL"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"BOOL"];
     }
@@ -1075,7 +1075,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref characterAtIndex:0];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"unichar"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"unichar"];
         }
         default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"unichar"];
     }
@@ -1486,7 +1486,7 @@ static double NaN, Infinity, NegInfinity;
     }
     IMP setterImp = [property setterImp];
     SEL setter = [property setter];
-    id value = [self unserialize:[property class] withType:[property type]];
+    id value = [self unserialize:[property classRef] withType:[property type]];
     switch ([property type]) {
         case _C_ID:
             ((void (*)(id, SEL, id))setterImp)(obj, setter, value);
@@ -1833,7 +1833,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return @([ref timeIntervalSince1970]);
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSNumber"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSNumber"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSNumber"];
@@ -1897,7 +1897,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSDate"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSDate"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSDate"];
@@ -1923,7 +1923,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSData class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSData"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSData"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSData"];
@@ -1952,7 +1952,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isMemberOfClass:[NSData class]]) {
                 return [NSMutableData dataWithBytes:[ref bytes] length:[ref length]];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMutableData"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSMutableData"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMutableData"];
@@ -2006,7 +2006,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [[NSDateFormatter new] stringFromDate:ref];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSString"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSString"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSString"];
@@ -2063,7 +2063,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [NSMutableString stringWithString:[[NSDateFormatter new] stringFromDate:ref]];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMutableString"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSMutableString"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMutableString"];
@@ -2089,7 +2089,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSUUID class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSUUID"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSUUID"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSUUID"];
@@ -2108,7 +2108,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSArray class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSArray"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSArray"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSArray"];
@@ -2127,7 +2127,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSSet class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSSet"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSSet"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSSet"];
@@ -2146,7 +2146,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSHashTable class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSHashTable"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSHashTable"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSHashTable"];
@@ -2172,7 +2172,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDictionary class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSDictionary"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSDictionary"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSDictionary"];
@@ -2198,7 +2198,7 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSMapTable class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMapTable"];
+            @throw [self castExceptionFromClass:[ref classRef] to:@"NSMapTable"];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMapTable"];
@@ -2222,7 +2222,7 @@ static double NaN, Infinity, NegInfinity;
             if (cls == Nil || [ref isKindOfClass:cls]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] toClass:cls];
+            @throw [self castExceptionFromClass:[ref classRef] toClass:cls];
         }
         default:
             @throw [self castExceptionFrom:[self tagToString:tag] toClass:cls];

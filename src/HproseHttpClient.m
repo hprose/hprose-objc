@@ -26,7 +26,7 @@
     NSMutableData *_buffer;
     void (^_callback)(NSData *);
     HproseExceptionHandler *_exceptionHandler;
-    HproseHttpClient *__weak _client;
+    HproseHttpClient * _client;
 }
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)response;

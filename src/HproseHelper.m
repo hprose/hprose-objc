@@ -13,7 +13,7 @@
  *                                                        *
  * hprose helper class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 17, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -133,7 +133,7 @@ id getHprosePropertyFormMethod(Class cls, Method method) {
                 NSString *className = [@(type)
                                        substringWithRange:
                                        NSMakeRange(2, strlen(type) - 3)];
-                [property setClass:objc_getClass([className UTF8String])];
+                [property setClassRef:objc_getClass([className UTF8String])];
             }
         }
         NSString *setterName = [NSString stringWithFormat:@"set%@%@:",
@@ -186,7 +186,7 @@ id getHprosePropertyFormProperty(Class cls, objc_property_t prop) {
                     if ([propAttr length] > 4) {
                         NSString *className = [propAttr substringWithRange:
                                                NSMakeRange(3, [propAttr length] - 4)];
-                        [property setClass:objc_getClass([className UTF8String])];
+                        [property setClassRef:objc_getClass([className UTF8String])];
                     }
                 }
                 break;
@@ -264,7 +264,7 @@ id getHproseProperties2(Class cls) {
 
 id getHproseAutoObjectProperty(id self, SEL _cmd) {
     NSString *name = NSStringFromSelector(_cmd);
-    return object_getIvar(self, class_getInstanceVariable([self class], [name UTF8String]));
+    return object_getIvar(self, class_getInstanceVariable([self classRef], [name UTF8String]));
 }
 
 void setHproseAutoObjectProperty(id self, SEL _cmd, id value) {
@@ -273,7 +273,7 @@ void setHproseAutoObjectProperty(id self, SEL _cmd, id value) {
             tolower([name characterAtIndex:3]),
             [name substringWithRange:
              NSMakeRange(4, [name length] - 5)]];
-    object_setIvar(self, class_getInstanceVariable([self class], [name UTF8String]), value);
+    object_setIvar(self, class_getInstanceVariable([self classRef], [name UTF8String]), value);
 }
 
 @implementation HproseHelper

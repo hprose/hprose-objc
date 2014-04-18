@@ -13,7 +13,7 @@
  *                                                        *
  * hprose property class header for Objective-C.          *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 17, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -25,7 +25,7 @@
 
 @property (copy) NSString *name;
 @property char type;
-@property (weak) Class class;
+@property (weak) Class classRef;
 @property SEL getter;
 @property IMP getterImp;
 @property SEL setter;

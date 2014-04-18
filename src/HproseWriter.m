@@ -13,7 +13,7 @@
  *                                                        *
  * hprose writer class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Apr 18, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -54,7 +54,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
     [self writeInt32:len withStream:stream];
     [stream writeByte:HproseTagQuote];
     if (len > 0) {
-        [stream writeBuffer:(void *)[className UTF8String] maxLength:len];
+        [stream writeBuffer:(const uint8_t *)[className UTF8String] maxLength:len];
     }
     [stream writeByte:HproseTagQuote];
     int count = (int)[properties count];
@@ -160,7 +160,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
             ++len;
         }
     }
-    [dataStream writeBuffer:(void *)(buf + off) maxLength:len];
+    [dataStream writeBuffer:(const uint8_t *)(buf + off) maxLength:len];
 }
 
 - (void) writeInt16:(int16_t)i withStream:(NSOutputStream *)dataStream {
@@ -192,7 +192,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
             ++len;
         }
     }
-    [dataStream writeBuffer:(void *)(buf + off) maxLength:len];
+    [dataStream writeBuffer:(const uint8_t *)(buf + off) maxLength:len];
 }
 
 - (void) writeInt32:(int32_t)i withStream:(NSOutputStream *)dataStream {
@@ -455,7 +455,7 @@ static Class classOfNSCFBoolean;
         [self writeNull];
         return;
     }
-    Class c = [obj class];
+    Class c = [obj classRef];
     if (c == classOfNSCFBoolean) {
         [self writeBoolean:[obj boolValue]];
     }
@@ -590,7 +590,7 @@ static Class classOfNSCFBoolean;
 - (void) writeBigInteger:(NSString *)bi {
     [stream writeByte:HproseTagLong];
     NSData * data = [bi dataUsingEncoding:NSASCIIStringEncoding];
-    [stream writeBuffer:[data bytes] maxLength:[data length]];
+    [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
     [stream writeByte:HproseTagSemicolon];
 }
 
@@ -610,7 +610,7 @@ static Class classOfNSCFBoolean;
         [stream writeByte:HproseTagDouble];
         NSData * data = [[@(f) stringValue]
                          dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagSemicolon];
     }
 }
@@ -631,7 +631,7 @@ static Class classOfNSCFBoolean;
         [stream writeByte:HproseTagDouble];
         NSData * data = [[@(d) stringValue]
                          dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagSemicolon];
     }
 }
@@ -729,22 +729,22 @@ static Class classOfNSCFBoolean;
     if ([t isEqualToString:@"000000.000"]) {
         [stream writeByte:HproseTagDate];
         data = [d dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagSemicolon];
     }
     else if ([d isEqualToString:@"19700101"]) {
         [stream writeByte:HproseTagTime];
         data = [t dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagSemicolon];
     }
     else {
         [stream writeByte:HproseTagDate];
         data = [d dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagTime];
         data = [t dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagSemicolon];
     }
 }
@@ -763,22 +763,22 @@ static Class classOfNSCFBoolean;
     if ([t isEqualToString:@"000000.000"]) {
         [stream writeByte:HproseTagDate];
         data = [d dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagUTC];
     }
     else if ([d isEqualToString:@"19700101"]) {
         [stream writeByte:HproseTagTime];
         data = [t dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagUTC];
     }
     else {
         [stream writeByte:HproseTagDate];
         data = [d dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagTime];
         data = [t dataUsingEncoding:NSASCIIStringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
         [stream writeByte:HproseTagUTC];
     }
 }
@@ -812,7 +812,7 @@ static Class classOfNSCFBoolean;
     }
     [stream writeByte:HproseTagQuote];
     if (length > 0) {
-        [stream writeBuffer:[data bytes] maxLength:length];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:length];
     }
     [stream writeByte:HproseTagQuote];
 }
@@ -849,7 +849,7 @@ static Class classOfNSCFBoolean;
     [stream writeByte:HproseTagQuote];
     if (length > 0) {
         NSData * data = [str dataUsingEncoding:NSUTF8StringEncoding];
-        [stream writeBuffer:[data bytes] maxLength:[data length]];
+        [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
     }
     [stream writeByte:HproseTagQuote];
 }
@@ -865,7 +865,7 @@ static Class classOfNSCFBoolean;
     [stream writeByte:HproseTagGuid];
     [stream writeByte:HproseTagOpenbrace];
     NSData * data = [[uuid UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
-    [stream writeBuffer:[data bytes] maxLength:[data length]];
+    [stream writeBuffer:(const uint8_t *)[data bytes] maxLength:[data length]];
     [stream writeByte:HproseTagClosebrace];
 }
 
@@ -988,7 +988,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeObject:(id)obj {
-    Class cls = [obj class];
+    Class cls = [obj classRef];
     NSUInteger cr = [classref indexOfObjectIdenticalTo:cls];
     if (cr == NSNotFound) {
         cr = [self writeClass:cls];
