@@ -3,7 +3,6 @@
 |                          hprose                          |
 |                                                          |
 | Official WebSite: http://www.hprose.com/                 |
-|                   http://www.hprose.net/                 |
 |                   http://www.hprose.org/                 |
 |                                                          |
 \**********************************************************/
@@ -78,7 +77,7 @@
         filters = [NSMutableArray new];
     }
     return self;
-    
+
 }
 
 - (id) init:(NSString *)aUri {

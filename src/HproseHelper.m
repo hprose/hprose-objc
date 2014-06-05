@@ -3,7 +3,6 @@
 |                          hprose                          |
 |                                                          |
 | Official WebSite: http://www.hprose.com/                 |
-|                   http://www.hprose.net/                 |
 |                   http://www.hprose.org/                 |
 |                                                          |
 \**********************************************************/
@@ -42,7 +41,7 @@
                 @throw [NSException exceptionWithName:@"NSReadBufferException"
                                                reason:@"Stream read error"
                                              userInfo:nil];
-                
+
             }
             else {
                 @throw [NSException exceptionWithName:@"NSReadBufferException"

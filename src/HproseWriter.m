@@ -3,7 +3,6 @@
 |                          hprose                          |
 |                                                          |
 | Official WebSite: http://www.hprose.com/                 |
-|                   http://www.hprose.net/                 |
 |                   http://www.hprose.org/                 |
 |                                                          |
 \**********************************************************/
@@ -344,7 +343,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 @implementation HproseFakeWriterRefer
 
 - (void) set:(id)obj {
-    
+
 }
 
 - (BOOL) write:(id)obj {
@@ -352,7 +351,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 }
 
 - (void) reset {
-    
+
 }
 
 @end
@@ -1004,7 +1003,7 @@ static Class classOfNSCFBoolean;
         }
     }
     [stream writeByte:HproseTagClosebrace];
-    
+
 }
 
 - (void) writeObjectWithRef:(id)obj {

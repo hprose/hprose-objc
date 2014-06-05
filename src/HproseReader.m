@@ -3,7 +3,6 @@
 |                          hprose                          |
 |                                                          |
 | Official WebSite: http://www.hprose.com/                 |
-|                   http://www.hprose.net/                 |
 |                   http://www.hprose.org/                 |
 |                                                          |
 \**********************************************************/
@@ -35,7 +34,7 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
     }
     return [HproseException exceptionWithReason:[NSString stringWithFormat:
                                                  @"Unexpected serialize tag '%c' in stream", tag]];
-    
+
 }
 
 @interface HproseRawReader (PrivateMethods)
@@ -285,7 +284,7 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 @implementation HproseFakeReaderRefer
 
 - (void) set:(id)obj {
-    
+
 }
 
 - (id) read:(NSUInteger)index {
@@ -293,7 +292,7 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 }
 
 - (void) reset {
-    
+
 }
 
 @end
@@ -1420,7 +1419,7 @@ static double NaN, Infinity, NegInfinity;
     }
     [self checkTag:HproseTagClosebrace];
     return map;
-    
+
 }
 
 - (NSDictionary *) readObjectAsDict {
