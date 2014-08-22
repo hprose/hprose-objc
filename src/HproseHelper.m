@@ -12,7 +12,7 @@
  *                                                        *
  * hprose helper class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 17, 2014                             *
+ * LastModified: Aug 22, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -263,7 +263,7 @@ id getHproseProperties2(Class cls) {
 
 id getHproseAutoObjectProperty(id self, SEL _cmd) {
     NSString *name = NSStringFromSelector(_cmd);
-    return object_getIvar(self, class_getInstanceVariable([self classRef], [name UTF8String]));
+    return object_getIvar(self, class_getInstanceVariable([self class], [name UTF8String]));
 }
 
 void setHproseAutoObjectProperty(id self, SEL _cmd, id value) {
@@ -272,7 +272,7 @@ void setHproseAutoObjectProperty(id self, SEL _cmd, id value) {
             tolower([name characterAtIndex:3]),
             [name substringWithRange:
              NSMakeRange(4, [name length] - 5)]];
-    object_setIvar(self, class_getInstanceVariable([self classRef], [name UTF8String]), value);
+    object_setIvar(self, class_getInstanceVariable([self class], [name UTF8String]), value);
 }
 
 @implementation HproseHelper

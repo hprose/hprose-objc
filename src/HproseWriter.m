@@ -12,7 +12,7 @@
  *                                                        *
  * hprose writer class for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 18, 2014                             *
+ * LastModified: Aug 22, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -454,7 +454,7 @@ static Class classOfNSCFBoolean;
         [self writeNull];
         return;
     }
-    Class c = [obj classRef];
+    Class c = [obj class];
     if (c == classOfNSCFBoolean) {
         [self writeBoolean:[obj boolValue]];
     }
@@ -987,7 +987,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeObject:(id)obj {
-    Class cls = [obj classRef];
+    Class cls = [obj class];
     NSUInteger cr = [classref indexOfObjectIdenticalTo:cls];
     if (cr == NSNotFound) {
         cr = [self writeClass:cls];
