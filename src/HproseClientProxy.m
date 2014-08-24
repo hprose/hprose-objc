@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: Aug 24, 2014                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -702,8 +702,9 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
     SEL selector = NULL;
     id __unsafe_unretained delegate = nil;
     BOOL async = NO;
-    if (type[0] == 'V' && type[1] == _C_VOID) {
+    if ((type[0] == 'V' && type[1] == _C_VOID) || type[0] == _C_VOID) {
         async = YES;
+        BOOL _async = (type[0] == 'V');
         if (count > 2) {
             type = [methodSignature getArgumentTypeAtIndex:count - 1];
             if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
@@ -722,12 +723,24 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
                         [anInvocation getArgument:&selector atIndex:count - 2];
                         count -= 2;
                     }
+                    else {
+                        async = _async;
+                    }
+                }
+                else {
+                    async = _async;
                 }
             }
             else if (type[0] == _C_SEL) {
                 [anInvocation getArgument:&selector atIndex:count - 1];
                 count--;
             }
+            else {
+                async = _async;
+            }
+        }
+        else {
+            async = _async;
         }
     }
     BOOL byRef = NO;
