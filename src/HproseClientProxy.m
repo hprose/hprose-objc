@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Aug 24, 2014                             *
+ * LastModified: Mar 31, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -670,6 +670,9 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
         case _C_CHARPTR: {
             const char *value = [result UTF8String];
             [anInvocation setReturnValue:&value];
+            break;
+        }
+        case _C_VOID: {
             break;
         }
         default:
