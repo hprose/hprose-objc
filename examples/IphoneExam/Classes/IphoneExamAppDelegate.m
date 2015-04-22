@@ -8,7 +8,7 @@
 
 #import "IphoneExamAppDelegate.h"
 #import "Exam.h"
-
+#import "LogFilter.h"
 
 @implementation IphoneExamAppDelegate
 
@@ -23,6 +23,7 @@
     HproseClient *client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
     [client setDelegate:self];
     [client setOnError:@selector(errorHandler:withException:)];
+    [client setFilter:[LogFilter new]];
     exam = [client useService:@protocol(Exam)];
     return YES;
 }

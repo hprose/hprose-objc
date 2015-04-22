@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2E9FA176-15F8-405C-9180-B86A2AD8194F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Hprose</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>943A601EF3CA8A25D293B23D0BE1F43E1F5CF12B</key>
+		<string>https://github.com/hprose/hprose-objc.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>mac/Hprose.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>943A601EF3CA8A25D293B23D0BE1F43E1F5CF12B</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/hprose/hprose-objc.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>943A601EF3CA8A25D293B23D0BE1F43E1F5CF12B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>943A601EF3CA8A25D293B23D0BE1F43E1F5CF12B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>hprose-objc</string>
+		</dict>
+	</array>
+</dict>
+</plist>
