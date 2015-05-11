@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Mar 31, 2015                             *
+ * LastModified: May 11, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -26,7 +26,7 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
     NSMutableArray *args = [NSMutableArray arrayWithCapacity:count - 2];
     for (NSUInteger i = 2; i < count; i++) {
         const char *type = [methodSignature getArgumentTypeAtIndex:i];
-        __unsafe_unretained id arg;
+        id arg;
         int j = 0;
         char t = type[j];
         switch (t) {

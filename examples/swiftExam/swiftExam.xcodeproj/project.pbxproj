@@ -1,0 +1,323 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9BEB19611B00B8E800FAAE4A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19601B00B8E800FAAE4A /* main.swift */; };
+		9BEB19811B00B91800FAAE4A /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB196A1B00B91800FAAE4A /* HproseClassManager.m */; };
+		9BEB19821B00B91800FAAE4A /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB196C1B00B91800FAAE4A /* HproseClient.m */; };
+		9BEB19831B00B91800FAAE4A /* HproseClientProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB196E1B00B91800FAAE4A /* HproseClientProxy.m */; };
+		9BEB19841B00B91800FAAE4A /* HproseException.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19701B00B91800FAAE4A /* HproseException.m */; };
+		9BEB19851B00B91800FAAE4A /* HproseFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19731B00B91800FAAE4A /* HproseFormatter.m */; };
+		9BEB19861B00B91800FAAE4A /* HproseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19751B00B91800FAAE4A /* HproseHelper.m */; };
+		9BEB19871B00B91800FAAE4A /* HproseHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19771B00B91800FAAE4A /* HproseHttpClient.m */; };
+		9BEB19881B00B91800FAAE4A /* HproseProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB197A1B00B91800FAAE4A /* HproseProperty.m */; };
+		9BEB19891B00B91800FAAE4A /* HproseReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB197C1B00B91800FAAE4A /* HproseReader.m */; };
+		9BEB198A1B00B91800FAAE4A /* HproseWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19801B00B91800FAAE4A /* HproseWriter.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9BEB195B1B00B8E800FAAE4A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9BEB195D1B00B8E800FAAE4A /* swiftExam */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftExam; sourceTree = BUILT_PRODUCTS_DIR; };
+		9BEB19601B00B8E800FAAE4A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		9BEB19681B00B91800FAAE4A /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hprose.h; sourceTree = "<group>"; };
+		9BEB19691B00B91800FAAE4A /* HproseClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseClassManager.h; sourceTree = "<group>"; };
+		9BEB196A1B00B91800FAAE4A /* HproseClassManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseClassManager.m; sourceTree = "<group>"; };
+		9BEB196B1B00B91800FAAE4A /* HproseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseClient.h; sourceTree = "<group>"; };
+		9BEB196C1B00B91800FAAE4A /* HproseClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseClient.m; sourceTree = "<group>"; };
+		9BEB196D1B00B91800FAAE4A /* HproseClientProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseClientProxy.h; sourceTree = "<group>"; };
+		9BEB196E1B00B91800FAAE4A /* HproseClientProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseClientProxy.m; sourceTree = "<group>"; };
+		9BEB196F1B00B91800FAAE4A /* HproseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseException.h; sourceTree = "<group>"; };
+		9BEB19701B00B91800FAAE4A /* HproseException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseException.m; sourceTree = "<group>"; };
+		9BEB19711B00B91800FAAE4A /* HproseFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseFilter.h; sourceTree = "<group>"; };
+		9BEB19721B00B91800FAAE4A /* HproseFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseFormatter.h; sourceTree = "<group>"; };
+		9BEB19731B00B91800FAAE4A /* HproseFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseFormatter.m; sourceTree = "<group>"; };
+		9BEB19741B00B91800FAAE4A /* HproseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseHelper.h; sourceTree = "<group>"; };
+		9BEB19751B00B91800FAAE4A /* HproseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseHelper.m; sourceTree = "<group>"; };
+		9BEB19761B00B91800FAAE4A /* HproseHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseHttpClient.h; sourceTree = "<group>"; };
+		9BEB19771B00B91800FAAE4A /* HproseHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseHttpClient.m; sourceTree = "<group>"; };
+		9BEB19781B00B91800FAAE4A /* HproseInvoker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseInvoker.h; sourceTree = "<group>"; };
+		9BEB19791B00B91800FAAE4A /* HproseProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseProperty.h; sourceTree = "<group>"; };
+		9BEB197A1B00B91800FAAE4A /* HproseProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseProperty.m; sourceTree = "<group>"; };
+		9BEB197B1B00B91800FAAE4A /* HproseReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseReader.h; sourceTree = "<group>"; };
+		9BEB197C1B00B91800FAAE4A /* HproseReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseReader.m; sourceTree = "<group>"; };
+		9BEB197D1B00B91800FAAE4A /* HproseResultMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseResultMode.h; sourceTree = "<group>"; };
+		9BEB197E1B00B91800FAAE4A /* HproseTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseTags.h; sourceTree = "<group>"; };
+		9BEB197F1B00B91800FAAE4A /* HproseWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseWriter.h; sourceTree = "<group>"; };
+		9BEB19801B00B91800FAAE4A /* HproseWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseWriter.m; sourceTree = "<group>"; };
+		9BEB19901B00BA3700FAAE4A /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9BEB195A1B00B8E800FAAE4A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9BEB19541B00B8E800FAAE4A = {
+			isa = PBXGroup;
+			children = (
+				9BEB195F1B00B8E800FAAE4A /* swiftExam */,
+				9BEB195E1B00B8E800FAAE4A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9BEB195E1B00B8E800FAAE4A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9BEB195D1B00B8E800FAAE4A /* swiftExam */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9BEB195F1B00B8E800FAAE4A /* swiftExam */ = {
+			isa = PBXGroup;
+			children = (
+				9BEB19671B00B91800FAAE4A /* Hprose */,
+				9BEB19601B00B8E800FAAE4A /* main.swift */,
+				9BEB19901B00BA3700FAAE4A /* Bridging-Header.h */,
+			);
+			path = swiftExam;
+			sourceTree = "<group>";
+		};
+		9BEB19671B00B91800FAAE4A /* Hprose */ = {
+			isa = PBXGroup;
+			children = (
+				9BEB19681B00B91800FAAE4A /* Hprose.h */,
+				9BEB19691B00B91800FAAE4A /* HproseClassManager.h */,
+				9BEB196A1B00B91800FAAE4A /* HproseClassManager.m */,
+				9BEB196B1B00B91800FAAE4A /* HproseClient.h */,
+				9BEB196C1B00B91800FAAE4A /* HproseClient.m */,
+				9BEB196D1B00B91800FAAE4A /* HproseClientProxy.h */,
+				9BEB196E1B00B91800FAAE4A /* HproseClientProxy.m */,
+				9BEB196F1B00B91800FAAE4A /* HproseException.h */,
+				9BEB19701B00B91800FAAE4A /* HproseException.m */,
+				9BEB19711B00B91800FAAE4A /* HproseFilter.h */,
+				9BEB19721B00B91800FAAE4A /* HproseFormatter.h */,
+				9BEB19731B00B91800FAAE4A /* HproseFormatter.m */,
+				9BEB19741B00B91800FAAE4A /* HproseHelper.h */,
+				9BEB19751B00B91800FAAE4A /* HproseHelper.m */,
+				9BEB19761B00B91800FAAE4A /* HproseHttpClient.h */,
+				9BEB19771B00B91800FAAE4A /* HproseHttpClient.m */,
+				9BEB19781B00B91800FAAE4A /* HproseInvoker.h */,
+				9BEB19791B00B91800FAAE4A /* HproseProperty.h */,
+				9BEB197A1B00B91800FAAE4A /* HproseProperty.m */,
+				9BEB197B1B00B91800FAAE4A /* HproseReader.h */,
+				9BEB197C1B00B91800FAAE4A /* HproseReader.m */,
+				9BEB197D1B00B91800FAAE4A /* HproseResultMode.h */,
+				9BEB197E1B00B91800FAAE4A /* HproseTags.h */,
+				9BEB197F1B00B91800FAAE4A /* HproseWriter.h */,
+				9BEB19801B00B91800FAAE4A /* HproseWriter.m */,
+			);
+			name = Hprose;
+			path = ../../../src;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9BEB195C1B00B8E800FAAE4A /* swiftExam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9BEB19641B00B8E800FAAE4A /* Build configuration list for PBXNativeTarget "swiftExam" */;
+			buildPhases = (
+				9BEB19591B00B8E800FAAE4A /* Sources */,
+				9BEB195A1B00B8E800FAAE4A /* Frameworks */,
+				9BEB195B1B00B8E800FAAE4A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = swiftExam;
+			productName = swiftExam;
+			productReference = 9BEB195D1B00B8E800FAAE4A /* swiftExam */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9BEB19551B00B8E800FAAE4A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = "马秉尧";
+				TargetAttributes = {
+					9BEB195C1B00B8E800FAAE4A = {
+						CreatedOnToolsVersion = 6.2;
+					};
+				};
+			};
+			buildConfigurationList = 9BEB19581B00B8E800FAAE4A /* Build configuration list for PBXProject "swiftExam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9BEB19541B00B8E800FAAE4A;
+			productRefGroup = 9BEB195E1B00B8E800FAAE4A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9BEB195C1B00B8E800FAAE4A /* swiftExam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9BEB19591B00B8E800FAAE4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BEB19831B00B91800FAAE4A /* HproseClientProxy.m in Sources */,
+				9BEB19891B00B91800FAAE4A /* HproseReader.m in Sources */,
+				9BEB19881B00B91800FAAE4A /* HproseProperty.m in Sources */,
+				9BEB198A1B00B91800FAAE4A /* HproseWriter.m in Sources */,
+				9BEB19821B00B91800FAAE4A /* HproseClient.m in Sources */,
+				9BEB19611B00B8E800FAAE4A /* main.swift in Sources */,
+				9BEB19841B00B91800FAAE4A /* HproseException.m in Sources */,
+				9BEB19861B00B91800FAAE4A /* HproseHelper.m in Sources */,
+				9BEB19871B00B91800FAAE4A /* HproseHttpClient.m in Sources */,
+				9BEB19811B00B91800FAAE4A /* HproseClassManager.m in Sources */,
+				9BEB19851B00B91800FAAE4A /* HproseFormatter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9BEB19621B00B8E800FAAE4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9BEB19631B00B8E800FAAE4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9BEB19651B00B8E800FAAE4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "swiftExam/Bridging-Header.h";
+			};
+			name = Debug;
+		};
+		9BEB19661B00B8E800FAAE4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "swiftExam/Bridging-Header.h";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9BEB19581B00B8E800FAAE4A /* Build configuration list for PBXProject "swiftExam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BEB19621B00B8E800FAAE4A /* Debug */,
+				9BEB19631B00B8E800FAAE4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9BEB19641B00B8E800FAAE4A /* Build configuration list for PBXNativeTarget "swiftExam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BEB19651B00B8E800FAAE4A /* Debug */,
+				9BEB19661B00B8E800FAAE4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9BEB19551B00B8E800FAAE4A /* Project object */;
+}

@@ -10,11 +10,11 @@
 
 @protocol Exam
 
--(oneway void) hello:(NSString *)name selector:(SEL)selector delegate:(id)delegate;
--(oneway void) sum:(int)a and:(int)b selector:(SEL)selector delegate:(id)delegate;
--(oneway void) sum:(double)a and:(double)b and:(double)c selector:(SEL)selector delegate:(id)delegate;
--(oneway void) swapKeyAndValue:(byref NSDictionary *)dict selector:(SEL)selector delegate:(id)delegate;
--(oneway void) getUserList:(SEL)selector delegate:(id)delegate;
--(oneway void) thisMethodNotExist:(SEL)selector delegate:(id)delegate;
+-(void) hello:(NSString *)name selector:(SEL)selector delegate:(id)delegate;
+-(void) sum:(int)a and:(int)b selector:(SEL)selector delegate:(id)delegate;
+-(void) sum:(double)a and:(double)b and:(double)c selector:(SEL)selector delegate:(id)delegate;
+-(void) swapKeyAndValue:(byref NSDictionary *)dict selector:(SEL)selector delegate:(id)delegate;
+-(void) getUserList:(SEL)selector delegate:(id)delegate;
+-(void) thisMethodNotExist:(SEL)selector delegate:(id)delegate;
 
 @end
