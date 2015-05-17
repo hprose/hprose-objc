@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BE87D361B08CF380053F1E8 /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE87D351B08CF380053F1E8 /* HproseContext.m */; };
 		9BEB19611B00B8E800FAAE4A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB19601B00B8E800FAAE4A /* main.swift */; };
 		9BEB19811B00B91800FAAE4A /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB196A1B00B91800FAAE4A /* HproseClassManager.m */; };
 		9BEB19821B00B91800FAAE4A /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB196C1B00B91800FAAE4A /* HproseClient.m */; };
@@ -33,6 +34,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9BE87D341B08CF380053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseContext.h; sourceTree = "<group>"; };
+		9BE87D351B08CF380053F1E8 /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseContext.m; sourceTree = "<group>"; };
 		9BEB195D1B00B8E800FAAE4A /* swiftExam */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftExam; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BEB19601B00B8E800FAAE4A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		9BEB19681B00B91800FAAE4A /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hprose.h; sourceTree = "<group>"; };
@@ -128,6 +131,8 @@
 				9BEB197E1B00B91800FAAE4A /* HproseTags.h */,
 				9BEB197F1B00B91800FAAE4A /* HproseWriter.h */,
 				9BEB19801B00B91800FAAE4A /* HproseWriter.m */,
+				9BE87D341B08CF380053F1E8 /* HproseContext.h */,
+				9BE87D351B08CF380053F1E8 /* HproseContext.m */,
 			);
 			name = Hprose;
 			path = ../../../src;
@@ -197,6 +202,7 @@
 				9BEB19611B00B8E800FAAE4A /* main.swift in Sources */,
 				9BEB19841B00B91800FAAE4A /* HproseException.m in Sources */,
 				9BEB19861B00B91800FAAE4A /* HproseHelper.m in Sources */,
+				9BE87D361B08CF380053F1E8 /* HproseContext.m in Sources */,
 				9BEB19871B00B91800FAAE4A /* HproseHttpClient.m in Sources */,
 				9BEB19811B00B91800FAAE4A /* HproseClassManager.m in Sources */,
 				9BEB19851B00B91800FAAE4A /* HproseFormatter.m in Sources */,
@@ -316,6 +322,7 @@
 				9BEB19661B00B8E800FAAE4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

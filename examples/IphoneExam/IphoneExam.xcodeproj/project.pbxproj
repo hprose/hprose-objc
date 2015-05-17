@@ -19,6 +19,7 @@
 		9BD8146211A1C07D005BEAFF /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8145E11A1C07D005BEAFF /* SecondViewController.m */; };
 		9BD8146311A1C07D005BEAFF /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8146011A1C07D005BEAFF /* ThirdViewController.m */; };
 		9BD8158E11A286AC005BEAFF /* FifthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8158D11A286AC005BEAFF /* FifthViewController.m */; };
+		9BE87D331B08CDDB0053F1E8 /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE87D321B08CDDB0053F1E8 /* HproseContext.m */; };
 		D824A71818F79F06004ED013 /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A70318F79F06004ED013 /* HproseClassManager.m */; };
 		D824A71918F79F06004ED013 /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A70518F79F06004ED013 /* HproseClient.m */; };
 		D824A71A18F79F06004ED013 /* HproseClientProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A70718F79F06004ED013 /* HproseClientProxy.m */; };
@@ -55,6 +56,8 @@
 		9BD8146011A1C07D005BEAFF /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
 		9BD8158C11A286AC005BEAFF /* FifthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FifthViewController.h; sourceTree = "<group>"; };
 		9BD8158D11A286AC005BEAFF /* FifthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FifthViewController.m; sourceTree = "<group>"; };
+		9BE87D311B08CDDB0053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../../src/HproseContext.h; sourceTree = "<group>"; };
+		9BE87D321B08CDDB0053F1E8 /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseContext.m; path = ../../src/HproseContext.m; sourceTree = "<group>"; };
 		9BF1BFE711A182860097A03A /* Exam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exam.h; sourceTree = "<group>"; };
 		D824A70118F79F06004ED013 /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hprose.h; path = ../../src/Hprose.h; sourceTree = "<group>"; };
 		D824A70218F79F06004ED013 /* HproseClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClassManager.h; path = ../../src/HproseClassManager.h; sourceTree = "<group>"; };
@@ -198,6 +201,8 @@
 				D824A71518F79F06004ED013 /* HproseTags.h */,
 				D824A71618F79F06004ED013 /* HproseWriter.h */,
 				D824A71718F79F06004ED013 /* HproseWriter.m */,
+				9BE87D311B08CDDB0053F1E8 /* HproseContext.h */,
+				9BE87D321B08CDDB0053F1E8 /* HproseContext.m */,
 			);
 			name = Hprose;
 			sourceTree = "<group>";
@@ -263,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BE87D331B08CDDB0053F1E8 /* HproseContext.m in Sources */,
 				D824A71D18F79F06004ED013 /* HproseHttpClient.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				D824A71818F79F06004ED013 /* HproseClassManager.m in Sources */,

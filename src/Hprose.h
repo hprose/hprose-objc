@@ -25,6 +25,7 @@
 #import "HproseHelper.h"
 #import "HproseClassManager.h"
 #import "HproseResultMode.h"
+#import "HproseContext.h"
 #import "HproseFilter.h"
 #import "HproseClient.h"
 #import "HproseHttpClient.h"

@@ -8,21 +8,24 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * HproseFilter.h                                         *
+ * HproseContext.m                                        *
  *                                                        *
- * hprose filter protocol for Objective-C.                *
+ * hprose context for Objective-C.                        *
  *                                                        *
  * LastModified: May 17, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
-#import <Foundation/Foundation.h>
 #import "HproseContext.h"
 
-@protocol HproseFilter
+@implementation HproseContext
 
-- (NSData *) inputFilter:(NSData *) data withContext:(HproseContext *) context;
-- (NSData *) outputFilter:(NSData *) data withContext:(HproseContext *) context;
+- (id) init {
+    if (self = [super init]) {
+        _userData = [NSMutableDictionary new];
+    }
+    return self;
+}
 
 @end

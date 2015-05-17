@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Apr 11, 2014                             *
+ * LastModified: May 17, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -26,6 +26,17 @@
 #import "HproseHelper.h"
 #import "HproseClient.h"
 #import "HproseClientProxy.h"
+
+@implementation HproseClientContext
+
+- (id) init:(HproseClient *)client {
+    if (self = [super init]) {
+        _client = client;
+    }
+    return self;
+}
+
+@end
 
 @implementation HproseExceptionHandler
 
@@ -57,8 +68,8 @@
 - (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback block:(HproseBlock)block delegate:(id)delegate selector:(SEL)selector;
 
 - (HproseException *) wrongResponse:(NSData *)data;
-- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple;
-- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode;
+- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple context:(HproseClientContext *)context;
+- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context;
 
 @end
 
@@ -424,9 +435,10 @@
 @implementation HproseClient(PrivateMethods)
 
 - (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
-    NSData * data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple];
+    HproseClientContext *context = [[HproseClientContext alloc] init:self];
+    NSData * data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple context:context];
     data = [self sendAndReceive:data];
-    id result = [self doInput:data withArgs:args resultClass:cls resultType:type resultMode:mode];
+    id result = [self doInput:data withArgs:args resultClass:cls resultType:type resultMode:mode context:context];
     if ([result isMemberOfClass:[HproseException class]]) {
         @throw result;
     }
@@ -446,11 +458,12 @@
     [handler setClient:self];
     [handler setName:name];
     [handler setDelegate:delegate];
+    HproseClientContext *context = [[HproseClientContext alloc] init:self];
     @try {
-        NSData *data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple];
+        NSData *data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple context:context];
         [self sendAsync:data receiveAsync:^(NSData *data) {
             @try {
-                id result = [self doInput:data withArgs:args resultClass:cls resultType:type resultMode:mode];
+                id result = [self doInput:data withArgs:args resultClass:cls resultType:type resultMode:mode context:context];
                 if ([result isMemberOfClass:[HproseException class]]) {
                     [handler doErrorCallback:result];
                 }
@@ -524,7 +537,7 @@
     return [HproseException exceptionWithReason:[NSString stringWithFormat:@"Wrong Response: %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]];
 }
 
-- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple {
+- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple context:(HproseClientContext *)context {
     NSOutputStream *ostream = [NSOutputStream outputStreamToMemory];
     [ostream open];
     @try {
@@ -541,7 +554,7 @@
         [ostream writeByte:HproseTagEnd];
         NSData *data = [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
         for (NSUInteger i = 0, n = filters.count; i < n; ++i) {
-            data = [filters[i] outputFilter:data withContext:self];
+            data = [filters[i] outputFilter:data withContext:context];
         }
         return data;
     }
@@ -550,9 +563,9 @@
     }
 }
 
-- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode {
+- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context {
     for (int i = (int)filters.count - 1; i >= 0; --i) {
-        data = [filters[i] inputFilter:data withContext:self];
+        data = [filters[i] inputFilter:data withContext:context];
     }
     int tag = ((uint8_t *)[data bytes])[[data length] - 1];
     if (tag != HproseTagEnd) {

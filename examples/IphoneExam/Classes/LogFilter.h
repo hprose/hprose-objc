@@ -3,8 +3,8 @@
 @interface LogFilter : NSObject<HproseFilter> {
 }
 
-- (NSData *) inputFilter:(NSData *) data withContext:(id) context;
-- (NSData *) outputFilter:(NSData *) data withContext:(id) context;
+- (NSData *) inputFilter:(NSData *) data withContext:(HproseContext *) context;
+- (NSData *) outputFilter:(NSData *) data withContext:(HproseContext *) context;
 
 @end
 

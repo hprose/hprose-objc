@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Apr 17, 2014                             *
+ * LastModified: May 17, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import "HproseInvoker.h"
 #import "HproseFilter.h"
+#import "HproseContext.h"
 
 typedef void (^HproseErrorEvent)(NSString *, NSException *);
 
@@ -67,5 +68,13 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 - (void) setFilter:(id<HproseFilter>)filter;
 - (void) addFilter:(id<HproseFilter>)filter;
 - (void) removeFilter:(id<HproseFilter>)filter;
+
+@end
+
+@interface HproseClientContext : HproseContext;
+
+@property HproseClient* client;
+
+- (id) init:(HproseClient *)client;
 
 @end

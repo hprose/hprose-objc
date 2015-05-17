@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BE87D301B08CD900053F1E8 /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE87D2F1B08CD900053F1E8 /* HproseContext.m */; };
 		D824A6BF18F79995004ED013 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B9AF6B610F607B20043DFBD /* Foundation.framework */; };
 		D824A6F718F79A64004ED013 /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A6E218F79A64004ED013 /* HproseClassManager.m */; };
 		D824A6F818F79A64004ED013 /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A6E418F79A64004ED013 /* HproseClient.m */; };
@@ -34,6 +35,8 @@
 
 /* Begin PBXFileReference section */
 		9B9AF6B610F607B20043DFBD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		9BE87D2E1B08CD900053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../../src/HproseContext.h; sourceTree = "<group>"; };
+		9BE87D2F1B08CD900053F1E8 /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseContext.m; path = ../../src/HproseContext.m; sourceTree = "<group>"; };
 		D824A6BE18F79995004ED013 /* libHprose.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHprose.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D824A6C218F79995004ED013 /* Hprose-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hprose-Prefix.pch"; sourceTree = "<group>"; };
 		D824A6E018F79A64004ED013 /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hprose.h; path = ../../src/Hprose.h; sourceTree = "<group>"; };
@@ -129,6 +132,8 @@
 				D824A6F418F79A64004ED013 /* HproseTags.h */,
 				D824A6F518F79A64004ED013 /* HproseWriter.h */,
 				D824A6F618F79A64004ED013 /* HproseWriter.m */,
+				9BE87D2E1B08CD900053F1E8 /* HproseContext.h */,
+				9BE87D2F1B08CD900053F1E8 /* HproseContext.m */,
 				D824A6C118F79995004ED013 /* Supporting Files */,
 			);
 			path = Hprose;
@@ -193,6 +198,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D824A6FA18F79A64004ED013 /* HproseException.m in Sources */,
+				9BE87D301B08CD900053F1E8 /* HproseContext.m in Sources */,
 				D8258B3118F8DEDF0049E92C /* HproseFormatter.m in Sources */,
 				D824A6F918F79A64004ED013 /* HproseClientProxy.m in Sources */,
 				D824A6FB18F79A64004ED013 /* HproseHelper.m in Sources */,
