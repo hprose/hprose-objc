@@ -24,7 +24,7 @@
 
 @property (copy) NSString *name;
 @property char type;
-@property (weak) Class classRef;
+@property Class classRef;
 @property SEL getter;
 @property IMP getterImp;
 @property SEL setter;
