@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "hprose"
-  s.version      = "1.4.2"
+  s.version      = "1.4.3"
   s.summary      = "Hprose for Objective-C"
 
   s.description  = <<-DESC
