@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: May 11, 2015                             *
+ * LastModified: Jun 6, 2015                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -45,8 +45,14 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
         }
         switch (t) {
             case _C_ID: {
-                [anInvocation getArgument:&arg atIndex:i];
-                if (arg == nil) arg = [NSNull null];
+                __unsafe_unretained id value;
+                [anInvocation getArgument:&value atIndex:i];
+                if (value == nil) {
+                    arg = [NSNull null];
+                }
+                else {
+                    arg = value;
+                }
                 break;
             }
             case _C_CHR: {
@@ -138,8 +144,12 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
                     case _C_ID: {
                         __unsafe_unretained id *value;
                         [anInvocation getArgument:&value atIndex:i];
-                        arg = *value;
-                        if (arg == nil) arg = [NSNull null];
+                        if (value == nil || *value == nil) {
+                            arg = [NSNull null];
+                        }
+                        else {
+                            arg = *value;
+                        }
                         break;
                     }
                     case _C_CHR: {

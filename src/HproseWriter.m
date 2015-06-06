@@ -12,7 +12,7 @@
  *                                                        *
  * hprose writer class for Objective-C.                   *
  *                                                        *
- * LastModified: Aug 22, 2014                             *
+ * LastModified: Jun 6, 2015                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -346,7 +346,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 
 }
 
-- (BOOL) write:(id)obj {
+- (BOOL) write:(id)obj writer:(HproseWriter *)w {
     return NO;
 }
 
@@ -357,19 +357,15 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 @end
 
 @interface HproseRealWriterRefer : NSObject<HproseWriterRefer> {
-    HproseWriter *w;
     NSMutableArray *ref;
 }
-
-- (id) init:(HproseWriter *)writer;
 
 @end
 
 @implementation HproseRealWriterRefer
 
-- (id) init:(HproseWriter *)writer {
-    if((self = [self init])) {
-        w = writer;
+- (id) init {
+    if(self = [super init]) {
         ref = [[NSMutableArray alloc] init];
     }
     return self;
@@ -379,7 +375,7 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
     [ref addObject:obj];
 }
 
-- (BOOL) write:(id)obj {
+- (BOOL) write:(id)obj writer:(HproseWriter *)w {
     NSUInteger r = [ref indexOfObject:obj];
     if (r != NSNotFound) {
         [w.stream writeByte:HproseTagRef];
@@ -436,7 +432,7 @@ static Class classOfNSCFBoolean;
     if (self = [super init]) {
         [self setStream:dataStream];
         classref = [NSMutableArray new];
-        refer = b ? [HproseFakeWriterRefer new] : [[HproseRealWriterRefer alloc] init:self];
+        refer = b ? [HproseFakeWriterRefer new] : [HproseRealWriterRefer new];
     }
     return self;
 }
@@ -749,7 +745,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeDateWithRef:(NSDate *)date {
-    if (![refer write:date]) {
+    if (![refer write:date writer:self]) {
         [self writeDate:date];
     }
 }
@@ -783,7 +779,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeUTCDateWithRef:(NSDate *)date {
-    if (![refer write:date]) {
+    if (![refer write:date writer:self]) {
         [self writeUTCDate:date];
     }
 }
@@ -817,7 +813,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeDataWithRef:(NSData *)data {
-    if (![refer write:data]) {
+    if (![refer write:data writer:self]) {
         [self writeData:data];
     }
 }
@@ -854,7 +850,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeStringWithRef:(NSString *)str {
-    if (![refer write:str]) {
+    if (![refer write:str writer:self]) {
         [self writeString:str];
     }
 }
@@ -869,7 +865,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeUUIDWithRef:(NSUUID *)uuid {
-    if (![refer write:uuid]) {
+    if (![refer write:uuid writer:self]) {
         [self writeUUID:uuid];
     }
 }
@@ -891,7 +887,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeArrayWithRef:(NSArray *)array {
-    if (![refer write:array]) {
+    if (![refer write:array writer:self]) {
         [self writeArray:array];
     }
 }
@@ -913,7 +909,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeSetWithRef:(NSSet *)set {
-    if (![refer write:set]) {
+    if (![refer write:set writer:self]) {
         [self writeSet:set];
     }
 }
@@ -935,7 +931,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeHashTableWithRef:(NSHashTable *)hashtable {
-    if (![refer write:hashtable]) {
+    if (![refer write:hashtable writer:self]) {
         [self writeHashTable:hashtable];
     }
 }
@@ -958,7 +954,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeDictWithRef:(NSDictionary *)dict {
-    if (![refer write:dict]) {
+    if (![refer write:dict writer:self]) {
         [self writeDict:dict];
     }
 }
@@ -981,7 +977,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeMapTableWithRef:(NSMapTable *)map {
-    if (![refer write:map]) {
+    if (![refer write:map writer:self]) {
         [self writeMapTable:map];
     }
 }
@@ -1007,7 +1003,7 @@ static Class classOfNSCFBoolean;
 }
 
 - (void) writeObjectWithRef:(id)obj {
-    if (![refer write:obj]) {
+    if (![refer write:obj writer:self]) {
         [self writeObject:obj];
     }
 }

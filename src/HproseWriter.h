@@ -12,16 +12,18 @@
  *                                                        *
  * hprose writer class header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: Jun 6, 2015                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
 
+@class HproseWriter;
+
 @protocol HproseWriterRefer <NSObject>
 - (void) set:(id)obj;
-- (BOOL) write:(id)obj;
+- (BOOL) write:(id)obj writer:(HproseWriter *)w;
 - (void) reset;
 @end
 
