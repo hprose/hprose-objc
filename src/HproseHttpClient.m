@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Apr 11, 2014                             *
+ * LastModified: Jun 13, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -24,7 +24,7 @@
     @private
     NSMutableData *_buffer;
     void (^_callback)(NSData *);
-    HproseExceptionHandler *_exceptionHandler;
+    void (^_errorHandler)(NSException *);
     HproseHttpClient * _client;
 }
 
@@ -36,12 +36,12 @@
 
 @implementation AsyncInvokeContext
 
-- (id) init:(HproseHttpClient *)client callback:(void (^)(NSData *))callback exceptionHandler:(HproseExceptionHandler *)exceptionHandler {
+- (id) init:(HproseHttpClient *)client callback:(void (^)(NSData *))callback errorHandler:(void (^)(NSException *)) errorHandler {
     if (self = [super init]) {
         _buffer = [NSMutableData data];
         _client = client;
         _callback = callback;
-        _exceptionHandler = exceptionHandler;
+        _errorHandler = errorHandler;
     }
     return self;
 }
@@ -50,10 +50,10 @@
 #pragma unused(connection)
     NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
     if ([httpResponse statusCode] != 200) {
-        [_exceptionHandler doErrorCallback:[HproseException exceptionWithReason:
+        _errorHandler([HproseException exceptionWithReason:
          [NSString stringWithFormat:@"Http error %d: %@",
           (int)[httpResponse statusCode],
-          [NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]]]]];
+          [NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]]]]);
     }
 }
 
@@ -68,7 +68,7 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [_exceptionHandler doErrorCallback:[HproseException exceptionWithReason:[error localizedDescription]]];
+    _errorHandler([HproseException exceptionWithReason:[error localizedDescription]]);
     if ([[_client URLConnectionDelegate] respondsToSelector:@selector(connection:didFailWithError:)]) {
         [[_client URLConnectionDelegate] connection:connection didFailWithError:error];
     }
@@ -189,8 +189,10 @@
     return data;
 }
 
-- (oneway void) sendAsync:(NSData *)data receiveAsync:(oneway void (^)(NSData *))receiveCallback exceptionHandler:(HproseExceptionHandler *)exceptionHandler; {
-    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback exceptionHandler:exceptionHandler];
+- (oneway void) sendAsync:(NSData *)data
+                receiveAsync:(void (^)(NSData *))receiveCallback
+                error:(void (^)(NSException *))errorCallback {
+    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setTimeoutInterval:_timeout];
     for (id field in _header) {

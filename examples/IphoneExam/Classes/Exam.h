@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Hprose.h"
 
 @protocol Exam
 
@@ -16,5 +17,6 @@
 -(void) swapKeyAndValue:(byref NSDictionary *)dict selector:(SEL)selector delegate:(id)delegate;
 -(void) getUserList:(SEL)selector delegate:(id)delegate;
 -(void) thisMethodNotExist:(SEL)selector delegate:(id)delegate;
+-(void) testErrorCallback:(SEL)selector delegate:(id)delegate error:(HproseErrorBlock)errorBlock;
 
 @end

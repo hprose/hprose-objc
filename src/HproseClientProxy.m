@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Jun 6, 2015                              *
+ * LastModified: Jun 13, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -702,8 +702,9 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation {
-    NSString *selname = NSStringFromSelector([anInvocation selector]);
-    NSString *name = [selname componentsSeparatedByString:@":"][0];
+    NSArray *selnames = [NSStringFromSelector([anInvocation selector]) componentsSeparatedByString:@":"];
+    NSUInteger namecount = [selnames count];
+    NSString *name = selnames[0];
     if (_ns != nil) {
         name = [NSString stringWithFormat:@"%@_%@", _ns, name];
     }
@@ -713,7 +714,11 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
     HproseCallback callback = NULL;
     HproseBlock __unsafe_unretained block = nil;
     SEL selector = NULL;
+    HproseErrorCallback errorCallback = NULL;
+    HproseErrorBlock __unsafe_unretained errorBlock = nil;
+    SEL errorSelector = NULL;
     id __unsafe_unretained delegate = nil;
+    
     BOOL async = NO;
     if ((type[0] == 'V' && type[1] == _C_VOID) || type[0] == _C_VOID) {
         async = YES;
@@ -721,32 +726,242 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
         if (count > 2) {
             type = [methodSignature getArgumentTypeAtIndex:count - 1];
             if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
-                [anInvocation getArgument:&callback atIndex:count - 1];
-                count--;
-            }
-            else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
-                [anInvocation getArgument:&block atIndex:count - 1];
-                count--;
-            }
-            else if (type[0] == _C_ID) {
                 if (count > 3) {
                     type = [methodSignature getArgumentTypeAtIndex:count - 2];
-                    if (type[0] == _C_SEL) {
-                        [anInvocation getArgument:&delegate atIndex:count - 1];
+                    if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&callback atIndex:count - 2];
+                        [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&block atIndex:count - 2];
+                        [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_SEL) {
                         [anInvocation getArgument:&selector atIndex:count - 2];
+                        [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if ((type[0] == _C_ID) && (count > 4)) {
+                        type = [methodSignature getArgumentTypeAtIndex:count - 3];
+                        if (type[0] == _C_SEL) {
+                            [anInvocation getArgument:&selector atIndex:count - 3];
+                            [anInvocation getArgument:&delegate atIndex:count - 2];
+                            [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorHandler"]) {
+                            [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                            count--;
+                        }
+                        else {
+                            [anInvocation getArgument:&callback atIndex:count - 1];
+                            count--;
+                        }
+                    }
+                    else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                             [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                             [selnames[namecount - 1] isEqual: @"errorHandler"]) {
+                        [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                        count--;
+                    }
+                    else {
+                        [anInvocation getArgument:&callback atIndex:count - 1];
+                        count--;
+                    }
+                }
+                else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                         [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                         [selnames[namecount - 1] isEqual: @"errorHandler"]) {
+                    [anInvocation getArgument:&errorCallback atIndex:count - 1];
+                    count--;
+                }
+                else {
+                    [anInvocation getArgument:&callback atIndex:count - 1];
+                    count--;
+                }
+            }
+            else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
+                if (count > 3) {
+                    type = [methodSignature getArgumentTypeAtIndex:count - 2];
+                    if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&callback atIndex:count - 2];
+                        [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&block atIndex:count - 2];
+                        [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_SEL) {
+                        [anInvocation getArgument:&selector atIndex:count - 2];
+                        [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if ((type[0] == _C_ID) && (count > 4)) {
+                        type = [methodSignature getArgumentTypeAtIndex:count - 3];
+                        if (type[0] == _C_SEL) {
+                            [anInvocation getArgument:&selector atIndex:count - 3];
+                            [anInvocation getArgument:&delegate atIndex:count - 2];
+                            [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorBlock"]) {
+                            [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                            count--;
+                        }
+                        else {
+                            [anInvocation getArgument:&block atIndex:count - 1];
+                            count--;
+                        }
+                    }
+                    else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                             [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                             [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                             [selnames[namecount - 1] isEqual: @"errorBlock"]) {
+                        [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                        count--;
+                    }
+                    else {
+                        [anInvocation getArgument:&block atIndex:count - 1];
+                        count--;
+                    }
+                }
+                else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                         [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                         [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                         [selnames[namecount - 1] isEqual: @"errorBlock"]) {
+                    [anInvocation getArgument:&errorBlock atIndex:count - 1];
+                    count--;
+                }
+                else {
+                    [anInvocation getArgument:&block atIndex:count - 1];
+                    count--;
+                }
+            }
+            else if (type[0] == _C_SEL) {
+                if (count > 3) {
+                    type = [methodSignature getArgumentTypeAtIndex:count - 2];
+                    if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&callback atIndex:count - 2];
+                        [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
+                        [anInvocation getArgument:&block atIndex:count - 2];
+                        [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if (type[0] == _C_SEL) {
+                        [anInvocation getArgument:&selector atIndex:count - 2];
+                        [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                        count -= 2;
+                    }
+                    else if ((type[0] == _C_ID) && (count > 4)) {
+                        type = [methodSignature getArgumentTypeAtIndex:count - 3];
+                        if (type[0] == _C_SEL) {
+                            [anInvocation getArgument:&selector atIndex:count - 3];
+                            [anInvocation getArgument:&delegate atIndex:count - 2];
+                            [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                                 [selnames[namecount - 1] isEqual: @"errorSelector"]) {
+                            [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                            count--;
+                        }
+                        else {
+                            [anInvocation getArgument:&selector atIndex:count - 1];
+                            count--;
+                        }
+                    }
+                    else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                             [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                             [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                             [selnames[namecount - 1] isEqual: @"errorSelector"]) {
+                        [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                        count--;
+                    }
+                    else {
+                        [anInvocation getArgument:&selector atIndex:count - 1];
+                        count--;
+                    }
+                }
+                else if ([selnames[namecount - 1] isEqual: @"error"] ||
+                         [selnames[namecount - 1] isEqual: @"errorCallback"] ||
+                         [selnames[namecount - 1] isEqual: @"errorHandler"] ||
+                         [selnames[namecount - 1] isEqual: @"errorSelector"]) {
+                    [anInvocation getArgument:&errorSelector atIndex:count - 1];
+                    count--;
+                }
+                else {
+                    [anInvocation getArgument:&selector atIndex:count - 1];
+                    count--;
+                }
+            }
+            else if ((type[0] == _C_ID) && (count > 3)) {
+                type = [methodSignature getArgumentTypeAtIndex:count - 2];
+                if (type[0] == _C_SEL) {
+                    if (count > 4) {
+                        type = [methodSignature getArgumentTypeAtIndex:count - 3];
+                        if (type[0] == _C_PTR && type[1] == _C_UNDEF) {
+                            [anInvocation getArgument:&callback atIndex:count - 3];
+                            [anInvocation getArgument:&errorSelector atIndex:count - 2];
+                            [anInvocation getArgument:&delegate atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if (type[0] == _C_ID && type[1] == _C_UNDEF) {
+                            [anInvocation getArgument:&block atIndex:count - 3];
+                            [anInvocation getArgument:&errorSelector atIndex:count - 2];
+                            [anInvocation getArgument:&delegate atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if (type[0] == _C_SEL) {
+                            [anInvocation getArgument:&selector atIndex:count - 3];
+                            [anInvocation getArgument:&errorSelector atIndex:count - 2];
+                            [anInvocation getArgument:&delegate atIndex:count - 1];
+                            count -= 3;
+                        }
+                        else if ([selnames[namecount - 2] isEqual: @"error"] ||
+                                 [selnames[namecount - 2] isEqual: @"errorCallback"] ||
+                                 [selnames[namecount - 2] isEqual: @"errorHandler"] ||
+                                 [selnames[namecount - 2] isEqual: @"errorSelector"]) {
+                            [anInvocation getArgument:&errorSelector atIndex:count - 2];
+                            [anInvocation getArgument:&delegate atIndex:count - 1];
+                            count -= 2;
+                        }
+                        else {
+                            [anInvocation getArgument:&selector atIndex:count - 2];
+                            [anInvocation getArgument:&delegate atIndex:count - 1];
+                            count -= 2;
+                        }
+                    }
+                    else if ([selnames[namecount - 2] isEqual: @"error"] ||
+                             [selnames[namecount - 2] isEqual: @"errorCallback"] ||
+                             [selnames[namecount - 2] isEqual: @"errorHandler"] ||
+                             [selnames[namecount - 2] isEqual: @"errorSelector"]) {
+                        [anInvocation getArgument:&errorSelector atIndex:count - 2];
+                        [anInvocation getArgument:&delegate atIndex:count - 1];
                         count -= 2;
                     }
                     else {
-                        async = _async;
+                        [anInvocation getArgument:&selector atIndex:count - 2];
+                        [anInvocation getArgument:&delegate atIndex:count - 1];
+                        count -= 2;
                     }
                 }
                 else {
                     async = _async;
                 }
-            }
-            else if (type[0] == _C_SEL) {
-                [anInvocation getArgument:&selector atIndex:count - 1];
-                count--;
             }
             else {
                 async = _async;
@@ -759,25 +974,7 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
     BOOL byRef = NO;
     NSMutableArray *args = getArguments(count, methodSignature, anInvocation, &byRef);
     if (async) {
-        if (callback != NULL) {
-            [_client invoke:name
-                  withArgs:args
-                     byRef:byRef
-                  callback:callback];
-        }
-        else if (block != nil) {
-            [_client invoke:name
-                  withArgs:args
-                     byRef:byRef
-                     block:block];
-        }
-        else {
-            [_client invoke:name
-                  withArgs:args
-                     byRef:byRef
-                  selector:selector
-                  delegate:delegate];
-        }
+        [_client invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:false callback:callback block:block selector: selector errorCallback:errorCallback errorBlock:errorBlock errorSelector:errorSelector delegate:delegate];
     }
     else {
         type = [methodSignature methodReturnType];

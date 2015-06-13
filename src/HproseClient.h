@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: May 17, 2015                             *
+ * LastModified: Jun 13, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -22,19 +22,7 @@
 #import "HproseFilter.h"
 #import "HproseContext.h"
 
-typedef void (^HproseErrorEvent)(NSString *, NSException *);
-
 @class HproseClient;
-
-@interface HproseExceptionHandler: NSObject;
-
-@property HproseClient* client;
-@property (copy) NSString *name;
-@property id delegate;
-
-- (oneway void) doErrorCallback:(NSException *)e;
-
-@end
 
 @protocol HproseTransporter <NSObject>
 
@@ -42,8 +30,9 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 
 - (NSData *) sendAndReceive:(NSData *)data;
 
-- (oneway void) sendAsync:(NSData *)data receiveAsync:(oneway void (^)(NSData *))receiveCallback exceptionHandler:(HproseExceptionHandler *)exceptionHandler;
-
+- (oneway void) sendAsync:(NSData *)data
+                receiveAsync:(void (^)(NSData *))receiveCallback
+                error:(void (^)(NSException *))errorCallback;
 @end
 
 @interface HproseClient : NSObject<HproseInvoker, HproseTransporter> {
@@ -54,7 +43,8 @@ typedef void (^HproseErrorEvent)(NSString *, NSException *);
 @property (getter = getFilter, setter = setFilter:)id<HproseFilter> filter;
 @property id delegate;
 @property (assign, nonatomic) SEL onError;
-@property (copy, nonatomic) HproseErrorEvent errorHandler;
+@property (assign, nonatomic) HproseErrorCallback errorCallback;
+@property (copy, nonatomic) HproseErrorBlock errorHandler;
 
 + (id) client;
 + (id) client:(NSString *)uri;
