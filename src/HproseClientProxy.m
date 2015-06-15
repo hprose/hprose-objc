@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Jun 13, 2015                             *
+ * LastModified: Jun 15, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -974,7 +974,7 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
     BOOL byRef = NO;
     NSMutableArray *args = getArguments(count, methodSignature, anInvocation, &byRef);
     if (async) {
-        [_client invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:false callback:callback block:block selector: selector errorCallback:errorCallback errorBlock:errorBlock errorSelector:errorSelector delegate:delegate];
+        [_client invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback block:block selector: selector errorCallback:errorCallback errorBlock:errorBlock errorSelector:errorSelector delegate:delegate];
     }
     else {
         type = [methodSignature methodReturnType];

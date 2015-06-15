@@ -591,16 +591,20 @@
         NSData *data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple context:context];
         [self sendAsync:data receiveAsync:^(NSData *data) {
             @try {
-                id result = [self doInput:data withArgs:args resultClass:cls resultType:type resultMode:mode context:context];
+                NSArray *_args = args;
+                if (byRef && ![args isKindOfClass:[NSMutableArray class]]) {
+                    _args = [args mutableCopy];
+                }
+                id result = [self doInput:data withArgs:_args resultClass:cls resultType:type resultMode:mode context:context];
                 if ([result isMemberOfClass:[HproseException class]]) {
                     [self errorHandler:name withException:result errorCallback:errorCallback errorBlock:errorBlock errorSelector:errorSelector delegate:delegate];
                 }
                 else {
                     if (callback) {
-                        callback(result, args);
+                        callback(result, _args);
                     }
                     else if (block) {
-                        block(result, args);
+                        block(result, _args);
                     }
                     else if (delegate != nil && selector != NULL) {
                         NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
@@ -629,21 +633,21 @@
                             }
                             case 4: {
                                 switch (type) {
-                                    case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, args); break;
-                                    case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
-                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
-                                    case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
-                                    case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
-                                    case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
-                                    case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
-                                    case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
-                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
-                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
-                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
-                                    case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
-                                    case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
-                                    case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
-                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
+                                    case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, _args); break;
+                                    case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], _args); break;
+                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], _args); break;
+                                    case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], _args); break;
+                                    case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], _args); break;
+                                    case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], _args); break;
+                                    case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], _args); break;
+                                    case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], _args); break;
+                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], _args); break;
+                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], _args); break;
+                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], _args); break;
+                                    case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], _args); break;
+                                    case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], _args); break;
+                                    case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], _args); break;
+                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], _args); break;
                                 }
                                 break;
                             }

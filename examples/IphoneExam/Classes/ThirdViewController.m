@@ -63,7 +63,12 @@
     dict[@"Mar"] = @"March";
     dict[@"Apr"] = @"April";
     [label setText:[dict description]];
-    [[delegate exam] swapKeyAndValue:dict selector:@selector(swapCallback:withArgs:) delegate:self];
+    //[[delegate exam] swapKeyAndValue:dict selector:@selector(swapCallback:withArgs:) delegate:self];
+    [[delegate client] invoke:@"swapKeyAndValue"
+                     withArgs:@[dict]
+                        byRef:YES
+                     selector:@selector(swapCallback:withArgs:)
+                     delegate:self];
 }
 
 -(void) swapCallback:(NSDictionary *)result withArgs:(NSArray *)args {
