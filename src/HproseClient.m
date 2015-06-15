@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 13, 2015                             *
+ * LastModified: Jun 15, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -40,13 +40,13 @@
 
 @interface HproseClient(PrivateMethods)
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple;
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback;
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock;
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple;
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback;
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock;
 - (oneway void) errorHandler:(NSString *)name withException:(NSException *)e errorCallback:(HproseErrorCallback)errorCallback errorBlock:(HproseErrorBlock)errorBlock errorSelector:(SEL)errorSelector delegate:(id)delegate;
 - (HproseException *) wrongResponse:(NSData *)data;
 - (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple context:(HproseClientContext *)context;
-- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context;
+- (id) doInput:(NSData *)data withArgs:(NSArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context;
 
 @end
 
@@ -120,55 +120,55 @@
     return [self invoke:name withArgs:nil byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:YES];
 }
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls {
     return [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO];
 }
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple];
 }
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls {
     return [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO];
 }
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple];
 }
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
     return [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple];
 }
 
@@ -197,103 +197,103 @@
     [self invoke:name withArgs:nil byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:YES callback:callback error:errorCallback];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO callback:callback error:errorCallback];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple callback:callback error:errorCallback];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO callback:callback error:errorCallback];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:callback error:errorCallback];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple callback:callback error:NULL];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple callback:callback error:errorCallback];
 }
 
@@ -322,103 +322,103 @@
     [self invoke:name withArgs:nil byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:YES block:block error:errorBlock];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO block:block error:errorBlock];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:NO resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple block:block error:errorBlock];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:NO block:block error:errorBlock];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultType:(char)type simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:type resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple block:block error:errorBlock];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple block:block error:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:mode simpleMode:simple block:block error:errorBlock];
 }
 
@@ -441,79 +441,79 @@
     [self invoke:name withArgs:[NSMutableArray array] byRef:NO simpleMode:YES selector:selector error:errorSelector delegate:delegate];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args selector:(SEL)selector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args selector:(SEL)selector {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:selector error:NULL delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args selector:(SEL)selector error:(SEL)errorSelector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args selector:(SEL)selector error:(SEL)errorSelector {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:selector error:errorSelector delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:NULL error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:NULL error:errorSelector delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args selector:(SEL)selector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args selector:(SEL)selector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:selector error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:NO selector:selector error:errorSelector delegate:delegate];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple selector:(SEL)selector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple selector:(SEL)selector {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:selector error:NULL delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:selector error:errorSelector delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:NULL error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:NULL error:errorSelector delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple selector:(SEL)selector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple selector:(SEL)selector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:selector error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:NO simpleMode:simple selector:selector error:errorSelector delegate:delegate];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef selector:(SEL)selector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef selector:(SEL)selector {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:selector error:NULL delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef selector:(SEL)selector error:(SEL)errorSelector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef selector:(SEL)selector error:(SEL)errorSelector {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:selector error:errorSelector delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:NULL error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:NULL error:errorSelector delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef selector:(SEL)selector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef selector:(SEL)selector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:selector error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:NO selector:selector error:errorSelector delegate:delegate];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector {
     [self invoke:name withArgs:args byRef:byRef simpleMode:simple selector:selector error:NULL delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector {
     [self invoke:name withArgs:args byRef:byRef simpleMode:simple selector:selector error:errorSelector delegate:nil];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:simple selector:NULL error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple error:(SEL)errorSelector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:simple selector:NULL error:errorSelector delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector delegate:(id)delegate {
     [self invoke:name withArgs:args byRef:byRef simpleMode:simple selector:selector error:NULL delegate:delegate];
 }
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef simpleMode:(BOOL)simple selector:(SEL)selector error:(SEL)errorSelector delegate:(id)delegate {
     if (delegate == nil) delegate = _delegate;
     if (delegate == nil && selector == NULL) {
         [self invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:simple callback:NULL block:nil selector: NULL errorCallback:NULL errorBlock:nil errorSelector:errorSelector delegate:nil];
@@ -542,7 +542,7 @@
 }
 
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback block:(HproseBlock)block selector:(SEL)selector errorCallback:(HproseErrorCallback)errorCallback errorBlock:(HproseErrorBlock)errorBlock errorSelector:(SEL)errorSelector delegate:(id)delegate {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback block:(HproseBlock)block selector:(SEL)selector errorCallback:(HproseErrorCallback)errorCallback errorBlock:(HproseErrorBlock)errorBlock errorSelector:(SEL)errorSelector delegate:(id)delegate {
     if (delegate != nil && selector != NULL) {
         NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
         if (methodSignature == nil) {
@@ -609,41 +609,41 @@
                             case 2: ((void (*)(id, SEL))objc_msgSend)(delegate, selector); break;
                             case 3: {
                                 switch (type) {
-                                    case _C_ID: ((void (*)(id, SEL,id))objc_msgSend)(delegate, selector, result); break;
-                                    case _C_CHR: ((void (*)(id, SEL,char))objc_msgSend)(delegate, selector, [result charValue]); break;
-                                    case _C_UCHR: ((void (*)(id, SEL,unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
-                                    case _C_SHT: ((void (*)(id, SEL,short))objc_msgSend)(delegate, selector, [result shortValue]); break;
-                                    case _C_USHT: ((void (*)(id, SEL,unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
-                                    case _C_INT: ((void (*)(id, SEL,int))objc_msgSend)(delegate, selector, [result intValue]); break;
-                                    case _C_UINT: ((void (*)(id, SEL,unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
-                                    case _C_LNG: ((void (*)(id, SEL,long))objc_msgSend)(delegate, selector, [result longValue]); break;
-                                    case _C_ULNG: ((void (*)(id, SEL,unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
-                                    case _C_LNG_LNG: ((void (*)(id, SEL,long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
-                                    case _C_ULNG_LNG: ((void (*)(id, SEL,unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
-                                    case _C_FLT: ((void (*)(id, SEL,float))objc_msgSend)(delegate, selector, [result floatValue]); break;
-                                    case _C_DBL: ((void (*)(id, SEL,double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
-                                    case _C_BOOL: ((void (*)(id, SEL,BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
-                                    case _C_CHARPTR: ((void (*)(id, SEL,const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
+                                    case _C_ID: ((void (*)(id, SEL, id))objc_msgSend)(delegate, selector, result); break;
+                                    case _C_CHR: ((void (*)(id, SEL, char))objc_msgSend)(delegate, selector, [result charValue]); break;
+                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
+                                    case _C_SHT: ((void (*)(id, SEL, short))objc_msgSend)(delegate, selector, [result shortValue]); break;
+                                    case _C_USHT: ((void (*)(id, SEL, unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
+                                    case _C_INT: ((void (*)(id, SEL, int))objc_msgSend)(delegate, selector, [result intValue]); break;
+                                    case _C_UINT: ((void (*)(id, SEL, unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
+                                    case _C_LNG: ((void (*)(id, SEL, long))objc_msgSend)(delegate, selector, [result longValue]); break;
+                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
+                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
+                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
+                                    case _C_FLT: ((void (*)(id, SEL, float))objc_msgSend)(delegate, selector, [result floatValue]); break;
+                                    case _C_DBL: ((void (*)(id, SEL, double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
+                                    case _C_BOOL: ((void (*)(id, SEL, BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
+                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
                                 }
                                 break;
                             }
                             case 4: {
                                 switch (type) {
-                                    case _C_ID: ((void (*)(id, SEL,id,NSMutableArray *))objc_msgSend)(delegate, selector, result, args); break;
-                                    case _C_CHR: ((void (*)(id, SEL,char,NSMutableArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
-                                    case _C_UCHR: ((void (*)(id, SEL,unsigned char,NSMutableArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
-                                    case _C_SHT: ((void (*)(id, SEL,short,NSMutableArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
-                                    case _C_USHT: ((void (*)(id, SEL,unsigned short,NSMutableArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
-                                    case _C_INT: ((void (*)(id, SEL,int,NSMutableArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
-                                    case _C_UINT: ((void (*)(id, SEL,unsigned int,NSMutableArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
-                                    case _C_LNG: ((void (*)(id, SEL,long,NSMutableArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
-                                    case _C_ULNG: ((void (*)(id, SEL,unsigned long,NSMutableArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
-                                    case _C_LNG_LNG: ((void (*)(id, SEL,long long,NSMutableArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
-                                    case _C_ULNG_LNG: ((void (*)(id, SEL,unsigned long long,NSMutableArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
-                                    case _C_FLT: ((void (*)(id, SEL, float,NSMutableArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
-                                    case _C_DBL: ((void (*)(id, SEL,double,NSMutableArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
-                                    case _C_BOOL: ((void (*)(id, SEL,BOOL,NSMutableArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
-                                    case _C_CHARPTR: ((void (*)(id, SEL,const char *,NSMutableArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
+                                    case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, args); break;
+                                    case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
+                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
+                                    case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
+                                    case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
+                                    case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
+                                    case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
+                                    case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
+                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
+                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
+                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
+                                    case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
+                                    case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
+                                    case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
+                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
                                 }
                                 break;
                             }
@@ -668,7 +668,7 @@
 
 @implementation HproseClient(PrivateMethods)
 
-- (id) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
+- (id) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple {
     HproseClientContext *context = [[HproseClientContext alloc] init:self];
     NSData * data = [self doOutput:name withArgs:args byRef:byRef simpleMode:simple context:context];
     data = [self sendAndReceive:data];
@@ -679,13 +679,13 @@
     return result;
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple callback:(HproseCallback)callback error:(HproseErrorCallback)errorCallback {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:type resultMode:mode simpleMode:simple
         callback:callback block:nil selector: NULL
         errorCallback:errorCallback errorBlock:nil errorSelector:NULL delegate:_delegate];
 }
 
-- (oneway void) invoke:(NSString *)name withArgs:(NSMutableArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
+- (oneway void) invoke:(NSString *)name withArgs:(NSArray *)args byRef:(BOOL)byRef resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode simpleMode:(BOOL)simple block:(HproseBlock)block error:(HproseErrorBlock)errorBlock {
     [self invoke:name withArgs:args byRef:byRef resultClass:cls resultType:type resultMode:mode simpleMode:simple
         callback:NULL block:block selector: NULL
         errorCallback:NULL errorBlock:errorBlock errorSelector:NULL delegate:_delegate];
@@ -745,7 +745,7 @@
     }
 }
 
-- (id) doInput:(NSData *)data withArgs:(NSMutableArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context {
+- (id) doInput:(NSData *)data withArgs:(NSArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context {
     for (int i = (int)filters.count - 1; i >= 0; --i) {
         data = [filters[i] inputFilter:data withContext:context];
     }
@@ -784,8 +784,11 @@
                         if (n > [args count]) {
                             n = [args count];
                         }
-                        for (NSUInteger i = 0; i < n; i++) {
-                            args[i] = arguments[i];
+                        if ([args isKindOfClass:[NSMutableArray class]]) {
+                            NSMutableArray *_args = (NSMutableArray *)args;
+                            for (NSUInteger i = 0; i < n; i++) {
+                                _args[i] = arguments[i];
+                            }
                         }
                     }
                     break;

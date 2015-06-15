@@ -11,12 +11,15 @@
 
 @interface FirstViewController : UIViewController {
     IBOutlet id button;
+    IBOutlet id button2;
     IBOutlet id text;
     IBOutlet id label;
     IBOutlet IphoneExamAppDelegate *delegate;
 }
 
 -(IBAction) helloClick:(id)sender;
+
+-(IBAction) hello2Click:(id)sender;
 
 -(void) helloCallback:(NSString *)result;
 

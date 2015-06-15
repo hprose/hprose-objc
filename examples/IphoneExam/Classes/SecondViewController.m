@@ -61,10 +61,18 @@
 }
 
 -(IBAction) sumIntClick:(id)sender {
+/*
     [[delegate exam] sum:[[int_a text] intValue]
                      and:[[int_b text] intValue]
      selector:@selector(sumIntCallback:)
      delegate:self];
+*/
+    [[delegate client] invoke:@"sum" withArgs:@[
+        @([[int_a text] intValue]),
+        @([[int_b text] intValue])]
+    block:^(id result, NSArray *args) {
+        [int_sum setText:[result stringValue]];
+    }];
 }
 
 -(IBAction) sumDoubleClick:(id)sender {
@@ -73,6 +81,15 @@
                      and:[[double_c text] doubleValue]
      selector:@selector(sumDoubleCallback:)
      delegate:self];
+/*
+    [[delegate client] invoke:@"sum" withArgs:@[
+        @([[double_a text] doubleValue]),
+        @([[double_b text] doubleValue]),
+        @([[double_c text] doubleValue])]
+    block:^(id result, NSArray *args) {
+        [double_sum setText:[result stringValue]];
+    }];
+ */
 }
 
 -(void) sumIntCallback:(int)result {
@@ -82,6 +99,5 @@
 -(void) sumDoubleCallback:(double)result {
     [double_sum setText:[NSString stringWithFormat:@"%f", result]];
 }
-
 
 @end

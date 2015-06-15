@@ -14,11 +14,13 @@
     UIWindow *window;
     UITabBarController *__weak tabBarController;
     id<Exam> exam;
+    HproseClient *client;
 }
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (weak, nonatomic, readonly) IBOutlet UITabBarController *tabBarController;
 @property (nonatomic, strong) IBOutlet id<Exam> exam;
+@property (nonatomic, strong) IBOutlet HproseClient *client;
 
 -(IBAction) didEndOnExit:(id)sender;
 

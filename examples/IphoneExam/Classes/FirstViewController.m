@@ -60,6 +60,14 @@
     [[delegate exam] hello:[text text] selector:@selector(helloCallback:) delegate:self];
 }
 
+-(IBAction) hello2Click:(id)sender {
+    [[delegate client] invoke:@"hello" withArgs:@[[text text]] block:^(id result, NSArray * args) {
+        [label setText:(NSString *)result];
+    } error:^(NSString *name, NSException *e) {
+        [label setText:name];
+    }];
+}
+
 -(void) helloCallback:(NSString *)result {
     [label setText:result];
 }

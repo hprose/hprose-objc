@@ -15,12 +15,13 @@
 @synthesize window;
 @synthesize tabBarController;
 @synthesize exam;
+@synthesize client;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     // Add the tab bar controller's current view as a subview of the window
     [window addSubview:tabBarController.view];
     [window makeKeyAndVisible];
-    HproseClient *client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
+    client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
     [client setDelegate:self];
     [client setOnError:@selector(errorHandler:withException:)];
     [client setFilter:[LogFilter new]];
