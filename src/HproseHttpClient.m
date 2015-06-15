@@ -170,6 +170,7 @@
     else {
         [request setValue:@"close" forHTTPHeaderField:@"Connection"];
     }
+    [request setValue:@"application/hprose" forHTTPHeaderField:@"Content-type"];
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
@@ -205,6 +206,7 @@
     else {
         [request setValue:@"close" forHTTPHeaderField:@"Connection"];
     }
+    [request setValue:@"application/hprose" forHTTPHeaderField:@"Content-type"];
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
