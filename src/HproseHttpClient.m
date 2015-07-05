@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jun 13, 2015                             *
+ * LastModified: Jul 5, 2015                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -51,7 +51,7 @@
     NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
     if ([httpResponse statusCode] != 200) {
         _errorHandler([HproseException exceptionWithReason:
-         [NSString stringWithFormat:@"Http error %d: %@",
+         [NSString stringWithFormat:@"%d: %@",
           (int)[httpResponse statusCode],
           [NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]]]]);
     }
@@ -68,7 +68,9 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    _errorHandler([HproseException exceptionWithReason:[error localizedDescription]]);
+    _errorHandler([HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
+                                                        (int)[error code],
+                                                        [error localizedDescription]]]);
     if ([[_client URLConnectionDelegate] respondsToSelector:@selector(connection:didFailWithError:)]) {
         [[_client URLConnectionDelegate] connection:connection didFailWithError:error];
     }
@@ -180,12 +182,14 @@
     NSInteger statusCode = [response statusCode];
     if (statusCode != 200 && statusCode != 0) {
         @throw [HproseException exceptionWithReason:
-                [NSString stringWithFormat:@"Http error %d: %@",
+                [NSString stringWithFormat:@"%d: %@",
                  (int)statusCode,
                  [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
     }
     if (data == nil) {
-        @throw [HproseException exceptionWithReason:[error localizedDescription]];
+        @throw [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
+                                                     (int)[error code],
+                                                     [error localizedDescription]]];
     }
     return data;
 }
