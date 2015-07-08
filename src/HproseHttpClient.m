@@ -23,6 +23,7 @@
 @interface AsyncInvokeContext: NSObject<NSURLConnectionDelegate> {
     @private
     NSMutableData *_buffer;
+    BOOL _hasError;
     void (^_callback)(NSData *);
     void (^_errorHandler)(NSException *);
     HproseHttpClient * _client;
@@ -42,6 +43,7 @@
         _client = client;
         _callback = callback;
         _errorHandler = errorHandler;
+        _hasError = NO;
     }
     return self;
 }
@@ -50,6 +52,7 @@
 #pragma unused(connection)
     NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
     if ([httpResponse statusCode] != 200) {
+        _hasError = YES;
         _errorHandler([HproseException exceptionWithReason:
          [NSString stringWithFormat:@"%d: %@",
           (int)[httpResponse statusCode],
@@ -64,10 +67,13 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 #pragma unused(connection)
-    _callback(_buffer);
+    if (!_hasError) {
+        _callback(_buffer);
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    _hasError = YES;
     _errorHandler([HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                         (int)[error code],
                                                         [error localizedDescription]]]);
