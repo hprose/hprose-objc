@@ -12,7 +12,7 @@
  *                                                        *
  * hprose reader class for Objective-C.                   *
  *                                                        *
- * LastModified: Aug 22, 2014                             *
+ * LastModified: Jul 14, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -381,6 +381,7 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 - (NSDictionary *) readDictWithoutTag;
 - (NSMapTable *) readArrayAsMapTable;
 - (NSMapTable *) readMapTableWithoutTag;
+- (NSDictionary *) readObjectAsDict:(id)key;
 - (NSDictionary *) readObjectAsDict;
 - (NSMapTable *) readObjectAsMapTable;
 - (id) readObjectWithoutTag:(Class)cls;
@@ -1422,9 +1423,8 @@ static double NaN, Infinity, NegInfinity;
 
 }
 
-- (NSDictionary *) readObjectAsDict {
-    Class cls = classref[[self readUI32:HproseTagOpenbrace]];
-    NSArray *propNames = fieldsref[cls];
+- (NSDictionary *) readObjectAsDict:(id)key {
+    NSArray *propNames = fieldsref[key];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:[propNames count]];
     [refer set:dict];
     for (id name in propNames) {
@@ -1434,9 +1434,13 @@ static double NaN, Infinity, NegInfinity;
     return dict;
 }
 
+- (NSDictionary *) readObjectAsDict {
+    return [self readObjectAsDict:classref[[self readUI32:HproseTagOpenbrace]]];
+}
+
 - (NSMapTable *) readObjectAsMapTable {
-    Class cls = classref[[self readUI32:HproseTagOpenbrace]];
-    NSArray *propNames = fieldsref[cls];
+    id key = classref[[self readUI32:HproseTagOpenbrace]];
+    NSArray *propNames = fieldsref[key];
     NSMapTable *map = [NSMapTable new];
     [refer set:map];
     for (id name in propNames) {
@@ -1447,14 +1451,17 @@ static double NaN, Infinity, NegInfinity;
 }
 
 - (id) readObjectWithoutTag:(Class)cls {
-    Class cls2 = classref[[self readUI32:HproseTagOpenbrace]];
-    if (cls == Nil || cls == [NSObject class] || [cls2 isSubclassOfClass:cls]) {
-        cls = cls2;
+    id key = classref[[self readUI32:HproseTagOpenbrace]];
+    if (cls == Nil || cls == [NSObject class]) {
+        if ([[key class] isSubclassOfClass:[NSString class]]) {
+            return [self readObjectAsDict:key];
+        }
+        cls = (Class)key;
     }
-    else {
-        @throw [self castExceptionFromClass:cls2 toClass:cls];
+    else if ([(Class)key isSubclassOfClass:cls]) {
+        cls = (Class)key;
     }
-    NSArray *propNames = fieldsref[cls];
+    NSArray *propNames = fieldsref[key];
     NSDictionary *properties = [HproseHelper getHproseProperties:cls];
     id obj = [cls new];
     [refer set:obj];
@@ -1549,11 +1556,15 @@ static double NaN, Infinity, NegInfinity;
         [propNames addObject:[self readString]];
     }
     [self checkTag:HproseTagClosebrace];
+    id key;
     if (cls == Nil) {
-        cls = [HproseHelper createClass:className withPropNames:propNames];
+        key = className;
     }
-    fieldsref[(id)cls] = propNames;
-    [classref addObject:cls];
+    else {
+        key = (id)cls;
+    }
+    fieldsref[key] = propNames;
+    [classref addObject:key];
 }
 
 - (id) readRef {

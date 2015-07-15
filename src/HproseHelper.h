@@ -12,7 +12,7 @@
  *                                                        *
  * hprose helper class header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 10, 2014                             *
+ * LastModified: Jul 15, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -25,7 +25,6 @@
 + (NSDictionary *) getHproseProperties:(Class)cls;
 + (NSString *) getClassName:(Class)cls;
 + (Class) getClass:(NSString *)className;
-+ (Class) createClass:(NSString *)className withPropNames:(NSArray *)propNames;
 
 @end
 

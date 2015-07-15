@@ -12,7 +12,7 @@
  *                                                        *
  * hprose helper class for Objective-C.                   *
  *                                                        *
- * LastModified: Aug 22, 2014                             *
+ * LastModified: Jul 15, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -261,20 +261,6 @@ id getHproseProperties2(Class cls) {
     return properties;
 }
 
-id getHproseAutoObjectProperty(id self, SEL _cmd) {
-    NSString *name = NSStringFromSelector(_cmd);
-    return object_getIvar(self, class_getInstanceVariable([self class], [name UTF8String]));
-}
-
-void setHproseAutoObjectProperty(id self, SEL _cmd, id value) {
-    NSString *name = NSStringFromSelector(_cmd);
-    name = [NSString stringWithFormat:@"%c%@",
-            tolower([name characterAtIndex:3]),
-            [name substringWithRange:
-             NSMakeRange(4, [name length] - 5)]];
-    object_setIvar(self, class_getInstanceVariable([self class], [name UTF8String]), value);
-}
-
 @implementation HproseHelper
 
 static NSMutableDictionary *gPropertiesCache;
@@ -338,34 +324,6 @@ static NSMutableDictionary *gPropertiesCache;
     }
     Class cls = objc_getClass([className UTF8String]);
     [HproseClassManager registerClass:cls withAlias:className];
-    return cls;
-}
-
-+ (Class) createClass:(NSString *)className withPropNames:(NSArray *)propNames {
-    Class cls = objc_allocateClassPair([NSObject class], [className UTF8String], 0);
-    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:[propNames count]];
-    for (NSString *propName in propNames) {
-        HproseProperty *property = [[HproseProperty alloc] init];
-        SEL getter = NSSelectorFromString(propName);
-        SEL setter = NSSelectorFromString([NSString stringWithFormat:@"set%@%@:",
-                                           [[propName substringToIndex:1] uppercaseString],
-                                           [propName substringFromIndex:1]]);
-        class_addIvar(cls, [propName UTF8String], sizeof(id), log2(sizeof(id)), "@");
-        class_addMethod(cls, getter, (IMP)getHproseAutoObjectProperty, "@@:");
-        class_addMethod(cls, setter, (IMP)setHproseAutoObjectProperty, "v@:@");
-        [property setName:propName];
-        [property setType:'@'];
-        [property setGetter:getter];
-        [property setGetterImp:(IMP)getHproseAutoObjectProperty];
-        [property setSetter:setter];
-        [property setSetterImp:(IMP)setHproseAutoObjectProperty];
-        properties[propName] = property;
-    }
-    objc_registerClassPair(cls);
-    [HproseClassManager registerClass:cls withAlias:className];
-    @synchronized(gPropertiesCache) {
-        gPropertiesCache[(id)cls] = properties;
-    }
     return cls;
 }
 
