@@ -1,6 +1,9 @@
 # Hprose for Objective-C
 
-[![Join the chat at https://gitter.im/hprose/hprose-objc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hprose/hprose-objc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/hprose/hprose-objc](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/hprose/hprose-objc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![CocoaPods](https://img.shields.io/cocoapods/v/hprose.svg)](https://cocoapods.org/pods/hprose)
+[![CocoaPods](https://img.shields.io/cocoapods/l/hprose.svg)](https://cocoapods.org/pods/hprose)
+[![CocoaPods](https://img.shields.io/cocoapods/p/hprose.svg)](https://cocoapods.org/pods/hprose)
 
 *Hprose* is a High Performance Remote Object Service Engine.
 
