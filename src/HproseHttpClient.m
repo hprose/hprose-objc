@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jul 5, 2015                              *
+ * LastModified: Jul 22, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -220,7 +220,9 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
-    [NSURLConnection connectionWithRequest:request delegate:context];
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];
+    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [connection start];
 }
 
 @end

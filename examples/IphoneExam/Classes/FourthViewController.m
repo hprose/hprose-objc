@@ -66,11 +66,11 @@
     NSString *sexStrings[] = {@"Unknown", @"Male", @"Female", @"InterSex"};
     for (id user in result) {
         [s appendFormat:@"Name:%@, Age:%@, Married:%@\nBirthday:%@, Sex:%@\n\n",
-         [user name],
-         [user performSelector:@selector(age)],
-         [[user performSelector:@selector(married)] boolValue] ? @"Yes" : @"No",
-         [[NSDateFormatter new] stringFromDate:[user performSelector:@selector(birthday)]],
-         sexStrings[[[user performSelector:@selector(sex)] intValue]]];
+         user[@"name"],
+         user[@"age"],
+         [user[@"married"] boolValue] ? @"Yes" : @"No",
+         [[NSDateFormatter new] stringFromDate:user[@"birthday"]],
+         sexStrings[[user[@"sex"] intValue]]];
     }
     [label setText:s];
 }
