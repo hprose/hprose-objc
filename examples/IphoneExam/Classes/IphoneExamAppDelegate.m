@@ -16,6 +16,7 @@
 @synthesize tabBarController;
 @synthesize exam;
 @synthesize client;
+@synthesize rootViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
