@@ -15,6 +15,8 @@
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 		28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD73870D9D96C1002E5188 /* MainWindow.xib */; };
 		9B0B26221AE7646B00292044 /* LogFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0B26211AE7646B00292044 /* LogFilter.m */; };
+		9BD079931BAA57E10040EA1F /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD079911BAA57E10040EA1F /* RootViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9BD079941BAA57E10040EA1F /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9BD079921BAA57E10040EA1F /* RootViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		9BD8146111A1C07D005BEAFF /* FourthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8145C11A1C07D005BEAFF /* FourthViewController.m */; };
 		9BD8146211A1C07D005BEAFF /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8145E11A1C07D005BEAFF /* SecondViewController.m */; };
 		9BD8146311A1C07D005BEAFF /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8146011A1C07D005BEAFF /* ThirdViewController.m */; };
@@ -48,6 +50,9 @@
 		8D1107310486CEB800E47090 /* IphoneExam-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "IphoneExam-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		9B0B26201AE7644100292044 /* LogFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogFilter.h; sourceTree = "<group>"; };
 		9B0B26211AE7646B00292044 /* LogFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogFilter.m; sourceTree = "<group>"; };
+		9BD079901BAA57E10040EA1F /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		9BD079911BAA57E10040EA1F /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		9BD079921BAA57E10040EA1F /* RootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootViewController.xib; sourceTree = "<group>"; };
 		9BD8145B11A1C07D005BEAFF /* FourthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FourthViewController.h; sourceTree = "<group>"; };
 		9BD8145C11A1C07D005BEAFF /* FourthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FourthViewController.m; sourceTree = "<group>"; };
 		9BD8145D11A1C07D005BEAFF /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
@@ -119,6 +124,9 @@
 				1D3623250D0F684500981E51 /* IphoneExamAppDelegate.m */,
 				9B0B26201AE7644100292044 /* LogFilter.h */,
 				9B0B26211AE7646B00292044 /* LogFilter.m */,
+				9BD079901BAA57E10040EA1F /* RootViewController.h */,
+				9BD079911BAA57E10040EA1F /* RootViewController.m */,
+				9BD079921BAA57E10040EA1F /* RootViewController.xib */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -258,6 +266,7 @@
 			files = (
 				28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */,
 				D8B878F818EED5520074F65A /* Default-568h@2x.png in Resources */,
+				9BD079941BAA57E10040EA1F /* RootViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +291,7 @@
 				D824A71B18F79F06004ED013 /* HproseException.m in Sources */,
 				9BD8146111A1C07D005BEAFF /* FourthViewController.m in Sources */,
 				D8258B3818F8E5340049E92C /* HproseFormatter.m in Sources */,
+				9BD079931BAA57E10040EA1F /* RootViewController.m in Sources */,
 				D824A71A18F79F06004ED013 /* HproseClientProxy.m in Sources */,
 				9BD8146211A1C07D005BEAFF /* SecondViewController.m in Sources */,
 				9BD8146311A1C07D005BEAFF /* ThirdViewController.m in Sources */,
@@ -310,6 +320,7 @@
 					"\"$(SRCROOT)/Release-iphonesimulator\"",
 					"\"$(SRCROOT)\"",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = IphoneExam;
 			};
 			name = Debug;
@@ -329,6 +340,7 @@
 					"\"$(SRCROOT)/Release-iphonesimulator\"",
 					"\"$(SRCROOT)\"",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = IphoneExam;
 				VALIDATE_PRODUCT = YES;
 			};
