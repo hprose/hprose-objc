@@ -30,6 +30,7 @@
 @property int keepAliveTimeout;
 @property (readonly) NSMutableDictionary *header;
 @property id<NSURLConnectionDelegate> URLConnectionDelegate;
+@property (nonatomic, weak) id<NSURLSessionDelegate> URLSessionDelegate;
 
 - (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 

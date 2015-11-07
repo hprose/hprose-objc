@@ -131,6 +131,11 @@
 
 @end
 
+@interface HproseHttpClient () <NSURLSessionDelegate>
+
+@property (nonatomic, strong) NSURLSession *session;
+
+@end
 
 @implementation HproseHttpClient
 
@@ -143,6 +148,17 @@
         _header = [NSMutableDictionary new];
     }
     return self;
+}
+
+- (NSURLSession *)session {
+    if (!_session) {
+        NSURLSessionConfiguration *conf = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _session = [NSURLSession sessionWithConfiguration:conf
+                                                 delegate:self.URLSessionDelegate
+                                            delegateQueue:[NSOperationQueue new]];
+    }
+    
+    return _session;
 }
 
 @dynamic uri;
@@ -187,7 +203,7 @@
     __block NSData *ret;
     
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable resp, NSError * _Nullable err) {
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable resp, NSError * _Nullable err) {
         response = (NSHTTPURLResponse *)resp;
         error = err;
         ret = data;
@@ -230,7 +246,7 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
-    [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                      (int)[error code],
