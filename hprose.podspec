@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "hprose"
-  s.version      = "1.4.7"
+  s.version      = "1.4.8"
   s.summary      = "Hprose for Objective-C"
 
   s.description  = <<-DESC
@@ -96,7 +96,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v1.4.7" }
+  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v1.4.8" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
