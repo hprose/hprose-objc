@@ -131,6 +131,11 @@
 
 @end
 
+@interface HproseHttpClient () <NSURLSessionDelegate>
+
+@property (nonatomic, strong) NSURLSession *session;
+
+@end
 
 @implementation HproseHttpClient
 
@@ -143,6 +148,17 @@
         _header = [NSMutableDictionary new];
     }
     return self;
+}
+
+- (NSURLSession *)session {
+    if (!_session) {
+        NSURLSessionConfiguration *conf = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _session = [NSURLSession sessionWithConfiguration:conf
+                                                 delegate:self.URLSessionDelegate
+                                            delegateQueue:[NSOperationQueue new]];
+    }
+    
+    return _session;
 }
 
 @dynamic uri;
@@ -182,9 +198,24 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
-    NSHTTPURLResponse *response;
-    NSError *error;
-    data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    __block NSHTTPURLResponse *response;
+    __block NSError *error;
+    __block NSData *ret;
+#if __IPHONE_9_0
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable resp, NSError * _Nullable err) {
+        response = (NSHTTPURLResponse *)resp;
+        error = err;
+        ret = data;
+        dispatch_semaphore_signal(sem);
+    }];
+    [task resume];
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+#else
+    ret = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+#endif
+    
     NSInteger statusCode = [response statusCode];
     if (statusCode != 200 && statusCode != 0) {
         @throw [HproseException exceptionWithReason:
@@ -192,18 +223,17 @@
                  (int)statusCode,
                  [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
     }
-    if (data == nil) {
+    if (ret == nil) {
         @throw [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                      (int)[error code],
                                                      [error localizedDescription]]];
     }
-    return data;
+    return ret;
 }
 
 - (oneway void) sendAsync:(NSData *)data
-                receiveAsync:(void (^)(NSData *))receiveCallback
-                error:(void (^)(NSException *))errorCallback {
-    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
+             receiveAsync:(void (^)(NSData *))receiveCallback
+                    error:(void (^)(NSException *))errorCallback {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setTimeoutInterval:_timeout];
     for (id field in _header) {
@@ -220,9 +250,24 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
+#if __IPHONE_9_0
+    [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
+                                                     (int)[error code],
+                                                                   [error localizedDescription]]];
+            errorCallback(e);
+            return;
+        }
+        
+        receiveCallback(data);
+    }];
+#else
+    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];
     [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     [connection start];
+#endif
 }
 
 @end
