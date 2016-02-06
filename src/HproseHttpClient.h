@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client header for Objective-C.             *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: Feb 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/

@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jul 22, 2015                             *
+ * LastModified: Feb 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -88,6 +88,7 @@
     }
 }
 
+#if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
     if ([[_client URLConnectionDelegate] respondsToSelector:@selector(connection:canAuthenticateAgainstProtectionSpace:)]) {
         return [[_client URLConnectionDelegate] connection:connection canAuthenticateAgainstProtectionSpace:protectionSpace];
@@ -121,6 +122,7 @@
         }
     }
 }
+#endif
 
 - (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection {
     if ([[_client URLConnectionDelegate] respondsToSelector:@selector(connectionShouldUseCredentialStorage:)]) {
@@ -203,7 +205,9 @@
     __block NSHTTPURLResponse *response;
     __block NSError *error;
     __block NSData *ret;
-#if __IPHONE_9_0
+#if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
+    ret = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+#else
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable resp, NSError * _Nullable err) {
         response = (NSHTTPURLResponse *)resp;
@@ -213,8 +217,6 @@
     }];
     [task resume];
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-#else
-    ret = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 #endif
     
     NSInteger statusCode = [response statusCode];
@@ -251,11 +253,16 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
-#if __IPHONE_9_0
+#if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
+    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];
+    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [connection start];
+#else
     [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
-                                                     (int)[error code],
+                                                                   (int)[error code],
                                                                    [error localizedDescription]]];
             errorCallback(e);
             return;
@@ -263,11 +270,6 @@
         
         receiveCallback(data);
     }];
-#else
-    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];
-    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    [connection start];
 #endif
 }
 
