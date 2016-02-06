@@ -145,6 +145,7 @@
         [self setKeepAlive:YES];
         [self setKeepAliveTimeout:300];
         [self setURLConnectionDelegate:nil];
+        [self setURLSessionDelegate:nil];
         _header = [NSMutableDictionary new];
     }
     return self;

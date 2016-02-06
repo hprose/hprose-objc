@@ -21,8 +21,7 @@
 #import "HproseClient.h"
 
 @interface HproseHttpClient : HproseClient {
-    @private
-    NSURL *url;
+    @private NSURL *url;
 }
 
 @property NSTimeInterval timeout;
@@ -30,7 +29,7 @@
 @property int keepAliveTimeout;
 @property (readonly) NSMutableDictionary *header;
 @property id<NSURLConnectionDelegate> URLConnectionDelegate;
-@property (nonatomic, weak) id<NSURLSessionDelegate> URLSessionDelegate;
+@property id<NSURLSessionDelegate> URLSessionDelegate;
 
 - (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 
