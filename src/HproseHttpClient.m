@@ -1,11 +1,11 @@
 /**********************************************************\
-|                                                          |
-|                          hprose                          |
-|                                                          |
-| Official WebSite: http://www.hprose.com/                 |
-|                   http://www.hprose.org/                 |
-|                                                          |
-\**********************************************************/
+ |                                                          |
+ |                          hprose                          |
+ |                                                          |
+ | Official WebSite: http://www.hprose.com/                 |
+ |                   http://www.hprose.org/                 |
+ |                                                          |
+ \**********************************************************/
 /**********************************************************\
  *                                                        *
  * HproseHttpClient.m                                     *
@@ -15,13 +15,13 @@
  * LastModified: Feb 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
-\**********************************************************/
+ \**********************************************************/
 
 #import "HproseException.h"
 #import "HproseHttpClient.h"
 
 @interface AsyncInvokeContext: NSObject<NSURLConnectionDelegate> {
-    @private
+@private
     NSMutableData *_buffer;
     BOOL _hasError;
     void (^_callback)(NSData *);
@@ -54,9 +54,9 @@
     if ([httpResponse statusCode] != 200) {
         _hasError = YES;
         _errorHandler([HproseException exceptionWithReason:
-         [NSString stringWithFormat:@"%d: %@",
-          (int)[httpResponse statusCode],
-          [NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]]]]);
+                       [NSString stringWithFormat:@"%d: %@",
+                        (int)[httpResponse statusCode],
+                        [NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]]]]);
     }
 }
 
@@ -175,9 +175,9 @@
 
 - (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {
     if (field != nil) {
-         if (value != nil) {
+        if (value != nil) {
             _header[field] = value;
-         }
+        }
         else {
             [_header removeObjectForKey:field];
         }
@@ -259,7 +259,7 @@
     [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     [connection start];
 #else
-    [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                                    (int)[error code],
@@ -268,8 +268,12 @@
             return;
         }
         
-        receiveCallback(data);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            receiveCallback(data);
+        });
     }];
+    [task resume];
 #endif
 }
 

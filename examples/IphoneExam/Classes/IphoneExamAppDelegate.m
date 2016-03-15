@@ -19,7 +19,7 @@
 @synthesize rootViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
+    self.rootViewController = [[RootViewController alloc] init];
     self.window.rootViewController = self.rootViewController;
     // Add the tab bar controller's current view as a subview of the window
     [window addSubview:tabBarController.view];
