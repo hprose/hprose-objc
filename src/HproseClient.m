@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 15, 2015                             *
+ * LastModified: Mar 23, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -73,6 +73,12 @@
         [self setUri:aUri];
     }
     return self;
+}
+
+- (void) close:(BOOL)cancelPendingTasks {}
+
+- (void) close {
+    [self close: NO];
 }
 
 - (id) useService:(Protocol *)protocol {

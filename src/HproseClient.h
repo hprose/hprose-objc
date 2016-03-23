@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jun 13, 2015                             *
+ * LastModified: Mar 23, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -50,6 +50,9 @@
 + (id) client:(NSString *)uri;
 
 - (id) init:(NSString *)uri;
+
+- (void) close:(BOOL)cancelPendingTasks;
+- (void) close;
 
 - (id) useService:(Protocol *)protocol;
 - (id) useService:(Protocol *)protocol withNameSpace:(NSString *)ns;
