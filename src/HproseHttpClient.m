@@ -166,11 +166,15 @@
     }
 }
 
+#if !defined(__MAC_10_7)
+
 - (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
     if ([[_client URLSessionDelegate] respondsToSelector:@selector(URLSessionDidFinishEventsForBackgroundURLSession:)]) {
         [[_client URLSessionDelegate] URLSessionDidFinishEventsForBackgroundURLSession:session];
     }
 }
+
+#endif
 
 @end
 
