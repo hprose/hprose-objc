@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Mar 23, 2016                             *
+ * LastModified: Apr 16, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -756,6 +756,9 @@
 }
 
 - (id) doInput:(NSData *)data withArgs:(NSArray *)args resultClass:(Class)cls resultType:(char)type resultMode:(HproseResultMode)mode context:(HproseClientContext *)context {
+    if ([data length] == 0) {
+        @throw [HproseException exceptionWithReason:@"EOF"];
+    }
     for (int i = (int)filters.count - 1; i >= 0; --i) {
         data = [filters[i] inputFilter:data withContext:context];
     }
