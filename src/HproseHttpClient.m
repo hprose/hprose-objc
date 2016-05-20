@@ -192,9 +192,10 @@
         [self setURLConnectionDelegate:nil];
 #else
         [self setURLSessionDelegate:nil];
-        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
-                                                       delegate: [[AsyncInvokeContext alloc] init:self]
-                                                  delegateQueue: nil];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _session = [NSURLSession sessionWithConfiguration: configuration
+                                                 delegate: [[AsyncInvokeContext alloc] init:self]
+                                            delegateQueue: nil];
 #endif
         _header = [NSMutableDictionary new];
     }
@@ -261,7 +262,6 @@
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request
                                              completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
-        [_session finishTasksAndInvalidate];
         dict[@"response"] = resp;
         dict[@"error"] = err;
         dict[@"ret"] = data;
