@@ -35,6 +35,8 @@
 
 /* Begin PBXFileReference section */
 		9B9AF6B610F607B20043DFBD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		9BC8D6631CE58219000E92AF /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Promise.h; path = ../../src/Promise.h; sourceTree = "<group>"; };
+		9BC8D6641CE980A9000E92AF /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Promise.m; path = ../../src/Promise.m; sourceTree = "<group>"; };
 		9BE87D2E1B08CD900053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../../src/HproseContext.h; sourceTree = "<group>"; };
 		9BE87D2F1B08CD900053F1E8 /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseContext.m; path = ../../src/HproseContext.m; sourceTree = "<group>"; };
 		D824A6BE18F79995004ED013 /* libHprose.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHprose.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +109,8 @@
 		D824A6C018F79995004ED013 /* Hprose */ = {
 			isa = PBXGroup;
 			children = (
+				9BC8D6641CE980A9000E92AF /* Promise.m */,
+				9BC8D6631CE58219000E92AF /* Promise.h */,
 				D824A6E018F79A64004ED013 /* Hprose.h */,
 				D824A6E118F79A64004ED013 /* HproseClassManager.h */,
 				D824A6E218F79A64004ED013 /* HproseClassManager.m */,

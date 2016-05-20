@@ -12,11 +12,12 @@
  *                                                        *
  * hprose header for Objective-C.                         *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: May 16, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
+#import "Promise.h"
 #import "HproseTags.h"
 #import "HproseReader.h"
 #import "HproseWriter.h"

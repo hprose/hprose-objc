@@ -15,11 +15,12 @@
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 		28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD73870D9D96C1002E5188 /* MainWindow.xib */; };
 		9B0B26221AE7646B00292044 /* LogFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0B26211AE7646B00292044 /* LogFilter.m */; };
-		9BD079931BAA57E10040EA1F /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD079911BAA57E10040EA1F /* RootViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9BD079931BAA57E10040EA1F /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD079911BAA57E10040EA1F /* RootViewController.m */; };
 		9BD8146111A1C07D005BEAFF /* FourthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8145C11A1C07D005BEAFF /* FourthViewController.m */; };
 		9BD8146211A1C07D005BEAFF /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8145E11A1C07D005BEAFF /* SecondViewController.m */; };
 		9BD8146311A1C07D005BEAFF /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8146011A1C07D005BEAFF /* ThirdViewController.m */; };
 		9BD8158E11A286AC005BEAFF /* FifthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8158D11A286AC005BEAFF /* FifthViewController.m */; };
+		9BE497471CEED189001CBCA5 /* Promise.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE497461CEED189001CBCA5 /* Promise.m */; };
 		9BE87D331B08CDDB0053F1E8 /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE87D321B08CDDB0053F1E8 /* HproseContext.m */; };
 		D824A71818F79F06004ED013 /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A70318F79F06004ED013 /* HproseClassManager.m */; };
 		D824A71918F79F06004ED013 /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D824A70518F79F06004ED013 /* HproseClient.m */; };
@@ -59,6 +60,8 @@
 		9BD8146011A1C07D005BEAFF /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
 		9BD8158C11A286AC005BEAFF /* FifthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FifthViewController.h; sourceTree = "<group>"; };
 		9BD8158D11A286AC005BEAFF /* FifthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FifthViewController.m; sourceTree = "<group>"; };
+		9BE497451CEED189001CBCA5 /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Promise.h; path = ../../src/Promise.h; sourceTree = "<group>"; };
+		9BE497461CEED189001CBCA5 /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Promise.m; path = ../../src/Promise.m; sourceTree = "<group>"; };
 		9BE87D311B08CDDB0053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../../src/HproseContext.h; sourceTree = "<group>"; };
 		9BE87D321B08CDDB0053F1E8 /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseContext.m; path = ../../src/HproseContext.m; sourceTree = "<group>"; };
 		9BF1BFE711A182860097A03A /* Exam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exam.h; sourceTree = "<group>"; };
@@ -181,6 +184,8 @@
 		D824A70018F79EF4004ED013 /* Hprose */ = {
 			isa = PBXGroup;
 			children = (
+				9BE497451CEED189001CBCA5 /* Promise.h */,
+				9BE497461CEED189001CBCA5 /* Promise.m */,
 				D824A70118F79F06004ED013 /* Hprose.h */,
 				D824A70218F79F06004ED013 /* HproseClassManager.h */,
 				D824A70318F79F06004ED013 /* HproseClassManager.m */,
@@ -285,6 +290,7 @@
 				D824A72018F79F06004ED013 /* HproseWriter.m in Sources */,
 				28216C970DB411BC00E5133A /* FirstViewController.m in Sources */,
 				D824A71B18F79F06004ED013 /* HproseException.m in Sources */,
+				9BE497471CEED189001CBCA5 /* Promise.m in Sources */,
 				9BD8146111A1C07D005BEAFF /* FourthViewController.m in Sources */,
 				D8258B3818F8E5340049E92C /* HproseFormatter.m in Sources */,
 				9BD079931BAA57E10040EA1F /* RootViewController.m in Sources */,
