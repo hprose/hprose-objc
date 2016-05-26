@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B642B0D1CF6EB3A003C4946 /* HproseInvokeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */; };
+		9B642B0E1CF6EB3A003C4946 /* HproseInvokeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */; };
 		9B9AF6B710F607B20043DFBD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B9AF6B610F607B20043DFBD /* Foundation.framework */; };
 		9BE497431CEED115001CBCA5 /* Promise.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE497411CEED115001CBCA5 /* Promise.h */; };
 		9BE497441CEED115001CBCA5 /* Promise.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE497421CEED115001CBCA5 /* Promise.m */; };
@@ -41,6 +43,8 @@
 
 /* Begin PBXFileReference section */
 		8DC2EF5B0486A6940098B216 /* Hprose.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Hprose.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvokeSettings.h; path = ../src/HproseInvokeSettings.h; sourceTree = "<group>"; };
+		9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseInvokeSettings.m; path = ../src/HproseInvokeSettings.m; sourceTree = "<group>"; };
 		9B9AF6B610F607B20043DFBD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		9BE497411CEED115001CBCA5 /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Promise.h; path = ../src/Promise.h; sourceTree = "<group>"; };
 		9BE497421CEED115001CBCA5 /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Promise.m; path = ../src/Promise.m; sourceTree = "<group>"; };
@@ -143,6 +147,8 @@
 				D824A66C18F79822004ED013 /* HproseHttpClient.h */,
 				D824A66D18F79822004ED013 /* HproseHttpClient.m */,
 				D824A66E18F79822004ED013 /* HproseInvoker.h */,
+				9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */,
+				9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */,
 				D824A66F18F79822004ED013 /* HproseProperty.h */,
 				D824A67018F79822004ED013 /* HproseProperty.m */,
 				D824A67118F79822004ED013 /* HproseReader.h */,
@@ -186,6 +192,7 @@
 				D824A68818F79822004ED013 /* HproseReader.h in Headers */,
 				D824A68118F79822004ED013 /* HproseHelper.h in Headers */,
 				D8258B3418F8E4F40049E92C /* HproseFormatter.h in Headers */,
+				9B642B0D1CF6EB3A003C4946 /* HproseInvokeSettings.h in Headers */,
 				D824A69118F798DA004ED013 /* Hprose_Prefix.pch in Headers */,
 				D824A67818F79822004ED013 /* HproseClassManager.h in Headers */,
 				D824A67E18F79822004ED013 /* HproseException.h in Headers */,
@@ -258,6 +265,7 @@
 				9BE87D2D1B08C7700053F1E8 /* HproseContext.m in Sources */,
 				D8258B3518F8E4F40049E92C /* HproseFormatter.m in Sources */,
 				9BE497441CEED115001CBCA5 /* Promise.m in Sources */,
+				9B642B0E1CF6EB3A003C4946 /* HproseInvokeSettings.m in Sources */,
 				D824A67D18F79822004ED013 /* HproseClientProxy.m in Sources */,
 				D824A68218F79822004ED013 /* HproseHelper.m in Sources */,
 				D824A68718F79822004ED013 /* HproseProperty.m in Sources */,

@@ -12,13 +12,14 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Mar 23, 2016                             *
+ * LastModified: May 25, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
 #import "HproseInvoker.h"
+#import "HproseInvokeSettings.h"
 #import "HproseFilter.h"
 #import "HproseContext.h"
 
@@ -67,7 +68,8 @@
 @interface HproseClientContext : HproseContext;
 
 @property HproseClient* client;
+@property HproseInvokeSettings *settings;
 
-- (id) init:(HproseClient *)client;
+- (id) init:(HproseClient *)client settings:(HproseInvokeSettings *)settings;
 
 @end

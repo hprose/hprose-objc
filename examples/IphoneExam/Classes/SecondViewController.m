@@ -70,9 +70,9 @@
     [[delegate client] invoke:@"sum" withArgs:@[
         @([[int_a text] intValue]),
         @([[int_b text] intValue])]
-    block:^(id result, NSArray *args) {
+                     settings:@{@"block":^(id result, NSArray *args) {
         [int_sum setText:[result stringValue]];
-    }];
+    }}];
 }
 
 -(IBAction) sumDoubleClick:(id)sender {

@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Jun 15, 2015                             *
+ * LastModified: May 26, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -971,10 +971,23 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
             async = _async;
         }
     }
-    BOOL byRef = NO;
-    NSMutableArray *args = getArguments(count, methodSignature, anInvocation, &byRef);
+    BOOL byref = NO;
+    NSMutableArray *args = getArguments(count, methodSignature, anInvocation, &byref);
+    HproseInvokeSettings *settings = [[HproseInvokeSettings alloc] init];
+    settings.byref = byref;
     if (async) {
-        [_client invoke:name withArgs:args byRef:byRef resultClass:Nil resultType:_C_ID resultMode:HproseResultMode_Normal simpleMode:NO callback:callback block:block selector: selector errorCallback:errorCallback errorBlock:errorBlock errorSelector:errorSelector delegate:delegate];
+        if ([methodSignature isOneway]) {
+            settings.oneway = YES;
+        }
+        settings.async = YES;
+        settings.callback = callback;
+        settings.block = block;
+        settings.selector = selector;
+        settings.errorCallback = errorCallback;
+        settings.errorBlock = errorBlock;
+        settings.errorSelector = errorSelector;
+        settings.delegate = delegate;
+        [_client invoke:name withArgs:args settings:settings];
     }
     else {
         type = [methodSignature methodReturnType];
@@ -985,16 +998,7 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
                 NSString *className = [@(type)
                                        substringWithRange:
                                        NSMakeRange(2, strlen(type) - 3)];
-                Class cls = objc_getClass([className UTF8String]);
-                result = [_client invoke:name
-                               withArgs:args
-                                  byRef:byRef
-                            resultClass:cls];
-            }
-            else {
-                result = [_client invoke:name
-                               withArgs:args
-                                  byRef:byRef];
+                settings.resultClass = objc_getClass([className UTF8String]);
             }
         }
         else {
@@ -1009,12 +1013,12 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
                     t = type[1];
                     break;
             }
-            result = [_client invoke:name
-                           withArgs:args
-                              byRef:byRef
-                         resultType:t];
         }
-        if (byRef) {
+        settings.resultType = t;
+        result = [_client invoke:name
+                        withArgs:args
+                        settings:settings];
+        if (byref) {
             setArguments(count, methodSignature, anInvocation, args);
         }
         setReturnValue(t, result, anInvocation);

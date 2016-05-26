@@ -18,7 +18,7 @@ class User:NSObject {
 HproseClassManager.registerClass(User.self, withAlias: "User")
 var client = HproseHttpClient("http://www.hprose.com/example/index.php")
 var h = client.useService(Hello)
-print(h.hello("world"))
+print(h.hello("world"));
 print(h.hello("hprose"))
 print(h.hello("中文"))
 print(h.sum(1,b:2,c:3))

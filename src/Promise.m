@@ -164,7 +164,6 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 @implementation Subscriber
 
-
 + (Subscriber *) subscriber:(Promise *)next success:(id (^)(id))onfulfill fail:(id (^)(id))onreject {
     Subscriber * result = [[self alloc] init];
     result.next = next;
@@ -177,8 +176,17 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 @implementation Promise
 
-- (id) init:(id (^)(void))computation {
+
+- (id) init {
     if (self = [super init]) {
+        _subscribers = [NSMutableArray array];
+    }
+    return self;
+    
+}
+
+- (id) init:(id (^)(void))computation {
+    if (self = [self init]) {
         __block Promise *this = self;
         dispatch_async(promiseQueue, ^{
             @try {

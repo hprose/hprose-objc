@@ -66,9 +66,10 @@
     //[[delegate exam] swapKeyAndValue:dict selector:@selector(swapCallback:withArgs:) delegate:self];
     [[delegate client] invoke:@"swapKeyAndValue"
                      withArgs:@[dict]
-                        byRef:YES
-                     selector:@selector(swapCallback:withArgs:)
-                     delegate:self];
+                     settings:@{
+                                @"byref":@(YES),
+                                @"selector":[NSValue valueWithBytes:&@selector(swapCallback:withArgs:) objCType:@encode(SEL)],
+                                @"delegate":self}];
 }
 
 -(void) swapCallback:(NSDictionary *)result withArgs:(NSArray *)args {
