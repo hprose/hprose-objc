@@ -18,17 +18,20 @@ class User:NSObject {
 HproseClassManager.registerClass(User.self, withAlias: "User")
 var client = HproseHttpClient("http://www.hprose.com/example/index.php")
 var h = client.useService(Hello)
+client.invoke("hello", withArgs: ["async world"], settings: ["async": true]).last { (result) in
+    print(result);
+};
 print(h.hello("world"));
-print(h.hello("hprose"))
-print(h.hello("中文"))
-print(h.sum(1,b:2,c:3))
+print(h.hello("hprose"));
+print(h.hello("中文"));
+print(h.sum(1,b:2,c:3));
 print(h.swapKeyAndValue(["January": "Jan", "February": "Feb", "March": "Mar", "April": "Apr"]));
 var sexStrings = ["Unknown", "Male", "Female", "InterSex"];
 var users = h.getUserList();
 for user in users {
-    print(user.name)
-    print(user.age)
-    print(user.married)
-    print(user.birthday)
-    print(sexStrings[user.sex])
+    print(user.name);
+    print(user.age);
+    print(user.married);
+    print(user.birthday);
+    print(sexStrings[user.sex]);
 }

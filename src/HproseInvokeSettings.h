@@ -10,7 +10,7 @@
  *                                                        *
  * HproseInvokeSettings.h                                 *
  *                                                        *
- * hprose invoke settings for Objective-C.                *
+ * hprose invoke settings header for Objective-C.         *
  *                                                        *
  * LastModified: May 25, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *

@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: May 20, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -104,10 +104,8 @@
 
 @end
 
-#define promiseQueue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-
 void promise_call(id(^callback)(id), Promise * next, id x) {
-    dispatch_async(promiseQueue, ^{
+    dispatch_async(PROMISE_QUEUE, ^{
         @try {
             id result = callback(x);
             [next resolve:result];
@@ -188,7 +186,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 - (id) init:(id (^)(void))computation {
     if (self = [self init]) {
         __block Promise *this = self;
-        dispatch_async(promiseQueue, ^{
+        dispatch_async(PROMISE_QUEUE, ^{
             @try {
                 [this resolve:computation()];
             }
@@ -222,7 +220,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 + (Promise *) delayed:(NSTimeInterval)duration with:(id)value {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, promiseQueue);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -234,7 +232,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 + (Promise *) delayed:(NSTimeInterval)duration block:(id (^)(void))computation {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, promiseQueue);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -275,7 +273,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     void(^allHandler)(id element, NSUInteger i)  = ^(id element, NSUInteger i) {
         [[Promise toPromise:element] last: ^(id value) {
             result[i] = value;
-            if (OSAtomicDecrement64(&count) == 0) {
+            if (OSAtomicAdd64(-1, &count) == 0) {
                 [promise resolve:result];
             }
         } catch:^(id e) {
@@ -308,7 +306,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
         [[Promise toPromise:array[i]] last:^(id value) {
             [promise resolve: value];
         } catch:^(id e) {
-            if (OSAtomicDecrement64(&count) == 0) {
+            if (OSAtomicAdd64(-1, &count) == 0) {
                 [promise reject:[NSException exceptionWithName:@"RuntimeException"
                                                         reason:@"any(): all promises failed"
                                                       userInfo:nil]];
@@ -443,7 +441,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 - (void) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject {
     [[self last:onfulfill catch:onreject] last:nil catch:^(id reason) {
-        dispatch_async(promiseQueue, ^{
+        dispatch_async(PROMISE_QUEUE, ^{
             @throw reason;
         });
     }];
@@ -501,7 +499,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 - (Promise *) timeout:(NSTimeInterval)duration with:(id)reason {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, promiseQueue);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -528,7 +526,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 - (Promise *) delay:(NSTimeInterval)duration {
     Promise * promise = [Promise promise];
     [self last:^(id result) {
-        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, promiseQueue);
+        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
         dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
         dispatch_source_set_event_handler(timer, ^{
             dispatch_source_cancel(timer);

@@ -35,7 +35,7 @@
 -(void)errorHandler:(NSString *)name withException:(NSException *)e {
     UIAlertView *alert = nil;
     alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error on: %@", name]
-                 message:[e description]
+                 message:[e reason]
                 delegate:self
        cancelButtonTitle:@"OK" 
        otherButtonTitles:nil];

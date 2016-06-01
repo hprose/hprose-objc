@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: May 26, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -27,14 +27,39 @@
 #import "HproseClient.h"
 #import "HproseClientProxy.h"
 #import "Promise.h"
+#import "libkern/OSAtomic.h"
 
 @implementation HproseClientContext
 
 - (id) init:(HproseClient *)client settings:(HproseInvokeSettings *)settings {
     if (self = [super init]) {
         _client = client;
-        _settings = settings;
+        _settings = [[HproseInvokeSettings alloc] init];
+        _settings.byref = client.byref;
+        _settings.simple = client.simple;
+        _settings.failswitch = client.failswitch;
+        _settings.idempotent = client.idempontent;
+        _settings.retry = client.retry;
+        _settings.oneway = NO;
+        [settings copyTo:_settings];
     }
+    return self;
+}
+
+@end
+
+@implementation HproseFilterHandlerManager
+
+- (id) init:(SEL)selector with:(id)delegate {
+    if (self = [super init]) {
+        _selector = selector;
+        _delegate = delegate;
+    }
+    return self;
+}
+
+- (HproseFilterHandlerManager *) use:(HproseFilterHandler)handler {
+    ((void (*)(id, SEL, HproseFilterHandler))objc_msgSend)(_delegate, _selector, handler);
     return self;
 }
 
@@ -45,9 +70,15 @@
 - (id) syncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings;
 - (id) asyncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings;
 - (oneway void) errorHandler:(NSString *)name withException:(NSException *)e settings:(HproseInvokeSettings *)settings;
-- (HproseException *) wrongResponse:(NSData *)data;
-- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context;
-- (id) doInput:(NSData *)data withArgs:(NSArray *)args context:(HproseClientContext *)context;
+
+- (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context;
+- (NSData *) inputFilter:(NSData *)response context:(HproseClientContext *)context;
+
+- (id) invokeHandler:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context;
+- (id) beforeFilterHandler:(NSData *)request context:(HproseClientContext *)context;
+- (id) afterFilterHandler:(NSData *)request context:(HproseClientContext *)context;
+- (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context;
+- (id) retry:(NSData *)request context:(HproseClientContext *)context;
 
 @end
 
@@ -64,9 +95,34 @@
 - (id) init {
     if (self = [super init]) {
         filters = [NSMutableArray array];
+        invokeHandlers = [NSMutableArray array];
+        beforeFilterHandlers = [NSMutableArray array];
+        afterFilterHandlers = [NSMutableArray array];
+        uris = [NSMutableArray array];
+        index = -1;
+        self.timeout = 30.0;
+        self.retry = 10;
+        self.idempontent = NO;
+        self.failswitch = NO;
+        self.byref = NO;
+        self.simple = NO;
+        __block HproseClient *client = self;
+        defaultInvokeHandler = ^id(NSString *name, NSArray *args, HproseContext *context) {
+            return [client invokeHandler:name withArgs:args context:(HproseClientContext *)context];
+        };
+        defaultBeforeFilterHandler = ^id(NSData *request, HproseContext *context) {
+            return [client beforeFilterHandler:request context:(HproseClientContext *)context];
+        };
+        defaultAfterFilterHandler = ^id(NSData *request, HproseContext *context) {
+            return [client afterFilterHandler:request context:(HproseClientContext *)context];
+        };
+        invokeHandler = defaultInvokeHandler;
+        beforeFilterHandler = defaultBeforeFilterHandler;
+        afterFilterHandler = defaultAfterFilterHandler;
+        _beforeFilter = [[HproseFilterHandlerManager alloc] init:@selector(addBeforeFilterHandler:) with:self];
+        _afterFilter = [[HproseFilterHandlerManager alloc] init:@selector(addAfterFilterHandler:) with:self];
     }
     return self;
-
 }
 
 - (id) init:(NSString *)aUri {
@@ -181,19 +237,60 @@
     }
 }
 
+HproseNextInvokeHandler getNextInvokeHandler(HproseNextInvokeHandler next, HproseInvokeHandler handler) {
+    return ^id(NSString *name, NSArray *args, HproseContext *context) {
+        return handler(name, args, context, next);
+    };
+}
+
+- (void) addInvokeHandler:(HproseInvokeHandler)handler {
+    if (handler == nil) return;
+    [invokeHandlers addObject:handler];
+    HproseNextInvokeHandler next = defaultInvokeHandler;
+    for (NSUInteger i = invokeHandlers.count; i > 0; --i) {
+        next = getNextInvokeHandler(next, invokeHandlers[i - 1]);
+    }
+    invokeHandler = next;
+}
+
+HproseNextFilterHandler getNextFilterHandler(HproseNextFilterHandler next, HproseFilterHandler handler) {
+    return ^id(NSData *request, HproseContext *context) {
+        return handler(request, context, next);
+    };
+}
+
+- (void) addBeforeFilterHandler:(HproseFilterHandler)handler {
+    if (handler == nil) return;
+    [beforeFilterHandlers addObject:handler];
+    HproseNextFilterHandler next = defaultBeforeFilterHandler;
+    for (NSUInteger i = beforeFilterHandlers.count; i > 0; --i) {
+        next = getNextFilterHandler(next, beforeFilterHandlers[i - 1]);
+    }
+    beforeFilterHandler = next;
+}
+
+- (void) addAfterFilterHandler:(HproseFilterHandler)handler {
+    if (handler == nil) return;
+    [afterFilterHandlers addObject:handler];
+    HproseNextFilterHandler next = defaultAfterFilterHandler;
+    for (NSUInteger i = afterFilterHandlers.count; i > 0; --i) {
+        next = getNextFilterHandler(next, afterFilterHandlers[i - 1]);
+    }
+    afterFilterHandler = next;
+}
+
+- (HproseClient *) use:(HproseInvokeHandler)handler {
+    [self addInvokeHandler:handler];
+    return self;
+}
+
 @end
 
 @implementation HproseClient(PrivateMethods)
 
 - (id) syncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings {
     HproseClientContext *context = [[HproseClientContext alloc] init:self settings:settings];
-    NSData * data = [self doOutput:name withArgs:args context:context];
-    data = [self sendAndReceive:data];
-    id result = [self doInput:data withArgs:args context:context];
-    if ([result isKindOfClass:[NSException class]]) {
-        @throw result;
-    }
-    return result;
+    return invokeHandler(name, args, context);
 }
 
 - (id) asyncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings {
@@ -249,85 +346,73 @@
     }
     HproseClientContext *context = [[HproseClientContext alloc] init:self settings:settings];
     @try {
-        NSData *data = [self doOutput:name withArgs:args context:context];
-        [self sendAsync:data receiveAsync:^(NSData *data) {
-            @try {
-                NSArray *_args = args;
-                if (settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
-                    _args = [args mutableCopy];
+        if (settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
+            args = [args mutableCopy];
+        }
+        id result = invokeHandler(name, args, context);
+        if ([Promise isPromise:result]) {
+            [(Promise *)result last:^(id result) {
+                [promise resolve:result];
+                if (settings.callback) {
+                    settings.callback(result, args);
                 }
-                id result = [self doInput:data withArgs:_args context:context];
-                if ([result isMemberOfClass:[HproseException class]]) {
-                    [self errorHandler:name withException:result settings:settings];
-                    [promise reject:result];
+                else if (settings.block) {
+                    settings.block(result, args);
                 }
-                else {
-                    [promise resolve:result];
-                    if (settings.callback) {
-                        settings.callback(result, _args);
-                    }
-                    else if (settings.block) {
-                        settings.block(result, _args);
-                    }
-                    else if (settings.delegate != nil && settings.selector != NULL) {
-                        id delegate = settings.delegate;
-                        SEL selector = settings.selector;
-                        NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
-                        NSUInteger n = [methodSignature numberOfArguments];
-                        switch (n) {
-                            case 2: ((void (*)(id, SEL))objc_msgSend)(delegate, selector); break;
-                            case 3: {
-                                switch (settings.resultType) {
-                                    case _C_ID: ((void (*)(id, SEL, id))objc_msgSend)(delegate, selector, result); break;
-                                    case _C_CHR: ((void (*)(id, SEL, char))objc_msgSend)(delegate, selector, [result charValue]); break;
-                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
-                                    case _C_SHT: ((void (*)(id, SEL, short))objc_msgSend)(delegate, selector, [result shortValue]); break;
-                                    case _C_USHT: ((void (*)(id, SEL, unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
-                                    case _C_INT: ((void (*)(id, SEL, int))objc_msgSend)(delegate, selector, [result intValue]); break;
-                                    case _C_UINT: ((void (*)(id, SEL, unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
-                                    case _C_LNG: ((void (*)(id, SEL, long))objc_msgSend)(delegate, selector, [result longValue]); break;
-                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
-                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
-                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
-                                    case _C_FLT: ((void (*)(id, SEL, float))objc_msgSend)(delegate, selector, [result floatValue]); break;
-                                    case _C_DBL: ((void (*)(id, SEL, double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
-                                    case _C_BOOL: ((void (*)(id, SEL, BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
-                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
-                                }
-                                break;
+                else if (settings.delegate != nil && settings.selector != NULL) {
+                    id delegate = settings.delegate;
+                    SEL selector = settings.selector;
+                    NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
+                    NSUInteger n = [methodSignature numberOfArguments];
+                    switch (n) {
+                        case 2: ((void (*)(id, SEL))objc_msgSend)(delegate, selector); break;
+                        case 3: {
+                            switch (settings.resultType) {
+                                case _C_ID: ((void (*)(id, SEL, id))objc_msgSend)(delegate, selector, result); break;
+                                case _C_CHR: ((void (*)(id, SEL, char))objc_msgSend)(delegate, selector, [result charValue]); break;
+                                case _C_UCHR: ((void (*)(id, SEL, unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
+                                case _C_SHT: ((void (*)(id, SEL, short))objc_msgSend)(delegate, selector, [result shortValue]); break;
+                                case _C_USHT: ((void (*)(id, SEL, unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
+                                case _C_INT: ((void (*)(id, SEL, int))objc_msgSend)(delegate, selector, [result intValue]); break;
+                                case _C_UINT: ((void (*)(id, SEL, unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
+                                case _C_LNG: ((void (*)(id, SEL, long))objc_msgSend)(delegate, selector, [result longValue]); break;
+                                case _C_ULNG: ((void (*)(id, SEL, unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
+                                case _C_LNG_LNG: ((void (*)(id, SEL, long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
+                                case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
+                                case _C_FLT: ((void (*)(id, SEL, float))objc_msgSend)(delegate, selector, [result floatValue]); break;
+                                case _C_DBL: ((void (*)(id, SEL, double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
+                                case _C_BOOL: ((void (*)(id, SEL, BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
+                                case _C_CHARPTR: ((void (*)(id, SEL, const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
                             }
-                            case 4: {
-                                switch (settings.resultType) {
-                                    case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, _args); break;
-                                    case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], _args); break;
-                                    case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], _args); break;
-                                    case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], _args); break;
-                                    case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], _args); break;
-                                    case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], _args); break;
-                                    case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], _args); break;
-                                    case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], _args); break;
-                                    case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], _args); break;
-                                    case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], _args); break;
-                                    case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], _args); break;
-                                    case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], _args); break;
-                                    case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], _args); break;
-                                    case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], _args); break;
-                                    case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], _args); break;
-                                }
-                                break;
+                            break;
+                        }
+                        case 4: {
+                            switch (settings.resultType) {
+                                case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, args); break;
+                                case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
+                                case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
+                                case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
+                                case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
+                                case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
+                                case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
+                                case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
+                                case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
+                                case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
+                                case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
+                                case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
+                                case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
+                                case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
+                                case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
                             }
+                            break;
                         }
                     }
                 }
-            }
-            @catch (NSException *e) {
+            } catch:^(id e) {
                 [self errorHandler:name withException:e settings:settings];
                 [promise reject:e];
-            }
-        } error:^(NSException *e) {
-            [self errorHandler:name withException:e settings:settings];
-            [promise reject:e];
-        }];
+            }];
+        }
     }
     @catch (NSException *e) {
         [self errorHandler:name withException:e settings:settings];
@@ -360,105 +445,213 @@
     }
 }
 
-- (HproseException *) wrongResponse:(NSData *)data {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat:@"Wrong Response: %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]];
+- (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context {
+    for (NSUInteger i = 0, n = filters.count; i < n; ++i) {
+        request = [filters[i] outputFilter:request withContext:context];
+    }
+    return request;
 }
 
-- (NSData *) doOutput:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context {
-    HproseInvokeSettings *settings = context.settings;
-    NSOutputStream *ostream = [NSOutputStream outputStreamToMemory];
-    [ostream open];
+- (NSData *) inputFilter:(NSData *)response context:(HproseClientContext *)context {
+    for (NSUInteger i = filters.count; i > 0; --i) {
+        response = [filters[i - 1] inputFilter:response withContext:context];
+    }
+    return response;
+}
+
+- (id) beforeFilterHandler:(NSData *)request context:(HproseClientContext *)context {
+    request = [self outputFilter:request context:context];
+    id response = afterFilterHandler(request, context);
+    if ([Promise isPromise:response]) {
+        return [((Promise *)response) then:^id(NSData *response) {
+            if (context.settings.oneway) return nil;
+            response = [self inputFilter:response context:context];
+            return response;
+        }];
+    }
+    else if ([response isKindOfClass:[NSData class]]) {
+        if (context.settings.oneway) return nil;
+        response = [self inputFilter:(NSData *)response context:context];
+        return response;
+    }
+    else {
+        @throw [HproseException exceptionWithReason:@"Wrong return type of afterFilterHander"];
+    }
+}
+
+- (id) afterFilterHandler:(NSData *)request context:(HproseClientContext *)context {
+    if (context.settings.async) {
+        Promise *response = [Promise promise];
+        [self sendAsync:request receiveAsync:^(NSData *data) {
+            [response resolve:data];
+        } error:^(NSException *e) {
+            [response reject:e];
+        }];
+        return response;
+    }
+    return [self sendAndReceive:request];
+}
+
+- (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context {
     @try {
-        HproseWriter *writer = [HproseWriter writerWithStream:ostream simple:settings.simple];
-        [ostream writeByte:HproseTagCall];
+        id response = beforeFilterHandler(request, context);
+        if ([Promise isPromise:response]) {
+            return [((Promise *) response) catch:^id(id e) {
+                id response = [self retry:request context:context];
+                if (response != nil) {
+                    return response;
+                }
+                @throw e;
+            }];
+        }
+        else if ([response isKindOfClass:[NSData class]]) {
+            return response;
+        }
+        else {
+            @throw [HproseException exceptionWithReason:@"Wrong return type of beforeFilterHander"];
+        }
+    }
+    @catch (NSException *e) {
+        id response = [self retry:request context:context];
+        if (response != nil) {
+            return response;
+        }
+        @throw e;
+    }
+}
+
+- (id) retry:(NSData *)request context:(HproseClientContext *)context {
+    HproseInvokeSettings *settings = context.settings;
+    if (settings.failswitch) {
+        int64_t i = OSAtomicAdd64(1, &index);
+        if (i >= uris.count) {
+            index = 0;
+            i = index;
+        }
+        _uri = uris[i];
+    }
+    if (settings.idempotent) {
+        NSUInteger n = settings.retry;
+        if (n > 0) {
+            settings.retry = n - 1;
+            NSTimeInterval interval = (n >= 10) ? 0.5 : (10 - n) * 0.5;
+            if (settings.async) {
+                return [Promise delayed:interval block:^id{
+                    return [self sendAndReceive:request context:context];
+                }];
+            }
+            else {
+                [NSThread sleepForTimeInterval:interval];
+                return [self sendAndReceive:request context:context];
+            }
+        }
+    }
+    return nil;
+}
+
+NSData * encode(NSString *name, NSArray *args, HproseClientContext *context) {
+    HproseInvokeSettings *settings = context.settings;
+    NSOutputStream *stream = [NSOutputStream outputStreamToMemory];
+    [stream open];
+    @try {
+        HproseWriter *writer = [HproseWriter writerWithStream:stream simple:settings.simple];
+        [stream writeByte:HproseTagCall];
         [writer writeString:name];
-        if (args != nil && ([args count] > 0 || settings.byref)) {
+        if (args != nil && (args.count > 0 || settings.byref)) {
             [writer reset];
             [writer writeArray:args];
             if (settings.byref) {
                 [writer writeBoolean:YES];
             }
         }
-        [ostream writeByte:HproseTagEnd];
-        NSData *data = [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-        for (NSUInteger i = 0, n = filters.count; i < n; ++i) {
-            data = [filters[i] outputFilter:data withContext:context];
-        }
+        [stream writeByte:HproseTagEnd];
+        NSData *data = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
         return data;
     }
     @finally {
-        [ostream close];
+        [stream close];
     }
 }
 
-- (id) doInput:(NSData *)data withArgs:(NSArray *)args context:(HproseClientContext *)context {
-    if ([data length] == 0) {
+HproseException * wrongResponse(NSData *data) {
+    return [HproseException exceptionWithReason:[NSString stringWithFormat:@"Wrong Response: %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]];
+}
+
+id decode(NSData *data, NSArray *args, HproseClientContext *context) {
+    HproseInvokeSettings *settings = context.settings;
+    if (settings.oneway) {
+        return nil;
+    }
+    if (data.length == 0) {
         @throw [HproseException exceptionWithReason:@"EOF"];
     }
-    for (int i = (int)filters.count - 1; i >= 0; --i) {
-        data = [filters[i] inputFilter:data withContext:context];
-    }
-    int tag = ((uint8_t *)[data bytes])[[data length] - 1];
+    int tag = ((uint8_t *)data.bytes)[data.length - 1];
     if (tag != HproseTagEnd) {
-        @throw [self wrongResponse:data];
+        @throw wrongResponse(data);
     }
-    HproseInvokeSettings *settings = context.settings;
     HproseResultMode mode = settings.mode;
-    if (mode == HproseResultMode_Raw) {
-        data = [NSData dataWithBytes:[data bytes] length:[data length] - 1];
-    }
-    if (mode == HproseResultMode_RawWithEndTag || mode == HproseResultMode_Raw) {
+    if (mode == HproseResultMode_RawWithEndTag) {
         return data;
     }
+    if (mode == HproseResultMode_Raw) {
+        return [NSData dataWithBytes:data.bytes length:data.length - 1];
+    }
     id result = nil;
-    NSInputStream *istream = [NSInputStream inputStreamWithData:data];
-    [istream open];
+    NSInputStream *stream = [NSInputStream inputStreamWithData:data];
+    [stream open];
     @try {
-        HproseReader *reader = [HproseReader readerWithStream:istream];
-        while ((tag = [istream readByte]) != HproseTagEnd) {
-            switch (tag) {
-                case HproseTagResult: {
-                    if (mode == HproseResultMode_Normal) {
-                        [reader reset];
-                        result = [reader unserialize:settings.resultClass withType:settings.resultType];
-                    }
-                    else {
-                        result = [reader readRaw];
-                    }
-                    break;
-                }
-                case HproseTagArgument: {
-                    [reader reset];
-                    NSArray *arguments = [reader readArray];
-                    if (args != nil) {
-                        NSUInteger n = [arguments count];
-                        if (n > [args count]) {
-                            n = [args count];
-                        }
-                        if ([args isKindOfClass:[NSMutableArray class]]) {
-                            NSMutableArray *_args = (NSMutableArray *)args;
-                            for (NSUInteger i = 0; i < n; i++) {
-                                _args[i] = arguments[i];
-                            }
-                        }
-                    }
-                    break;
-                }
-                case HproseTagError: {
-                    [reader reset];
-                    result = [HproseException exceptionWithReason:[reader readString]];
-                    break;
-                }
-                default: {
-                    @throw [self wrongResponse:data];
-                }
+        HproseReader *reader = [HproseReader readerWithStream:stream];
+        tag = [stream readByte];
+        if (tag == HproseTagResult) {
+            if (mode == HproseResultMode_Normal) {
+                result = [reader unserialize:settings.resultClass withType:settings.resultType];
             }
+            else {
+                result = [reader readRaw];
+            }
+            tag = [stream readByte];
+            if (tag == HproseTagArgument) {
+                [reader reset];
+                NSArray *arguments = [reader readArray];
+                if (args != nil) {
+                    NSUInteger n = arguments.count;
+                    if (n > args.count) {
+                        n = args.count;
+                    }
+                    if ([args isKindOfClass:[NSMutableArray class]]) {
+                        NSMutableArray *_args = (NSMutableArray *)args;
+                        for (NSUInteger i = 0; i < n; i++) {
+                            _args[i] = arguments[i];
+                        }
+                    }
+                }
+                tag = [stream readByte];
+            }
+        }
+        else if (tag == HproseTagError) {
+            @throw [HproseException exceptionWithReason:[reader readString]];
+        }
+        if (tag != HproseTagEnd) {
+            @throw wrongResponse(data);
         }
     }
     @finally {
-        [istream close];
+        [stream close];
     }
     return result;
+}
+
+- (id) invokeHandler:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context {
+    NSData *request = encode(name, args, context);
+    id response = [self sendAndReceive:request context:context];
+    if ([Promise isPromise:response]) {
+        return [(Promise *)response then:^id(NSData *response) {
+            return decode((NSData *)response, args, context);
+        }];
+    }
+    else {
+        return decode((NSData *)response, args, context);
+    }
 }
 
 @end

@@ -61,7 +61,7 @@
     [[delegate exam] testErrorCallback:@selector(showCallback) delegate:self error:^(NSString *name, NSException *e) {
         UIAlertView *alert = nil;
         alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error on: %@", name]
-                                           message:[e name]
+                                           message:[e reason]
                                           delegate:self
                                  cancelButtonTitle:@"OK"
                                  otherButtonTitles:nil];

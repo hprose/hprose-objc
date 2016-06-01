@@ -12,13 +12,19 @@
  *                                                        *
  * hprose http client header for Objective-C.             *
  *                                                        *
- * LastModified: Mar 23, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
 #import "HproseClient.h"
+
+#ifdef UIKIT_EXTERN
+#define HPROSE_ASYNC_QUEUE dispatch_get_main_queue()
+#else
+#define HPROSE_ASYNC_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+#endif
 
 @interface HproseHttpClient : HproseClient {
     @private NSURL *_url;
@@ -27,7 +33,6 @@
 #endif
 }
 
-@property NSTimeInterval timeout;
 @property BOOL keepAlive;
 @property int keepAliveTimeout;
 @property (readonly) NSMutableDictionary *header;

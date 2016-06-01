@@ -37,6 +37,7 @@
 
 /* Begin PBXFileReference section */
 		9B642B031CF5FCE8003C4946 /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HproseInvokeSettings.m; sourceTree = "<group>"; };
+		9B642B101CFD6E1E003C4946 /* HproseHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HproseHandlers.h; sourceTree = "<group>"; };
 		9BC8D66C1CEA0282000E92AF /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Promise.h; sourceTree = "<group>"; };
 		9BC8D66D1CEA0282000E92AF /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Promise.m; sourceTree = "<group>"; };
 		9BE497481CEF1F1B001CBCA5 /* HproseInvokeSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HproseInvokeSettings.h; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 				9BE87D351B08CF380053F1E8 /* HproseContext.m */,
 				9BE497481CEF1F1B001CBCA5 /* HproseInvokeSettings.h */,
 				9B642B031CF5FCE8003C4946 /* HproseInvokeSettings.m */,
+				9B642B101CFD6E1E003C4946 /* HproseHandlers.h */,
 			);
 			name = Hprose;
 			path = ../../../src;

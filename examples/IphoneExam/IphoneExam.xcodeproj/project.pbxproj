@@ -53,6 +53,7 @@
 		9B0B26211AE7646B00292044 /* LogFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogFilter.m; sourceTree = "<group>"; };
 		9B642B051CF6DE3A003C4946 /* HproseInvokeSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvokeSettings.h; path = ../../src/HproseInvokeSettings.h; sourceTree = "<group>"; };
 		9B642B061CF6DE3A003C4946 /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseInvokeSettings.m; path = ../../src/HproseInvokeSettings.m; sourceTree = "<group>"; };
+		9B642B0F1CFC55FA003C4946 /* HproseHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHandlers.h; path = ../../src/HproseHandlers.h; sourceTree = "<group>"; };
 		9BD079901BAA57E10040EA1F /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		9BD079911BAA57E10040EA1F /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		9BD8145B11A1C07D005BEAFF /* FourthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FourthViewController.h; sourceTree = "<group>"; };
@@ -218,6 +219,7 @@
 				D824A71718F79F06004ED013 /* HproseWriter.m */,
 				9BE87D311B08CDDB0053F1E8 /* HproseContext.h */,
 				9BE87D321B08CDDB0053F1E8 /* HproseContext.m */,
+				9B642B0F1CFC55FA003C4946 /* HproseHandlers.h */,
 			);
 			name = Hprose;
 			sourceTree = "<group>";

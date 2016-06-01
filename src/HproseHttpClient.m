@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Mar 23, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -185,7 +185,6 @@
 
 - (id) init {
     if (self = [super init]) {
-        [self setTimeout:30.0];
         [self setKeepAlive:YES];
         [self setKeepAliveTimeout:300];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
@@ -236,7 +235,7 @@
 
 - (NSData *) sendAndReceive:(NSData *)data {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
-    [request setTimeoutInterval:_timeout];
+    [request setTimeoutInterval:self.timeout];
     for (id field in _header) {
         [request setValue:_header[field] forHTTPHeaderField:field];
     }
@@ -294,7 +293,7 @@
              receiveAsync:(void (^)(NSData *))receiveCallback
                     error:(void (^)(NSException *))errorCallback {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
-    [request setTimeoutInterval:_timeout];
+    [request setTimeoutInterval:self.timeout];
     for (id field in _header) {
         [request setValue:_header[field] forHTTPHeaderField:field];
     }
@@ -317,7 +316,7 @@
 #else
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request
                                              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(HPROSE_ASYNC_QUEUE, ^{
             if (data == nil) {
                 NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                                        (int)[error code],

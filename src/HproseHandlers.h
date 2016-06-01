@@ -8,27 +8,19 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * Hprose.h                                               *
+ * HproseHandlers.h                                       *
  *                                                        *
- * hprose header for Objective-C.                         *
+ * hprose handlers header for Objective-C.                *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: May 30, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
-#import "Promise.h"
-#import "HproseTags.h"
-#import "HproseReader.h"
-#import "HproseWriter.h"
-#import "HproseFormatter.h"
-#import "HproseException.h"
-#import "HproseHelper.h"
-#import "HproseClassManager.h"
-#import "HproseResultMode.h"
+#import <Foundation/Foundation.h>
 #import "HproseContext.h"
-#import "HproseFilter.h"
-#import "HproseInvokeSettings.h"
-#import "HproseHandlers.h"
-#import "HproseClient.h"
-#import "HproseHttpClient.h"
+
+typedef id(^HproseNextInvokeHandler)(NSString *name, NSArray *args, HproseContext *context);
+typedef id(^HproseInvokeHandler)(NSString *name, NSArray *args, HproseContext *context, HproseNextInvokeHandler next);
+typedef id(^HproseNextFilterHandler)(NSData *request, HproseContext *context);
+typedef id(^HproseFilterHandler)(NSData *request, HproseContext *context, HproseNextFilterHandler next);

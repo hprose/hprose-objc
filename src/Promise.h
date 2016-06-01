@@ -12,12 +12,18 @@
  *                                                        *
  * Promise header for Objective-C.                        *
  *                                                        *
- * LastModified: May 20, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
+
+#ifdef UIKIT_EXTERN
+#define PROMISE_QUEUE dispatch_get_main_queue()
+#else
+#define PROMISE_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+#endif
 
 @interface NSArray<ObjectType> (NSArrayFunctional)
 
