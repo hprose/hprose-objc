@@ -570,9 +570,6 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
     else if (_delegate != nil && _onError != NULL && [_delegate respondsToSelector:_onError]) {
         ((void (*)(id, SEL, NSString *, NSException *))objc_msgSend)(_delegate, _onError, name, e);
     }
-    else {
-        NSLog(@"%@", e);
-    }
 }
 
 - (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context {
@@ -789,8 +786,6 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
         autoId = (Promise *)[self invoke:@"#" settings:autoIdSettings];
         [autoId last:^(NSNumber *value) {
             _clientId = value;
-        } catch:^(NSException *e) {
-            [self errorHandler:@"autoId" withException:e settings:autoIdSettings];
         }];
     }
     return autoId;
