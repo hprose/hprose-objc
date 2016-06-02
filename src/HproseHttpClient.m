@@ -233,9 +233,9 @@
     }
 }
 
-- (NSData *) sendAndReceive:(NSData *)data {
+- (NSURLRequest *) createRequest:(NSData *)data timeout:(NSTimeInterval)timeout {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
-    [request setTimeoutInterval:self.timeout];
+    [request setTimeoutInterval:timeout];
     for (id field in _header) {
         [request setValue:_header[field] forHTTPHeaderField:field];
     }
@@ -250,7 +250,11 @@
     [request setHTTPShouldHandleCookies:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
-    
+    return request;
+}
+
+- (NSData *) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout {
+    NSURLRequest *request = [self createRequest:data timeout:timeout];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
     NSHTTPURLResponse *response;
     NSError *error;
@@ -289,25 +293,10 @@
     return ret;
 }
 
-- (oneway void) sendAsync:(NSData *)data
+- (oneway void) sendAsync:(NSData *)data timeout:(NSTimeInterval)timeout
              receiveAsync:(void (^)(NSData *))receiveCallback
                     error:(void (^)(NSException *))errorCallback {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
-    [request setTimeoutInterval:self.timeout];
-    for (id field in _header) {
-        [request setValue:_header[field] forHTTPHeaderField:field];
-    }
-    if (_keepAlive) {
-        [request setValue:@"keep-alive" forHTTPHeaderField:@"Connection"];
-        [request setValue:[@(_keepAliveTimeout) stringValue] forHTTPHeaderField:@"Keep-Alive"];
-    }
-    else {
-        [request setValue:@"close" forHTTPHeaderField:@"Connection"];
-    }
-    [request setValue:@"application/hprose" forHTTPHeaderField:@"Content-type"];
-    [request setHTTPShouldHandleCookies:YES];
-    [request setHTTPMethod:@"POST"];
-    [request setHTTPBody:data];
+    NSURLRequest *request = [self createRequest:data timeout:timeout];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
     AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];

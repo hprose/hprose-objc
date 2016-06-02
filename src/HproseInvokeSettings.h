@@ -12,7 +12,7 @@
  *                                                        *
  * hprose invoke settings header for Objective-C.         *
  *                                                        *
- * LastModified: May 25, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -34,6 +34,7 @@ typedef void (*HproseErrorCallback)(NSString *, NSException *);
     NSNumber * _failswitch;
     NSNumber * _oneway;
     NSNumber * _retry;
+    NSNumber * _timeout;
 }
 
 @property HproseResultMode mode;
@@ -43,6 +44,7 @@ typedef void (*HproseErrorCallback)(NSString *, NSException *);
 @property (getter = getFailswitch, setter = setFailswitch:) BOOL failswitch;
 @property (getter = getOneway, setter = setOneway:) BOOL oneway;
 @property (getter = getRetry, setter = setRetry:) NSUInteger retry;
+@property (getter = getTimeout, setter = setTimeout:) NSTimeInterval timeout;
 @property (copy, nonatomic) HproseBlock block;
 @property (copy, nonatomic) HproseErrorBlock errorBlock;
 @property (assign, nonatomic) HproseCallback callback;
@@ -70,6 +72,8 @@ typedef void (*HproseErrorCallback)(NSString *, NSException *);
 - (void) setOneway:(BOOL)value;
 - (NSUInteger) getRetry;
 - (void) setRetry:(NSUInteger)value;
+- (NSTimeInterval) getTimeout;
+- (void) setTimeout:(NSTimeInterval)value;
 
 - (void) copyTo:(HproseInvokeSettings *)settings;
 

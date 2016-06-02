@@ -12,7 +12,7 @@
  *                                                        *
  * hprose invoke settings for Objective-C.                *
  *                                                        *
- * LastModified: May 26, 2016                             *
+ * LastModified: Jun 2, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -31,6 +31,7 @@
         _failswitch = nil;
         _oneway = nil;
         _retry = nil;
+        _timeout = nil;
         _resultType = 0;
         _resultClass = Nil;
         _block = nil;
@@ -68,6 +69,9 @@
         }
         if (settings[@"retry"] != nil) {
             self.retry = [settings[@"retry"] unsignedIntegerValue];
+        }
+        if (settings[@"timeout"] != nil) {
+            self.timeout = [settings[@"timeout"] doubleValue];
         }
         if (settings[@"resultType"] != nil) {
             self.resultType = [settings[@"resultType"] charValue];
@@ -152,6 +156,14 @@
     return [_retry unsignedIntegerValue];
 }
 
+- (void) setTimeout:(NSTimeInterval)value {
+    _timeout = @(value);
+}
+
+- (NSTimeInterval) getTimeout {
+    return [_timeout doubleValue];
+}
+
 - (void) copyTo:(HproseInvokeSettings *)settings {
     settings.mode = self.mode;
     settings.async = self.async;
@@ -161,6 +173,7 @@
     if (_failswitch != nil) settings.failswitch = self.failswitch;
     if (_oneway != nil) settings.oneway = self.oneway;
     if (_retry != nil) settings.retry = self.retry;
+    if (_timeout != nil) settings.timeout = self.timeout;
     if (_resultType != 0) settings.resultType = self.resultType;
     if (_resultClass != Nil) settings.resultClass = self.resultClass;
     if (_block != nil) settings.block = self.block;

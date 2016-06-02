@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jun 3, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -26,7 +26,6 @@
 #import "HproseHelper.h"
 #import "HproseClient.h"
 #import "HproseClientProxy.h"
-#import "Promise.h"
 #import "libkern/OSAtomic.h"
 
 @implementation HproseClientContext
@@ -40,6 +39,7 @@
         _settings.failswitch = client.failswitch;
         _settings.idempotent = client.idempontent;
         _settings.retry = client.retry;
+        _settings.timeout = client.timeout;
         _settings.oneway = NO;
         [settings copyTo:_settings];
     }
@@ -65,6 +65,18 @@
 
 @end
 
+@implementation HproseTopic
+
+- (id) init {
+    if (self = [super init]) {
+        _handler = nil;
+        _callbacks = [NSMutableArray array];
+    }
+    return self;
+}
+
+@end
+
 @interface HproseClient(PrivateMethods)
 
 - (id) syncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings;
@@ -80,9 +92,27 @@
 - (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context;
 - (id) retry:(NSData *)request context:(HproseClientContext *)context;
 
+- (Promise *) getAutoId;
+- (HproseTopic *) getTopic:(NSString *)name id:(int32_t)clientId create:(BOOL)create;
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
+
 @end
 
 @implementation HproseClient
+
+static HproseInvokeSettings *autoIdSettings;
+
++ (void) initialize {
+    if (self == [HproseClient class]) {
+        autoIdSettings = [[HproseInvokeSettings alloc] init];
+        autoIdSettings.resultType =_C_INT;
+        autoIdSettings.simple = YES;
+        autoIdSettings.idempotent = YES;
+        autoIdSettings.failswitch = YES;
+        autoIdSettings.async = YES;
+    }
+}
 
 + (id) client {
     return [[self alloc] init];
@@ -121,6 +151,10 @@
         afterFilterHandler = defaultAfterFilterHandler;
         _beforeFilter = [[HproseFilterHandlerManager alloc] init:@selector(addBeforeFilterHandler:) with:self];
         _afterFilter = [[HproseFilterHandlerManager alloc] init:@selector(addAfterFilterHandler:) with:self];
+        autoId = nil;
+        _clientId = nil;
+        allTopics = [NSMutableDictionary dictionary];
+        
     }
     return self;
 }
@@ -282,6 +316,102 @@ HproseNextFilterHandler getNextFilterHandler(HproseNextFilterHandler next, Hpros
 - (HproseClient *) use:(HproseInvokeHandler)handler {
     [self addInvokeHandler:handler];
     return self;
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback {
+    [self subscribe:name callback:callback resultType:_C_ID resultClass:Nil timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout {
+    [self subscribe:name callback:callback resultType:_C_ID resultClass:Nil timeout:timeout];
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType {
+    [self subscribe:name callback:callback resultType:resultType resultClass:Nil timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout {
+    [self subscribe:name callback:callback resultType:resultType resultClass:Nil timeout:timeout];
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass {
+    [self subscribe:name callback:callback resultType:_C_ID resultClass:resultClass timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout {
+    [self subscribe:name callback:callback resultType:_C_ID resultClass:resultClass timeout:timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback {
+    [self subscribe:name id:clientId callback:callback resultType:_C_ID resultClass:Nil timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout {
+    [self subscribe:name id:clientId callback:callback resultType:_C_ID resultClass:Nil timeout:timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType {
+    [self subscribe:name id:clientId callback:callback resultType:resultType resultClass:Nil timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout {
+    [self subscribe:name id:clientId callback:callback resultType:resultType resultClass:Nil timeout:timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass {
+    [self subscribe:name id:clientId callback:callback resultType:_C_ID resultClass:resultClass timeout:self.timeout];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout {
+    [self subscribe:name id:clientId callback:callback resultType:_C_ID resultClass:resultClass timeout:timeout];
+}
+
+void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(id)) {
+    if (topics != nil && topics.count > 0) {
+        if (callback != nil) {
+            HproseTopic *topic = topics[clientId];
+            if (topic != nil) {
+                [topic.callbacks removeObject:callback];
+                if (topic.callbacks.count == 0) {
+                    [topics removeObjectForKey:clientId];
+                }
+            }
+        }
+        else {
+            [topics removeObjectForKey:clientId];
+        }
+    }
+}
+
+- (void) unsubscribe:(NSString *)name {
+    [self unsubscribe:name callback:nil];
+}
+
+- (void) unsubscribe:(NSString *)name id:(int32_t)clientId {
+    [self unsubscribe:name id:clientId callback:nil];
+}
+
+- (void) unsubscribe:(NSString *)name callback:(void (^)(id))callback {
+    NSMutableDictionary<NSNumber *, HproseTopic *> *topics = allTopics[name];
+    if (topics != nil) {
+        if (autoId == nil) {
+            for (NSNumber *i in topics) {
+                delTopic(topics, i, callback);
+            }
+        }
+        else {
+            [autoId last:^(NSNumber *clientId) {
+                delTopic(topics, clientId, callback);
+            }];
+        }
+    }
+}
+
+- (void) unsubscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback {
+    NSMutableDictionary<NSNumber *, HproseTopic *> *topics = allTopics[name];
+    if (topics != nil) {
+        delTopic(topics, @(clientId), callback);
+    }
 }
 
 @end
@@ -482,14 +612,14 @@ HproseNextFilterHandler getNextFilterHandler(HproseNextFilterHandler next, Hpros
 - (id) afterFilterHandler:(NSData *)request context:(HproseClientContext *)context {
     if (context.settings.async) {
         Promise *response = [Promise promise];
-        [self sendAsync:request receiveAsync:^(NSData *data) {
+        [self sendAsync:request timeout:context.settings.timeout receiveAsync:^(NSData *data) {
             [response resolve:data];
         } error:^(NSException *e) {
             [response reject:e];
         }];
         return response;
     }
-    return [self sendAndReceive:request];
+    return [self sendAndReceive:request timeout:context.settings.timeout];
 }
 
 - (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context {
@@ -651,6 +781,86 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
     }
     else {
         return decode((NSData *)response, args, context);
+    }
+}
+
+- (Promise *) getAutoId {
+    if (autoId == nil) {
+        autoId = (Promise *)[self invoke:@"#" settings:autoIdSettings];
+        [autoId last:^(NSNumber *value) {
+            _clientId = value;
+        } catch:^(NSException *e) {
+            [self errorHandler:@"autoId" withException:e settings:autoIdSettings];
+        }];
+    }
+    return autoId;
+}
+
+- (HproseTopic *) getTopic:(NSString *)name id:(int32_t)id create:(BOOL)create {
+    NSMutableDictionary<NSNumber *, HproseTopic *> *topics = allTopics[name];
+    if (topics != nil) {
+        return topics[@(id)];
+    }
+    if (create) {
+        allTopics[name] = [NSMutableDictionary dictionary];
+    }
+    return nil;
+}
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout {
+    [[self getAutoId] last:^(NSNumber *clientId) {
+        [self subscribe:name id:[clientId intValue] callback:callback resultType:resultType resultClass:resultClass timeout:timeout];
+    }];
+}
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout {
+    HproseTopic *topic = [self getTopic:name id:clientId create:YES];
+    if (topic == nil) {
+        void (^cb)(NSException *) = ^(NSException *e) {
+            HproseTopic *topic = [self getTopic:name id:clientId create:NO];
+            if (topic != nil) {
+                HproseInvokeSettings *settings = [[HproseInvokeSettings alloc] init];
+                settings.idempotent = YES;
+                settings.failswitch = NO;
+                settings.resultType = resultType;
+                settings.resultClass = resultClass;
+                settings.timeout = timeout;
+                settings.async = YES;
+                @try {
+                    Promise *result = [self invoke:name withArgs:@[@(clientId)] settings:settings];
+                    [result last:topic.handler catch:cb];
+                }
+                @catch (NSException *e) {
+                    cb(e);
+                }
+            }
+        };
+        topic = [[HproseTopic alloc] init];
+        topic.handler = ^(id result) {
+            HproseTopic *topic = [self getTopic:name id:clientId create:NO];
+            if (topic != nil) {
+                if (result != nil) {
+                    for (void (^callback)(id) in topic.callbacks) {
+                        @try {
+                            callback(result);
+                        }
+                        @catch (id e) {}
+                    }
+                }
+                cb(nil);
+            }
+        };
+        [topic.callbacks addObject:callback];
+        allTopics[name][@(clientId)] = topic;
+        @try {
+            cb(nil);
+        }
+        @catch (NSException *exception) {
+            [self errorHandler:name withException:exception settings:[[HproseInvokeSettings alloc] init]];
+        }
+    }
+    else if (![topic.callbacks containsObject:callback]) {
+        [topic.callbacks addObject:callback];
     }
 }
 

@@ -12,12 +12,13 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jun 3, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import <Foundation/Foundation.h>
+#import "Promise.h"
 #import "HproseInvoker.h"
 #import "HproseInvokeSettings.h"
 #import "HproseFilter.h"
@@ -28,9 +29,9 @@
 
 @optional
 
-- (NSData *) sendAndReceive:(NSData *)data;
+- (NSData *) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout;
 
-- (oneway void) sendAsync:(NSData *)data
+- (oneway void) sendAsync:(NSData *)data timeout:(NSTimeInterval)timeout
                 receiveAsync:(void (^)(NSData *))receiveCallback
                 error:(void (^)(NSException *))errorCallback;
 @end
@@ -46,6 +47,13 @@
 
 @end
 
+@interface HproseTopic : NSObject{}
+
+@property NSMutableArray<void(^)(id)> *callbacks;
+@property (copy, nonatomic) void(^handler)(id);
+
+@end
+
 @interface HproseClient : NSObject<HproseInvoker, HproseTransporter> {
 @private
     NSMutableArray<id<HproseFilter>> *filters;
@@ -57,6 +65,8 @@
     HproseNextInvokeHandler invokeHandler, defaultInvokeHandler;
     HproseNextFilterHandler beforeFilterHandler, defaultBeforeFilterHandler;
     HproseNextFilterHandler afterFilterHandler, defaultAfterFilterHandler;
+    Promise * autoId;
+    NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, HproseTopic *> *> *allTopics;
 }
 
 @property (copy) NSString *uri;
@@ -73,6 +83,7 @@
 @property (copy, nonatomic) HproseErrorBlock errorHandler;
 @property (readonly) HproseFilterHandlerManager *beforeFilter;
 @property (readonly) HproseFilterHandlerManager *afterFilter;
+@property (readonly) NSNumber *clientId;
 
 + (id) client;
 + (id) client:(NSString *)uri;
@@ -94,6 +105,27 @@
 - (void) addAfterFilterHandler:(HproseFilterHandler)handler;
 - (HproseClient *) use:(HproseInvokeHandler)handler;
 
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback;
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout;
+
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType;
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout;
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass;
+- (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback;
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout;
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType;
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout;
+
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass;
+- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
+
+- (void) unsubscribe:(NSString *)name;
+- (void) unsubscribe:(NSString *)name callback:(void (^)(id))callback;
+- (void) unsubscribe:(NSString *)name id:(int32_t)clientId;
+- (void) unsubscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback;
 
 @end
 
