@@ -23,7 +23,7 @@
 
 - (id) init {
     if (self = [super init]) {
-        _userData = [NSMutableDictionary new];
+        _userData = [NSMutableDictionary dictionary];
     }
     return self;
 }

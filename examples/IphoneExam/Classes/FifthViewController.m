@@ -54,19 +54,20 @@
 - (void)viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
+    [super viewDidUnload];
 }
 
 -(IBAction) showClick:(id)sender {
     [[delegate exam] thisMethodNotExist:@selector(showCallback) delegate:self];
-    [[delegate exam] testErrorCallback:@selector(showCallback) delegate:self error:^(NSString *name, NSException *e) {
-        UIAlertView *alert = nil;
-        alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error on: %@", name]
-                                           message:[e reason]
-                                          delegate:self
-                                 cancelButtonTitle:@"OK"
-                                 otherButtonTitles:nil];
-        [alert show];
-    }];
+//    [[delegate exam] testErrorCallback:@selector(showCallback) delegate:self error:^(NSString *name, NSException *e) {
+//        UIAlertView *alert = nil;
+//        alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error on: %@", name]
+//                                           message:[e reason]
+//                                          delegate:self
+//                                 cancelButtonTitle:@"OK"
+//                                 otherButtonTitles:nil];
+//        [alert show];
+//    }];
 }
 
 -(void) showCallback {

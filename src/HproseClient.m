@@ -221,7 +221,7 @@ static HproseInvokeSettings *autoIdSettings;
     if (settings == nil) {
         _settings = [[HproseInvokeSettings alloc] init];
     }
-    if ([settings isKindOfClass:[HproseInvokeSettings class]]) {
+    else if ([settings isKindOfClass:[HproseInvokeSettings class]]) {
         _settings = (HproseInvokeSettings *)settings;
     }
     else if ([settings isKindOfClass:[NSDictionary class]]) {
