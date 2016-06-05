@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 5, 2016                              *
+ * LastModified: Jun 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -119,8 +119,8 @@ static HproseInvokeSettings *autoIdSettings;
     return [[self alloc] init];
 }
 
-+ (id) client:(NSString *)aUri {
-    return [[self alloc] init:aUri];
++ (id) client:(id)uri {
+    return [[self alloc] init:uri];
 }
 
 - (id) init {
@@ -131,6 +131,7 @@ static HproseInvokeSettings *autoIdSettings;
         afterFilterHandlers = [NSMutableArray array];
         uris = [NSMutableArray array];
         index = -1;
+        _uri = nil;
         self.timeout = 30.0;
         self.retry = 10;
         self.idempontent = NO;
@@ -160,9 +161,17 @@ static HproseInvokeSettings *autoIdSettings;
     return self;
 }
 
-- (id) init:(NSString *)aUri {
+- (id) init:(id)uri {
     if (self = [self init]) {
-        [self setUri:aUri];
+        if ([uri isKindOfClass:[NSString class]]) {
+            [self setUri:uri];
+        }
+        else if ([uri isKindOfClass:[NSArray class]]) {
+            [self setUris:uri];
+        }
+        else {
+            @throw [HproseException exceptionWithReason:@"uri must be an object of NSString or NSArray."];
+        }
     }
     return self;
 }
@@ -179,6 +188,28 @@ static HproseInvokeSettings *autoIdSettings;
 
 - (id) useService:(Protocol *)protocol withNameSpace:(NSString *)ns {
     return [[HproseClientProxy alloc] init:protocol withClient:self withNameSpace:ns];
+}
+
+- (NSString *) getUri {
+    return _uri;
+}
+
+- (void) setUri:(NSString *)value {
+    [self setUris:@[value]];
+}
+
+- (NSArray<NSString *> *) getUris {
+    return uris;
+}
+
+- (void) setUris:(NSArray<NSString *> *)value {
+    [uris removeAllObjects];
+    [uris addObjectsFromArray:value];
+    NSUInteger n = uris.count;
+    if (n > 0) {
+        index = arc4random_uniform((u_int32_t)n);
+        _uri = uris[index];
+    }
 }
 
 - (id<HproseFilter>) getFilter {

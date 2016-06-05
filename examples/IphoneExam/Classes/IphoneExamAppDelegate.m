@@ -24,11 +24,12 @@
     // Add the tab bar controller's current view as a subview of the window
     [window addSubview:tabBarController.view];
     [window makeKeyAndVisible];
-    client = [[HproseHttpClient alloc] init:@"http://www.hprose.com/example/index.php"];
+    client = [HproseHttpClient client:@[@"http://www.hprose.com/example/index.php", @"http://www.hprose.com/example/index.php"]];
     [client setDelegate:self];
     [client setOnError:@selector(errorHandler:withException:)];
     [client setFilter:[LogFilter new]];
     client.idempontent = YES;
+    client.failswitch = YES;
     client.retry = 100;
     exam = [client useService:@protocol(Exam)];
     return YES;

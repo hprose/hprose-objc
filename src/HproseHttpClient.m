@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jun 5, 2016                              *
+ * LastModified: Jun 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -214,12 +214,16 @@
 #endif
 
 @dynamic uri;
+@dynamic uris;
 
-- (void) setUri:(NSString *)aUri {
-    if ([super uri] != aUri) {
-        [super setUri:aUri];
-        _url = [NSURL URLWithString:aUri];
-    }
+- (void) setUri:(NSString *)uri {
+    super.uri = uri;
+    _url = [NSURL URLWithString:uri];
+}
+
+- (void) setUris:(NSArray *)uris {
+    super.uris = uris;
+    _url = [NSURL URLWithString:super.uri];
 }
 
 - (void) setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {

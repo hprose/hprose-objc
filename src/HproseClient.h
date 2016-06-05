@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jun 5, 2016                              *
+ * LastModified: Jun 6, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -62,6 +62,7 @@
     NSMutableArray<HproseFilterHandler> *afterFilterHandlers;
     NSMutableArray<NSString *> *uris;
     int64_t index;
+    NSString *_uri;
     HproseNextInvokeHandler invokeHandler, defaultInvokeHandler;
     HproseNextFilterHandler beforeFilterHandler, defaultBeforeFilterHandler;
     HproseNextFilterHandler afterFilterHandler, defaultAfterFilterHandler;
@@ -69,8 +70,9 @@
     NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, HproseTopic *> *> *allTopics;
 }
 
-@property (copy) NSString *uri;
-@property (getter = getFilter, setter = setFilter:)id<HproseFilter> filter;
+@property (getter = getUri, setter = setUri:) NSString *uri;
+@property (getter = getUris, setter = setUris:) NSString *uris;
+@property (getter = getFilter, setter = setFilter:) id<HproseFilter> filter;
 @property id delegate;
 @property NSUInteger retry;
 @property BOOL idempontent;
@@ -86,9 +88,9 @@
 @property (readonly) NSNumber *clientId;
 
 + (id) client;
-+ (id) client:(NSString *)uri;
++ (id) client:(id)uri;
 
-- (id) init:(NSString *)uri;
+- (id) init:(id)uri;
 
 - (void) close:(BOOL)cancelPendingTasks;
 - (void) close;
@@ -96,6 +98,10 @@
 - (id) useService:(Protocol *)protocol;
 - (id) useService:(Protocol *)protocol withNameSpace:(NSString *)ns;
 
+- (NSString *) getUri;
+- (void) setUri:(NSString *)value;
+- (NSArray<NSString *> *) getUris;
+- (void) setUris:(NSArray<NSString *> *)value;
 - (id<HproseFilter>) getFilter;
 - (void) setFilter:(id<HproseFilter>)filter;
 - (void) addFilter:(id<HproseFilter>)filter;
