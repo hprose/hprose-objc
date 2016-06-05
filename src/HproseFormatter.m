@@ -12,7 +12,7 @@
  *                                                        *
  * hprose formatter class for Objective-C.                *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -30,14 +30,16 @@
 
 + (NSData *) serialize:(id)obj simple:(BOOL)simple {
     NSOutputStream *ostream = [NSOutputStream outputStreamToMemory];
+    HproseWriter *writer = [HproseWriter writerWithStream:ostream simple:simple];
     [ostream open];
     @try {
-        HproseWriter *writer = [HproseWriter writerWithStream:ostream simple:simple];
         [writer serialize:obj];
         return [ostream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
     }
     @finally {
         [ostream close];
+        ostream = nil;
+        writer = nil;
     }
 }
 
@@ -71,13 +73,15 @@
 
 + (id) unserialize:(NSData *)data withClass:(Class)cls withType:(char)type simple:(BOOL)simple {
     NSInputStream *istream = [NSInputStream inputStreamWithData:data];
+    HproseReader *reader = [HproseReader readerWithStream:istream simple:simple];
     [istream open];
     @try {
-        HproseReader *reader = [HproseReader readerWithStream:istream simple:simple];
         return [reader unserialize:cls withType:type];
     }
     @finally {
         [istream close];
+        istream = nil;
+        reader = nil;
     }
 }
 

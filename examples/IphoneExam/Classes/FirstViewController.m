@@ -65,7 +65,7 @@
     [[delegate client] invoke:@"hello" withArgs:@[[text text]] settings:@{@"block":^(id result, NSArray * args) {
         [label setText:(NSString *)result];
     }, @"errorBlock":^(NSString *name, NSException *e) {
-        [label setText:name];
+        [label setText:e.reason];
     }}];
 }
 

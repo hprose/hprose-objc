@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -108,7 +108,13 @@ void promise_call(id(^callback)(id), Promise * next, id x) {
     dispatch_async(PROMISE_QUEUE, ^{
         @try {
             id result = callback(x);
-            [next resolve:result];
+            if ([result isKindOfClass:[NSException class]] ||
+                [result isKindOfClass:[NSError class]]) {
+                [next reject:result];
+            }
+            else {
+                [next resolve:result];
+            }
         }
         @catch (id e) {
             [next reject:e];
@@ -185,13 +191,20 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 - (id) init:(id (^)(void))computation {
     if (self = [self init]) {
-        __block Promise *this = self;
+        __block Promise *promise = self;
         dispatch_async(PROMISE_QUEUE, ^{
             @try {
-                [this resolve:computation()];
+                id result = computation();
+                if ([result isKindOfClass:[NSException class]] ||
+                    [result isKindOfClass:[NSError class]]) {
+                    [promise reject:result];
+                }
+                else {
+                    [promise resolve:result];
+                }
             }
             @catch (id e) {
-                [this reject:e];
+                [promise reject:e];
             }
         });
     }
@@ -221,7 +234,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 + (Promise *) delayed:(NSTimeInterval)duration with:(id)value {
     Promise * promise = [Promise promise];
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
-    dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
+    dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
         [promise resolve:value];
@@ -233,11 +246,18 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 + (Promise *) delayed:(NSTimeInterval)duration block:(id (^)(void))computation {
     Promise * promise = [Promise promise];
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
-    dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
+    dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
         @try {
-            [promise resolve:computation()];
+            id result = computation();
+            if ([result isKindOfClass:[NSException class]] ||
+                [result isKindOfClass:[NSError class]]) {
+                [promise reject:result];
+            }
+            else {
+                [promise resolve:result];
+            }
         }
         @catch (id e) {
             [promise reject:e];
@@ -249,7 +269,14 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 + (Promise *) sync:(id (^)(void))computation {
     @try {
-        return [Promise value:computation()];
+        id result = computation();
+        if ([result isKindOfClass:[NSException class]] ||
+            [result isKindOfClass:[NSError class]]) {
+            return [Promise error:result];
+        }
+        else {
+            return [Promise value:result];
+        }
     }
     @catch (id e) {
         return [Promise error:e];
@@ -457,7 +484,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
             if (test(reason)) {
                 return [self then:nil catch:onreject];
             }
-            @throw reason;
+            return reason;
         }];
     }
     return [self then:nil catch:onreject];
@@ -477,7 +504,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
         return result;
     } catch:^id(id reason) {
         action();
-        @throw reason;
+        return reason;
     }];
 }
 
@@ -500,7 +527,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 - (Promise *) timeout:(NSTimeInterval)duration with:(id)reason {
     Promise * promise = [Promise promise];
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
-    dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
+    dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
         if (reason == nil) {
@@ -527,7 +554,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     Promise * promise = [Promise promise];
     [self last:^(id result) {
         dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
-        dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), duration * NSEC_PER_SEC, 0);
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
         dispatch_source_set_event_handler(timer, ^{
             dispatch_source_cancel(timer);
             [promise resolve:result];

@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 3, 2016                              *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -41,6 +41,7 @@
         _settings.retry = client.retry;
         _settings.timeout = client.timeout;
         _settings.oneway = NO;
+        _settings.delegate = client.delegate;
         [settings copyTo:_settings];
     }
     return self;
@@ -476,12 +477,13 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
     }
     HproseClientContext *context = [[HproseClientContext alloc] init:self settings:settings];
     @try {
-        if (settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
+        if (context.settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
             args = [args mutableCopy];
         }
         id result = invokeHandler(name, args, context);
         if ([Promise isPromise:result]) {
             [(Promise *)result last:^(id result) {
+                HproseInvokeSettings *settings = context.settings;
                 [promise resolve:result];
                 if (settings.callback) {
                     settings.callback(result, args);
@@ -539,13 +541,13 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
                     }
                 }
             } catch:^(id e) {
-                [self errorHandler:name withException:e settings:settings];
+                [self errorHandler:name withException:e settings:context.settings];
                 [promise reject:e];
             }];
         }
     }
     @catch (NSException *e) {
-        [self errorHandler:name withException:e settings:settings];
+        [self errorHandler:name withException:e settings:context.settings];
         [promise reject:e];
     }
     return promise;
@@ -592,17 +594,18 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
     if ([Promise isPromise:response]) {
         return [((Promise *)response) then:^id(NSData *response) {
             if (context.settings.oneway) return nil;
-            response = [self inputFilter:response context:context];
-            return response;
+            return [self inputFilter:response context:context];
         }];
     }
     else if ([response isKindOfClass:[NSData class]]) {
         if (context.settings.oneway) return nil;
-        response = [self inputFilter:(NSData *)response context:context];
+        return [self inputFilter:(NSData *)response context:context];
+    }
+    else if ([response isKindOfClass:[NSException class]]) {
         return response;
     }
     else {
-        @throw [HproseException exceptionWithReason:@"Wrong return type of afterFilterHander"];
+        return [HproseException exceptionWithReason:@"Wrong return type of afterFilterHander"];
     }
 }
 
@@ -628,14 +631,22 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
                 if (response != nil) {
                     return response;
                 }
-                @throw e;
+                return e;
             }];
         }
         else if ([response isKindOfClass:[NSData class]]) {
             return response;
         }
+        else if ([response isKindOfClass:[NSException class]]) {
+            NSException *e = response;
+            id response = [self retry:request context:context];
+            if (response != nil) {
+                return response;
+            }
+            return e;
+        }
         else {
-            @throw [HproseException exceptionWithReason:@"Wrong return type of beforeFilterHander"];
+            return [HproseException exceptionWithReason:@"Wrong return type of beforeFilterHander"];
         }
     }
     @catch (NSException *e) {
@@ -643,7 +654,7 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
         if (response != nil) {
             return response;
         }
-        @throw e;
+        return e;
     }
 }
 
@@ -679,9 +690,9 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
 NSData * encode(NSString *name, NSArray *args, HproseClientContext *context) {
     HproseInvokeSettings *settings = context.settings;
     NSOutputStream *stream = [NSOutputStream outputStreamToMemory];
+    HproseWriter *writer = [HproseWriter writerWithStream:stream simple:settings.simple];
     [stream open];
     @try {
-        HproseWriter *writer = [HproseWriter writerWithStream:stream simple:settings.simple];
         [stream writeByte:HproseTagCall];
         [writer writeString:name];
         if (args != nil && (args.count > 0 || settings.byref)) {
@@ -697,6 +708,8 @@ NSData * encode(NSString *name, NSArray *args, HproseClientContext *context) {
     }
     @finally {
         [stream close];
+        stream = nil;
+        writer = nil;
     }
 }
 
@@ -710,11 +723,11 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
         return nil;
     }
     if (data.length == 0) {
-        @throw [HproseException exceptionWithReason:@"EOF"];
+        return [HproseException exceptionWithReason:@"EOF"];
     }
     int tag = ((uint8_t *)data.bytes)[data.length - 1];
     if (tag != HproseTagEnd) {
-        @throw wrongResponse(data);
+        return wrongResponse(data);
     }
     HproseResultMode mode = settings.mode;
     if (mode == HproseResultMode_RawWithEndTag) {
@@ -725,9 +738,9 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
     }
     id result = nil;
     NSInputStream *stream = [NSInputStream inputStreamWithData:data];
+    HproseReader *reader = [HproseReader readerWithStream:stream];
     [stream open];
     @try {
-        HproseReader *reader = [HproseReader readerWithStream:stream];
         tag = [stream readByte];
         if (tag == HproseTagResult) {
             if (mode == HproseResultMode_Normal) {
@@ -756,14 +769,19 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
             }
         }
         else if (tag == HproseTagError) {
-            @throw [HproseException exceptionWithReason:[reader readString]];
+            return [HproseException exceptionWithReason:[reader readString]];
         }
         if (tag != HproseTagEnd) {
-            @throw wrongResponse(data);
+            return wrongResponse(data);
         }
+    }
+    @catch (NSException *e) {
+        return e;
     }
     @finally {
         [stream close];
+        stream = nil;
+        reader = nil;
     }
     return result;
 }
@@ -826,6 +844,8 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
                     [result last:topic.handler catch:cb];
                 }
                 @catch (NSException *e) {
+                    settings = nil;
+                    topic = nil;
                     cb(e);
                 }
             }
@@ -843,6 +863,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
                     }
                 }
                 cb(nil);
+                topic = nil;
             }
         };
         [topic.callbacks addObject:callback];
@@ -851,6 +872,8 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
             cb(nil);
         }
         @catch (NSException *exception) {
+            topic = nil;
+            cb = nil;
             [self errorHandler:name withException:exception settings:[[HproseInvokeSettings alloc] init]];
         }
     }

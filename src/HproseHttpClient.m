@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -253,7 +253,7 @@
     return request;
 }
 
-- (NSData *) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout {
+- (id) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout {
     NSURLRequest *request = [self createRequest:data timeout:timeout];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
     NSHTTPURLResponse *response;
@@ -280,13 +280,13 @@
     
     NSInteger statusCode = [response statusCode];
     if (statusCode != 200 && statusCode != 0) {
-        @throw [HproseException exceptionWithReason:
+        return [HproseException exceptionWithReason:
                 [NSString stringWithFormat:@"%d: %@",
                  (int)statusCode,
                  [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
     }
     if (ret == nil) {
-        @throw [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
+        return [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
                                                      (int)[error code],
                                                      [error localizedDescription]]];
     }

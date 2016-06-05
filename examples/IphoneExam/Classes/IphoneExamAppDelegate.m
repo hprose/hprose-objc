@@ -28,6 +28,8 @@
     [client setDelegate:self];
     [client setOnError:@selector(errorHandler:withException:)];
     [client setFilter:[LogFilter new]];
+    client.idempontent = YES;
+    client.retry = 100;
     exam = [client useService:@protocol(Exam)];
     return YES;
 }

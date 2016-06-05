@@ -12,7 +12,7 @@
  *                                                        *
  * hprose invoke settings for Objective-C.                *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -182,6 +182,7 @@
     if (_errorCallback != NULL) settings.errorCallback = self.errorCallback;
     if (_selector != NULL) settings.selector = self.selector;
     if (_errorSelector != NULL) settings.errorSelector = self.errorSelector;
+    if (_delegate != nil) settings.delegate = self.delegate;
 }
 
 @end

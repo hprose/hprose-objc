@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jun 3, 2016                              *
+ * LastModified: Jun 5, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -29,7 +29,7 @@
 
 @optional
 
-- (NSData *) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout;
+- (id) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout;
 
 - (oneway void) sendAsync:(NSData *)data timeout:(NSTimeInterval)timeout
                 receiveAsync:(void (^)(NSData *))receiveCallback
@@ -131,8 +131,8 @@
 
 @interface HproseClientContext : HproseContext;
 
-@property HproseClient* client;
-@property HproseInvokeSettings *settings;
+@property (readonly) HproseClient* client;
+@property (readonly) HproseInvokeSettings *settings;
 
 - (id) init:(HproseClient *)client settings:(HproseInvokeSettings *)settings;
 
