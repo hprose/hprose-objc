@@ -71,7 +71,7 @@
 }
 
 @property (getter = getUri, setter = setUri:) NSString *uri;
-@property (getter = getUris, setter = setUris:) NSString *uris;
+@property (getter = getUris, setter = setUris:) NSArray<NSString *> *uris;
 @property (getter = getFilter, setter = setFilter:) id<HproseFilter> filter;
 @property id delegate;
 @property NSUInteger retry;

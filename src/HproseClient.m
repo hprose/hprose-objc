@@ -432,7 +432,7 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
             }
         }
         else {
-            [autoId last:^(NSNumber *clientId) {
+            [autoId done:^(NSNumber *clientId) {
                 delTopic(topics, clientId, callback);
             }];
         }
@@ -513,7 +513,7 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
         }
         id result = invokeHandler(name, args, context);
         if ([Promise isPromise:result]) {
-            [(Promise *)result last:^(id result) {
+            [(Promise *)result done:^(id result) {
                 HproseInvokeSettings *settings = context.settings;
                 [promise resolve:result];
                 if (settings.callback) {
@@ -571,7 +571,7 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
                         }
                     }
                 }
-            } catch:^(id e) {
+            } fail:^(id e) {
                 [self errorHandler:name withException:e settings:context.settings];
                 [promise reject:e];
             }];
@@ -833,7 +833,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
 - (Promise *) getAutoId {
     if (autoId == nil) {
         autoId = (Promise *)[self invoke:@"#" settings:autoIdSettings];
-        [autoId last:^(NSNumber *value) {
+        [autoId done:^(NSNumber *value) {
             _clientId = value;
         }];
     }
@@ -852,7 +852,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
 }
 
 - (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultType:(char)resultType resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout {
-    [[self getAutoId] last:^(NSNumber *clientId) {
+    [[self getAutoId] done:^(NSNumber *clientId) {
         [self subscribe:name id:[clientId intValue] callback:callback resultType:resultType resultClass:resultClass timeout:timeout];
     }];
 }
@@ -872,7 +872,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
                 settings.async = YES;
                 @try {
                     Promise *result = [self invoke:name withArgs:@[@(clientId)] settings:settings];
-                    [result last:topic.handler catch:cb];
+                    [result done:topic.handler fail:cb];
                 }
                 @catch (NSException *e) {
                     settings = nil;

@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Jun 5, 2016                              *
+ * LastModified: Jul 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -140,9 +140,9 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
                                                  userInfo:nil]);
             return;
         }
-        [x last:^(id y) {
+        [x done:^(id y) {
             promise_resolve(this, onfulfill, onreject, next, y);
-        } catch:^(id e) {
+        } fail:^(id e) {
             promise_reject(onreject, next, e);
         }];
     }
@@ -298,12 +298,12 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     __block NSMutableArray * result = [NSMutableArray arrayWithCapacity:n];
     __block Promise * promise = [Promise promise];
     void(^allHandler)(id element, NSUInteger i)  = ^(id element, NSUInteger i) {
-        [[Promise toPromise:element] last: ^(id value) {
+        [[Promise toPromise:element] done: ^(id value) {
             result[i] = value;
             if (OSAtomicAdd64(-1, &count) == 0) {
                 [promise resolve:result];
             }
-        } catch:^(id e) {
+        } fail:^(id e) {
             [promise reject:e];
         }];
     };
@@ -330,9 +330,9 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     __block int64_t count = n;
     __block Promise * promise = [Promise promise];
     for (NSUInteger i = 0; i < n; ++i) {
-        [[Promise toPromise:array[i]] last:^(id value) {
+        [[Promise toPromise:array[i]] done:^(id value) {
             [promise resolve: value];
-        } catch:^(id e) {
+        } fail:^(id e) {
             if (OSAtomicAdd64(-1, &count) == 0) {
                 [promise reject:[NSException exceptionWithName:@"RuntimeException"
                                                         reason:@"any(): all promises failed"
@@ -344,7 +344,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 }
 
 + (Promise *) each:(id (^)(id, NSUInteger))handler with:(NSArray *)array {
-    return [[Promise all:array] last:^(NSArray * array) {
+    return [[Promise all:array] done:^(NSArray * array) {
         [array each:handler];
     }];
 }
@@ -452,7 +452,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     return [self then:onfulfill catch:nil];
 }
 
-- (Promise *) last:(void (^)(id))onfulfill catch:(void (^)(id))onreject {
+- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject {
     return [self then: (onfulfill == nil) ? nil : ^id(id result) {
         onfulfill(result);
         return nil;
@@ -462,21 +462,10 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     }];
 }
 
-- (Promise *) last:(void (^)(id))onfulfill {
-    return [self last:onfulfill catch:nil];
+- (Promise *) done:(void (^)(id))onfulfill {
+    return [self done:onfulfill fail:nil];
 }
 
-- (void) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject {
-    [[self last:onfulfill catch:onreject] last:nil catch:^(id reason) {
-        dispatch_async(PROMISE_QUEUE, ^{
-            @throw reason;
-        });
-    }];
-}
-
-- (void) done:(void (^)(id))onfulfill {
-    [self done:onfulfill fail:nil];
-}
 
 - (Promise *) catch:(id (^)(id))onreject with:(BOOL (^)(id))test {
     if (test != nil) {
@@ -494,8 +483,8 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     return [self then:nil catch:onreject];
 }
 
-- (void) fail:(void (^)(id))onreject {
-    [self done:nil fail:onreject];
+- (Promise *) fail:(void (^)(id))onreject {
+    return [self done:nil fail:onreject];
 }
 
 - (Promise *) whenComplete:(void  (^)())action {
@@ -512,14 +501,14 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     return [self then:oncomplete catch:oncomplete];
 }
 
-- (void) always:(void (^)(id))oncomplete {
-    [self done:oncomplete fail:oncomplete];
+- (Promise *) always:(void (^)(id))oncomplete {
+    return [self done:oncomplete fail:oncomplete];
 }
 
 - (void) fill:(Promise *)promise {
-    [self last:^(id result) {
+    [self done:^(id result) {
         [promise resolve:result];
-    } catch:^(id reason) {
+    } fail:^(id reason) {
         [promise reject:reason];
     }];
 }
@@ -552,7 +541,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
 
 - (Promise *) delay:(NSTimeInterval)duration {
     Promise * promise = [Promise promise];
-    [self last:^(id result) {
+    [self done:^(id result) {
         dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
         dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
         dispatch_source_set_event_handler(timer, ^{
@@ -560,7 +549,7 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
             [promise resolve:result];
         });
         dispatch_resume(timer);
-    } catch:^(id reason) {
+    } fail:^(id reason) {
         [promise reject:reason];
     }];
     return promise;

@@ -12,7 +12,7 @@
  *                                                        *
  * Promise header for Objective-C.                        *
  *                                                        *
- * LastModified: Jun 2, 2016                              *
+ * LastModified: Jul 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -82,16 +82,14 @@ typedef enum {
 - (void) reject:(id)reason;
 - (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject;
 - (Promise *) then:(id (^)(id))onfulfill;
-- (Promise *) last:(void (^)(id))onfulfill catch:(void (^)(id))onreject;
-- (Promise *) last:(void (^)(id))onfulfill;
-- (void) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject;
-- (void) done:(void (^)(id))onfulfill;
+- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject;
+- (Promise *) done:(void (^)(id))onfulfill;
 - (Promise *) catch:(id (^)(id))onreject with:(BOOL (^)(id))test;
 - (Promise *) catch:(id (^)(id))onreject;
-- (void) fail:(void (^)(id))onreject;
+- (Promise *) fail:(void (^)(id))onreject;
 - (Promise *) whenComplete:(void (^)())action;
 - (Promise *) complete:(id (^)(id))oncomplete;
-- (void) always:(void (^)(id))oncomplete;
+- (Promise *) always:(void (^)(id))oncomplete;
 - (void) fill:(Promise *)promise;
 - (Promise *) timeout:(NSTimeInterval)duration with:(id)reason;
 - (Promise *) timeout:(NSTimeInterval)duration;
