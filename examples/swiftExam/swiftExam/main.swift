@@ -18,7 +18,7 @@ class User:NSObject {
 HproseClassManager.registerClass(User.self, withAlias: "User")
 var client = HproseHttpClient("http://www.hprose.com/example/index.php")
 var h = client.useService(Hello)
-client.invoke("hello", withArgs: ["async world"], settings: ["async": true]).last { (result) in
+client.invoke("hello", withArgs: ["async world"], settings: ["async": true]).done { (result) in
     print(result);
 };
 print(h.hello("world"));
