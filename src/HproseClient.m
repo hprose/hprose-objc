@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jun 6, 2016                              *
+ * LastModified: Jul 26, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -692,12 +692,15 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
 - (id) retry:(NSData *)request context:(HproseClientContext *)context {
     HproseInvokeSettings *settings = context.settings;
     if (settings.failswitch) {
-        int64_t i = OSAtomicAdd64(1, &index);
-        if (i >= uris.count) {
-            index = 0;
-            i = index;
+        NSUInteger n = uris.count;
+        if (n > 1) {
+            NSUInteger i = index + arc4random_uniform((u_int32_t)n - 1) + 1;
+            if (i >= n) {
+                i %= n;
+            }
+            index = i;
+            _uri = uris[i];
         }
-        _uri = uris[i];
     }
     if (settings.idempotent) {
         NSUInteger n = settings.retry;

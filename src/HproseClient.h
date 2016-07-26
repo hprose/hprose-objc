@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jun 6, 2016                              *
+ * LastModified: Jul 26, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -61,7 +61,7 @@
     NSMutableArray<HproseFilterHandler> *beforeFilterHandlers;
     NSMutableArray<HproseFilterHandler> *afterFilterHandlers;
     NSMutableArray<NSString *> *uris;
-    int64_t index;
+    NSUInteger index;
     NSString *_uri;
     HproseNextInvokeHandler invokeHandler, defaultInvokeHandler;
     HproseNextFilterHandler beforeFilterHandler, defaultBeforeFilterHandler;
