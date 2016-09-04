@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Jul 4, 2016                              *
+ * LastModified: Sep 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -104,7 +104,7 @@
 
 @end
 
-void promise_call(id(^callback)(id), Promise * next, id x) {
+void promise_call(Promise * next, id(^callback)(id), id x) {
     dispatch_async(PROMISE_QUEUE, ^{
         @try {
             id result = callback(x);
@@ -122,37 +122,21 @@ void promise_call(id(^callback)(id), Promise * next, id x) {
     });
 }
 
-void promise_reject(id(^onreject)(id), Promise * next, id e) {
+void promise_reject(Promise * next, id(^onreject)(id), id e) {
     if (onreject != nil) {
-        promise_call(onreject, next, e);
+        promise_call(next, onreject, e);
     }
     else {
         [next reject:e];
     }
 }
 
-void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Promise * next, id x) {
-    if ([Promise isPromise:x]) {
-        if (x == this) {
-            promise_reject(onreject, next,
-                           [NSException exceptionWithName:@"TypeException"
-                                                   reason:@"Self resolution"
-                                                 userInfo:nil]);
-            return;
-        }
-        [x done:^(id y) {
-            promise_resolve(this, onfulfill, onreject, next, y);
-        } fail:^(id e) {
-            promise_reject(onreject, next, e);
-        }];
+void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
+    if (onfulfill != nil) {
+        promise_call(next, onfulfill, x);
     }
     else {
-        if (onfulfill != nil) {
-            promise_call(onfulfill, next, x);
-        }
-        else {
-            [next resolve:x];
-        }
+        [next resolve:x];
     }
 }
 
@@ -397,55 +381,52 @@ void promise_resolve(Promise * this, id(^onfulfill)(id), id(^onreject)(id), Prom
     }];
 }
 
+- (PromiseState) getState {
+    return (PromiseState)_state;
+}
+
 - (void) resolve:(id)result {
-    if (_state == PENDING) {
-        _state = FULFILLED;
+    if (result == self) {
+        [self reject:[NSException exceptionWithName:@"TypeException"
+                                               reason:@"Self resolution"
+                                             userInfo:nil]];
+    }
+    else if ([Promise isPromise:result]) {
+        [result fill:self];
+    }
+    else if (OSAtomicCompareAndSwap32(PENDING, FULFILLED, &_state)) {
         _result = result;
         while ([_subscribers count] > 0) {
             Subscriber * subscriber = [_subscribers objectAtIndex:0];
             [_subscribers removeObjectAtIndex:0];
-            promise_resolve(self, subscriber.onfulfill, subscriber.onreject, subscriber.next, result);
+            promise_resolve(subscriber.next, subscriber.onfulfill, result);
         }
     }
 }
 
 - (void) reject:(id)reason {
-    if (_state == PENDING) {
-        _state = REJECTED;
+    if (OSAtomicCompareAndSwap32(PENDING, REJECTED, &_state)) {
         _reason = reason;
         while ([_subscribers count] > 0) {
             Subscriber * subscriber = [_subscribers objectAtIndex:0];
             [_subscribers removeObjectAtIndex:0];
-            if (subscriber.onreject != nil) {
-                promise_call(subscriber.onreject, subscriber.next, reason);
-            }
-            else {
-                [subscriber.next reject:reason];
-            }
+            promise_reject(subscriber.next, subscriber.onreject, reason);
         }
     }
 }
 
 - (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject {
-    if (onfulfill != nil || onreject != nil) {
-        Promise * next = [Promise promise];
-        if (_state == FULFILLED) {
-            promise_resolve(self, onfulfill, onreject, next, _result);
-        }
-        else if (_state == REJECTED) {
-            if (onreject != nil) {
-                promise_call(onreject, next, _reason);
-            }
-            else {
-                [next reject:_reason];
-            }
-        }
-        else {
-            [_subscribers addObject:[Subscriber subscriber:next success:onfulfill fail:onreject]];
-        }
-        return next;
+    Promise * next = [Promise promise];
+    if (_state == FULFILLED) {
+        promise_resolve(next, onfulfill, _result);
     }
-    return self;
+    else if (_state == REJECTED) {
+        promise_reject(next, onreject, _reason);
+    }
+    else {
+        [_subscribers addObject:[Subscriber subscriber:next success:onfulfill fail:onreject]];
+    }
+    return next;
 }
 
 - (Promise *) then:(id (^)(id))onfulfill {

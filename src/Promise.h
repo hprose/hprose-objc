@@ -48,9 +48,10 @@ typedef enum {
 @interface Promise : NSObject {
 @private
     NSMutableArray *_subscribers;
+    int32_t _state;
 }
 
-@property (readonly) PromiseState state;
+@property (readonly, getter=getState) PromiseState state;
 @property (readonly) id result;
 @property (readonly) id reason;
 
@@ -78,6 +79,7 @@ typedef enum {
 + (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler with:(NSArray *)array;
 + (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler with:(NSArray *)array init:(id)value;
 
+- (PromiseState) getState;
 - (void) resolve:(id)result;
 - (void) reject:(id)reason;
 - (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject;
