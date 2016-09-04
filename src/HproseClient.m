@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Jul 26, 2016                             *
+ * LastModified: Sep 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -43,6 +43,7 @@
         _settings.oneway = NO;
         _settings.delegate = client.delegate;
         [settings copyTo:_settings];
+        _retried = 0;
     }
     return self;
 }
@@ -129,7 +130,7 @@ static HproseInvokeSettings *autoIdSettings;
         invokeHandlers = [NSMutableArray array];
         beforeFilterHandlers = [NSMutableArray array];
         afterFilterHandlers = [NSMutableArray array];
-        uris = [NSMutableArray array];
+        uriList = [NSMutableArray array];
         index = -1;
         _uri = nil;
         self.timeout = 30.0;
@@ -167,7 +168,7 @@ static HproseInvokeSettings *autoIdSettings;
             [self setUri:uri];
         }
         else if ([uri isKindOfClass:[NSArray class]]) {
-            [self setUris:uri];
+            [self setUriList:uri];
         }
         else {
             @throw [HproseException exceptionWithReason:@"uri must be an object of NSString or NSArray."];
@@ -195,21 +196,27 @@ static HproseInvokeSettings *autoIdSettings;
 }
 
 - (void) setUri:(NSString *)value {
-    [self setUris:@[value]];
+    [self setUriList:@[value]];
 }
 
-- (NSArray<NSString *> *) getUris {
-    return uris;
+- (NSArray<NSString *> *) getUriList {
+    return uriList;
 }
 
-- (void) setUris:(NSArray<NSString *> *)value {
-    [uris removeAllObjects];
-    [uris addObjectsFromArray:value];
-    NSUInteger n = uris.count;
-    if (n > 0) {
-        index = arc4random_uniform((u_int32_t)n);
-        _uri = uris[index];
+- (void) setUriList:(NSArray<NSString *> *)value {
+    [uriList removeAllObjects];
+    [uriList addObjectsFromArray:value];
+    NSUInteger n = uriList.count;
+    if (n > 1) {
+        [uriList sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            if (arc4random_uniform(2)) {
+                return NSOrderedAscending;
+            }
+            return NSOrderedDescending;
+        }];
     }
+    index = 0;
+    _uri = uriList[index];
 }
 
 - (id<HproseFilter>) getFilter {
@@ -692,31 +699,41 @@ void delTopic(NSMutableDictionary *topics, NSNumber *clientId, void (^callback)(
 - (id) retry:(NSData *)request context:(HproseClientContext *)context {
     HproseInvokeSettings *settings = context.settings;
     if (settings.failswitch) {
-        NSUInteger n = uris.count;
+        NSUInteger n = uriList.count;
         if (n > 1) {
-            NSUInteger i = index + arc4random_uniform((u_int32_t)n - 1) + 1;
+            NSUInteger i = index + 1;
             if (i >= n) {
-                i %= n;
+                i = 0;
+                _failround++;
             }
             index = i;
-            _uri = uris[i];
+            _uri = uriList[index];
+        }
+        else {
+            _failround++;
+        }
+        if (_delegate != nil && _onFailswitch != NULL && [_delegate respondsToSelector:_onFailswitch]) {
+            ((void (*)(id, SEL, HproseClient *))objc_msgSend)(_delegate, _onFailswitch, self);
         }
     }
-    if (settings.idempotent) {
-        NSUInteger n = settings.retry;
-        if (n > 0) {
-            settings.retry = n - 1;
-            NSTimeInterval interval = (n >= 10) ? 0.5 : (10 - n) * 0.5;
+    if (settings.idempotent && context.retried < settings.retry) {
+        NSTimeInterval interval = ++context.retried * 0.5;
+        if (settings.failswitch) {
+            interval -= (uriList.count - 1) * 0.5;
+        }
+        if (interval > 5) {
+            interval = 5;
+        }
+        if (interval > 0) {
             if (settings.async) {
                 return [Promise delayed:interval block:^id{
                     return [self sendAndReceive:request context:context];
                 }];
             }
-            else {
-                [NSThread sleepForTimeInterval:interval];
-                return [self sendAndReceive:request context:context];
-            }
+            [NSThread sleepForTimeInterval:interval];
+            return [self sendAndReceive:request context:context];
         }
+        return [self sendAndReceive:request context:context];
     }
     return nil;
 }

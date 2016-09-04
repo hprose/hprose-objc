@@ -214,15 +214,14 @@
 #endif
 
 @dynamic uri;
-@dynamic uris;
+@dynamic uriList;
 
 - (void) setUri:(NSString *)uri {
-    super.uri = uri;
-    _url = [NSURL URLWithString:uri];
+    [self setUriList: @[uri]];
 }
 
-- (void) setUris:(NSArray *)uris {
-    super.uris = uris;
+- (void) setUriList:(NSArray *)uriList {
+    super.uriList = uriList;
     _url = [NSURL URLWithString:super.uri];
 }
 

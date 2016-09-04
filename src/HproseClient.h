@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Jul 26, 2016                             *
+ * LastModified: Sep 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -60,7 +60,7 @@
     NSMutableArray<HproseInvokeHandler> *invokeHandlers;
     NSMutableArray<HproseFilterHandler> *beforeFilterHandlers;
     NSMutableArray<HproseFilterHandler> *afterFilterHandlers;
-    NSMutableArray<NSString *> *uris;
+    NSMutableArray<NSString *> *uriList;
     NSUInteger index;
     NSString *_uri;
     HproseNextInvokeHandler invokeHandler, defaultInvokeHandler;
@@ -71,16 +71,18 @@
 }
 
 @property (getter = getUri, setter = setUri:) NSString *uri;
-@property (getter = getUris, setter = setUris:) NSArray<NSString *> *uris;
+@property (getter = getUriList, setter = setUriList:) NSArray<NSString *> *uriList;
 @property (getter = getFilter, setter = setFilter:) id<HproseFilter> filter;
 @property id delegate;
 @property NSUInteger retry;
 @property BOOL idempontent;
 @property BOOL failswitch;
+@property (readonly) NSUInteger failround;
 @property BOOL byref;
 @property BOOL simple;
 @property NSTimeInterval timeout;
 @property (assign, nonatomic) SEL onError;
+@property (assign, nonatomic) SEL onFailswitch;
 @property (assign, nonatomic) HproseErrorCallback errorCallback;
 @property (copy, nonatomic) HproseErrorBlock errorHandler;
 @property (readonly) HproseFilterHandlerManager *beforeFilter;
@@ -100,8 +102,8 @@
 
 - (NSString *) getUri;
 - (void) setUri:(NSString *)value;
-- (NSArray<NSString *> *) getUris;
-- (void) setUris:(NSArray<NSString *> *)value;
+- (NSArray<NSString *> *) getUriList;
+- (void) setUriList:(NSArray<NSString *> *)value;
 - (id<HproseFilter>) getFilter;
 - (void) setFilter:(id<HproseFilter>)filter;
 - (void) addFilter:(id<HproseFilter>)filter;
@@ -139,6 +141,7 @@
 
 @property (readonly) HproseClient* client;
 @property (readonly) HproseInvokeSettings *settings;
+@property NSInteger retried;
 
 - (id) init:(HproseClient *)client settings:(HproseInvokeSettings *)settings;
 
