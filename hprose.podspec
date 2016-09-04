@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "hprose"
-  s.version      = "1.4.10"
+  s.version      = "2.0.0"
   s.summary      = "Hprose for Objective-C"
 
   s.description  = <<-DESC
@@ -96,7 +96,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v1.4.10" }
+  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v2.0.0" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -110,7 +110,7 @@ Pod::Spec.new do |s|
   s.source_files  = "src", "src/**/*.{h,m}"
   # s.exclude_files = "Classes/Exclude"
 
-  # s.public_header_files = "src/**/*.h"
+  s.public_header_files = "src/**/*.h"
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -147,8 +147,5 @@ Pod::Spec.new do |s|
   #  you can include multiple dependencies to ensure it works.
 
   s.requires_arc = true
-
-  # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
-  # s.dependency "JSONKit", "~> 1.4"
 
 end
