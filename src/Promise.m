@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Sep 4, 2016                              *
+ * LastModified: Oct 13, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -394,37 +394,45 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     else if ([Promise isPromise:result]) {
         [result fill:self];
     }
-    else if (OSAtomicCompareAndSwap32(PENDING, FULFILLED, &_state)) {
-        _result = result;
-        while ([_subscribers count] > 0) {
-            Subscriber * subscriber = [_subscribers objectAtIndex:0];
-            [_subscribers removeObjectAtIndex:0];
-            promise_resolve(subscriber.next, subscriber.onfulfill, result);
+    else {
+        @synchronized(_subscribers) {
+            if (OSAtomicCompareAndSwap32(PENDING, FULFILLED, &_state)) {
+                _result = result;
+                while ([_subscribers count] > 0) {
+                    Subscriber * subscriber = [_subscribers objectAtIndex:0];
+                    [_subscribers removeObjectAtIndex:0];
+                    promise_resolve(subscriber.next, subscriber.onfulfill, result);
+                }
+            }
         }
     }
 }
 
 - (void) reject:(id)reason {
-    if (OSAtomicCompareAndSwap32(PENDING, REJECTED, &_state)) {
-        _reason = reason;
-        while ([_subscribers count] > 0) {
-            Subscriber * subscriber = [_subscribers objectAtIndex:0];
-            [_subscribers removeObjectAtIndex:0];
-            promise_reject(subscriber.next, subscriber.onreject, reason);
+    @synchronized(_subscribers) {
+        if (OSAtomicCompareAndSwap32(PENDING, REJECTED, &_state)) {
+            _reason = reason;
+            while ([_subscribers count] > 0) {
+                Subscriber * subscriber = [_subscribers objectAtIndex:0];
+                [_subscribers removeObjectAtIndex:0];
+                promise_reject(subscriber.next, subscriber.onreject, reason);
+            }
         }
     }
 }
 
 - (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject {
     Promise * next = [Promise promise];
-    if (_state == FULFILLED) {
-        promise_resolve(next, onfulfill, _result);
-    }
-    else if (_state == REJECTED) {
-        promise_reject(next, onreject, _reason);
-    }
-    else {
-        [_subscribers addObject:[Subscriber subscriber:next success:onfulfill fail:onreject]];
+    @synchronized(_subscribers) {
+        if (_state == FULFILLED) {
+            promise_resolve(next, onfulfill, _result);
+        }
+        else if (_state == REJECTED) {
+            promise_reject(next, onreject, _reason);
+        }
+        else {
+            [_subscribers addObject:[Subscriber subscriber:next success:onfulfill fail:onreject]];
+        }
     }
     return next;
 }
