@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Sep 4, 2016                              *
+ * LastModified: Oct 13, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -67,7 +67,7 @@
     HproseNextFilterHandler beforeFilterHandler, defaultBeforeFilterHandler;
     HproseNextFilterHandler afterFilterHandler, defaultAfterFilterHandler;
     Promise * autoId;
-    NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, HproseTopic *> *> *allTopics;
+    NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, HproseTopic *> *> *allTopics;
 }
 
 @property (getter = getUri, setter = setUri:) NSString *uri;
@@ -87,7 +87,7 @@
 @property (copy, nonatomic) HproseErrorBlock errorHandler;
 @property (readonly) HproseFilterHandlerManager *beforeFilter;
 @property (readonly) HproseFilterHandlerManager *afterFilter;
-@property (readonly) NSNumber *clientId;
+@property (readonly) NSString *clientId;
 
 + (id) client;
 + (id) client:(id)uri;
@@ -121,19 +121,22 @@
 - (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass;
 - (void) subscribe:(NSString *)name callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
 
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback;
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback timeout:(NSTimeInterval)timeout;
 
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType;
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback resultType:(char)resultType;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback resultType:(char)resultType timeout:(NSTimeInterval)timeout;
 
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass;
-- (void) subscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass;
+- (void) subscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback resultClass:(Class)resultClass timeout:(NSTimeInterval)timeout;
 
 - (void) unsubscribe:(NSString *)name;
 - (void) unsubscribe:(NSString *)name callback:(void (^)(id))callback;
-- (void) unsubscribe:(NSString *)name id:(int32_t)clientId;
-- (void) unsubscribe:(NSString *)name id:(int32_t)clientId callback:(void (^)(id))callback;
+- (void) unsubscribe:(NSString *)name id:(NSString *)clientId;
+- (void) unsubscribe:(NSString *)name id:(NSString *)clientId callback:(void (^)(id))callback;
+
+- (BOOL) isSubscribed:(NSString *)name;
+- (NSArray<NSString *> *) subscribedList;
 
 @end
 
