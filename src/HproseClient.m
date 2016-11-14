@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Oct 13, 2016                             *
+ * LastModified: Nov 14, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -662,21 +662,8 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
 }
 
 - (id) afterFilterHandler:(NSData *)request context:(HproseClientContext *)context {
-    if (context.settings.async) {
-        Promise *response = [Promise promise];
-        [self sendAsync:request timeout:context.settings.timeout receiveAsync:^(NSData *data) {
-            [response resolve:data];
-        } error:^(NSException *e) {
-            [response reject:e];
-        }];
-        return response;
-    }
-    return [self sendAndReceive:request timeout:context.settings.timeout];
-}
-
-- (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context {
     @try {
-        id response = beforeFilterHandler(request, context);
+        id response = [self sendAndReceive:request context:context];
         if ([Promise isPromise:response]) {
             return [((Promise *) response) catch:^id(id e) {
                 id response = [self retry:request context:context];
@@ -710,6 +697,19 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
     }
 }
 
+- (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context {
+    if (context.settings.async) {
+        Promise *response = [Promise promise];
+        [self sendAsync:request timeout:context.settings.timeout receiveAsync:^(NSData *data) {
+            [response resolve:data];
+        } error:^(NSException *e) {
+            [response reject:e];
+        }];
+        return response;
+    }
+    return [self sendAndReceive:request timeout:context.settings.timeout];
+}
+
 - (id) retry:(NSData *)request context:(HproseClientContext *)context {
     HproseInvokeSettings *settings = context.settings;
     if (settings.failswitch) {
@@ -741,13 +741,13 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
         if (interval > 0) {
             if (settings.async) {
                 return [Promise delayed:interval block:^id{
-                    return [self sendAndReceive:request context:context];
+                    return [self afterFilterHandler:request context:context];
                 }];
             }
             [NSThread sleepForTimeInterval:interval];
-            return [self sendAndReceive:request context:context];
+            return [self afterFilterHandler:request context:context];
         }
-        return [self sendAndReceive:request context:context];
+        return [self afterFilterHandler:request context:context];
     }
     return nil;
 }
@@ -853,7 +853,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
 
 - (id) invokeHandler:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context {
     NSData *request = encode(name, args, context);
-    id response = [self sendAndReceive:request context:context];
+    id response = beforeFilterHandler(request, context);
     if ([Promise isPromise:response]) {
         return [(Promise *)response then:^id(NSData *response) {
             return decode((NSData *)response, args, context);
