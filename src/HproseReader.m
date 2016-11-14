@@ -12,7 +12,7 @@
  *                                                        *
  * hprose reader class for Objective-C.                   *
  *                                                        *
- * LastModified: Jul 14, 2015                             *
+ * LastModified: Nov 14, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -988,7 +988,7 @@ static double NaN, Infinity, NegInfinity;
             return ![[self readUntil:HproseTagSemicolon] isEqual: @"0"];
         case HproseTagDouble:
             return [[self readUntil:HproseTagSemicolon] doubleValue] != 0;
-        case HproseTagNaN: return NO;
+        case HproseTagNaN: return YES;
         case HproseTagInfinity: [stream readByte]; return YES;
         case HproseTagEmpty: return NO;
         case HproseTagTrue: return YES;
