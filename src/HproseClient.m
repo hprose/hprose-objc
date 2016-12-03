@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client for Objective-C.                         *
  *                                                        *
- * LastModified: Nov 14, 2016                             *
+ * LastModified: Dec 3, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -26,7 +26,6 @@
 #import "HproseHelper.h"
 #import "HproseClient.h"
 #import "HproseClientProxy.h"
-#import "libkern/OSAtomic.h"
 
 @implementation HproseClientContext
 
@@ -700,31 +699,33 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
 - (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context {
     if (context.settings.async) {
         Promise *response = [Promise promise];
-        [self sendAsync:request timeout:context.settings.timeout receiveAsync:^(NSData *data) {
+        [self sendAsync:request context:context receiveAsync:^(NSData *data) {
             [response resolve:data];
         } error:^(NSException *e) {
             [response reject:e];
         }];
         return response;
     }
-    return [self sendAndReceive:request timeout:context.settings.timeout];
+    return [self sendSync:request context:context];
 }
 
 - (id) retry:(NSData *)request context:(HproseClientContext *)context {
     HproseInvokeSettings *settings = context.settings;
     if (settings.failswitch) {
-        NSUInteger n = uriList.count;
-        if (n > 1) {
-            NSUInteger i = index + 1;
-            if (i >= n) {
-                i = 0;
+        @synchronized(uriList) {
+            NSUInteger n = uriList.count;
+            if (n > 1) {
+                NSUInteger i = index + 1;
+                if (i >= n) {
+                    i = 0;
+                    _failround++;
+                }
+                index = i;
+                _uri = uriList[index];
+            }
+            else {
                 _failround++;
             }
-            index = i;
-            _uri = uriList[index];
-        }
-        else {
-            _failround++;
         }
         if (_delegate != nil && _onFailswitch != NULL && [_delegate respondsToSelector:_onFailswitch]) {
             ((void (*)(id, SEL, HproseClient *))objc_msgSend)(_delegate, _onFailswitch, self);

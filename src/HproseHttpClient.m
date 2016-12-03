@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Jun 6, 2016                              *
+ * LastModified: Dec 3, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -21,13 +21,14 @@
 #import "HproseHttpClient.h"
 
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
-@interface AsyncInvokeContext: NSObject<NSURLConnectionDelegate> {
+@interface AsyncInvokeDelegate: NSObject<NSURLConnectionDelegate> {
 @private
     NSMutableData *_buffer;
     BOOL _hasError;
     void (^_callback)(NSData *);
     void (^_errorHandler)(NSException *);
     HproseHttpClient * _client;
+    HproseClientContext * _context;
 }
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveResponse:(NSURLResponse *)response;
@@ -36,12 +37,13 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)theConnection;
 @end
 
-@implementation AsyncInvokeContext
+@implementation AsyncInvokeDelegate
 
-- (id) init:(HproseHttpClient *)client callback:(void (^)(NSData *))callback errorHandler:(void (^)(NSException *)) errorHandler {
+- (id) init:(HproseHttpClient *)client context:(HproseClientContext *)context callback:(void (^)(NSData *))callback errorHandler:(void (^)(NSException *)) errorHandler {
     if (self = [super init]) {
         _buffer = [NSMutableData data];
         _client = client;
+        _context = context;
         _callback = callback;
         _errorHandler = errorHandler;
         _hasError = NO;
@@ -56,6 +58,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 #pragma unused(connection)
     NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+    _context.userData[@"httpHeader"] = response.allHTTPHeaderFields;
     if ([httpResponse statusCode] != 200) {
         _hasError = YES;
         _errorHandler([HproseException exceptionWithReason:
@@ -130,12 +133,12 @@
 
 @end
 #else
-@interface AsyncInvokeContext: NSObject<NSURLSessionDelegate> {
+@interface AsyncInvokeDelegate: NSObject<NSURLSessionDelegate> {
     @private HproseHttpClient * _client;
 }
 @end
 
-@implementation AsyncInvokeContext
+@implementation AsyncInvokeDelegate
 
 - (id) init:(HproseHttpClient *)client {
     if (self = [super init]) {
@@ -166,16 +169,6 @@
     }
 }
 
-#if !defined(__MAC_10_7)
-
-- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
-    if ([[_client URLSessionDelegate] respondsToSelector:@selector(URLSessionDidFinishEventsForBackgroundURLSession:)]) {
-        [[_client URLSessionDelegate] URLSessionDidFinishEventsForBackgroundURLSession:session];
-    }
-}
-
-#endif
-
 @end
 
 #endif
@@ -193,10 +186,10 @@
         [self setURLSessionDelegate:nil];
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         _session = [NSURLSession sessionWithConfiguration: configuration
-                                                 delegate: [[AsyncInvokeContext alloc] init:self]
+                                                 delegate: [[AsyncInvokeDelegate alloc] init:self]
                                             delegateQueue: nil];
 #endif
-        _header = [NSMutableDictionary new];
+        _header = [NSMutableDictionary<NSString *,NSString *> new];
     }
     return self;
 }
@@ -236,11 +229,17 @@
     }
 }
 
-- (NSURLRequest *) createRequest:(NSData *)data timeout:(NSTimeInterval)timeout {
+- (NSURLRequest *) createRequest:(NSData *)data context:(HproseClientContext *)context {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_url];
-    [request setTimeoutInterval:timeout];
+    [request setTimeoutInterval:context.settings.timeout];
     for (id field in _header) {
         [request setValue:_header[field] forHTTPHeaderField:field];
+    }
+    NSDictionary<NSString *,NSString *> *header = context.userData[@"httpHeader"];
+    if (header != nil) {
+        for (id field in _header) {
+            [request setValue:header[field] forHTTPHeaderField:field];
+        }
     }
     if (_keepAlive) {
         [request setValue:@"keep-alive" forHTTPHeaderField:@"Connection"];
@@ -256,8 +255,8 @@
     return request;
 }
 
-- (id) sendAndReceive:(NSData *)data timeout:(NSTimeInterval)timeout {
-    NSURLRequest *request = [self createRequest:data timeout:timeout];
+- (id) sendSync:(NSData *)data context:(HproseClientContext *)context {
+    NSURLRequest *request = [self createRequest:data context:context];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
     NSHTTPURLResponse *response;
     NSError *error;
@@ -281,7 +280,8 @@
     dict = nil;
 #endif
     
-    NSInteger statusCode = [response statusCode];
+    NSInteger statusCode = response.statusCode;
+    context.userData[@"httpHeader"] = response.allHeaderFields;
     if (statusCode != 200 && statusCode != 0) {
         return [HproseException exceptionWithReason:
                 [NSString stringWithFormat:@"%d: %@",
@@ -296,18 +296,19 @@
     return ret;
 }
 
-- (oneway void) sendAsync:(NSData *)data timeout:(NSTimeInterval)timeout
+- (oneway void) sendAsync:(NSData *)data context:(HproseClientContext *)context
              receiveAsync:(void (^)(NSData *))receiveCallback
                     error:(void (^)(NSException *))errorCallback {
-    NSURLRequest *request = [self createRequest:data timeout:timeout];
+    NSURLRequest *request = [self createRequest:data context:context];
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
-    AsyncInvokeContext *context = [[AsyncInvokeContext alloc] init:self callback:receiveCallback errorHandler:errorCallback];
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:context startImmediately:NO];
+    AsyncInvokeDelegate *delegate = [[AsyncInvokeDelegate alloc] init:self context:context callback:receiveCallback errorHandler:errorCallback];
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:NO];
     [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     [connection start];
 #else
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request
                                              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        context.userData[@"httpHeader"] = ((NSHTTPURLResponse *)response).allHeaderFields;
         dispatch_async(HPROSE_ASYNC_QUEUE, ^{
             if (data == nil) {
                 NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",

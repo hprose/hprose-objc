@@ -35,7 +35,7 @@
 
 @property BOOL keepAlive;
 @property int keepAliveTimeout;
-@property (readonly) NSMutableDictionary *header;
+@property (readonly) NSMutableDictionary<NSString *,NSString *> *header;
 #if !defined(__MAC_10_7) && !defined(__IPHONE_7_0) && !defined(__TVOS_9_0) && !defined(__WATCHOS_1_0)
 @property id<NSURLConnectionDelegate> URLConnectionDelegate;
 #else
