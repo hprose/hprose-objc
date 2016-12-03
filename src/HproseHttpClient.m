@@ -263,21 +263,19 @@
     NSData *ret;
     ret = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 #else
-    NSMutableDictionary *dict = [NSMutableDictionary new];
+    __block NSHTTPURLResponse *response;
+    __block NSError *error;
+    __block NSData *ret;
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request
                                              completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
-        dict[@"response"] = resp;
-        dict[@"error"] = err;
-        dict[@"ret"] = data;
+        response = (NSHTTPURLResponse *)resp;
+        error = err;
+        ret = data;
         dispatch_semaphore_signal(sem);
     }];
     [task resume];
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-    NSHTTPURLResponse *response = (NSHTTPURLResponse *)(dict[@"response"]);
-    NSError *error = (NSError *)(dict[@"@error"]);
-    NSData *ret = (NSData *)(dict[@"ret"]);
-    dict = nil;
 #endif
     
     NSInteger statusCode = response.statusCode;
@@ -289,9 +287,8 @@
                  [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
     }
     if (ret == nil) {
-        return [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
-                                                     (int)[error code],
-                                                     [error localizedDescription]]];
+        NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", error.code, error.localizedDescription];
+        return [HproseException exceptionWithReason:errmsg];
     }
     return ret;
 }
@@ -311,10 +308,8 @@
         context.userData[@"httpHeader"] = ((NSHTTPURLResponse *)response).allHeaderFields;
         dispatch_async(HPROSE_ASYNC_QUEUE, ^{
             if (data == nil) {
-                NSException *e = [HproseException exceptionWithReason:[NSString stringWithFormat:@"%d: %@",
-                                                                       (int)[error code],
-                                                                       [error localizedDescription]]];
-                errorCallback(e);
+                NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", error.code, error.localizedDescription];
+                errorCallback([HproseException exceptionWithReason:errmsg]);
             }
             else {
                 receiveCallback(data);
