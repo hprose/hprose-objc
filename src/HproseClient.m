@@ -80,8 +80,8 @@
 
 @interface HproseClient(PrivateMethods)
 
-- (id) syncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings;
-- (id) asyncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings;
+- (id) syncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
+- (id) asyncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
 - (oneway void) errorHandler:(NSString *)name withException:(NSException *)e settings:(HproseInvokeSettings *)settings;
 
 - (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context;
@@ -302,11 +302,41 @@ static HproseInvokeSettings *autoIdSettings;
         _settings.resultType = _C_ID;
     }
     if (_settings.async) {
-        return [self asyncInvoke:name withArgs:args settings:_settings];
+        return [self asyncInvoke:name args:args settings:_settings];
     }
     else {
-        return [self syncInvoke:name withArgs:args settings:_settings];
+        return [self syncInvoke:name args:args settings:_settings];
     }
+}
+
+- (Promise *) asyncInvoke:(NSString *)name {
+    return [self asyncInvoke:name withArgs:nil settings:nil];
+}
+
+- (Promise *) asyncInvoke:(NSString *)name settings:(id)settings {
+    return [self asyncInvoke:name withArgs:nil settings:settings];
+}
+
+- (Promise *) asyncInvoke:(NSString *)name withArgs:(NSArray *)args {
+    return [self asyncInvoke:name withArgs:args settings:nil];
+}
+
+- (Promise *) asyncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(id)settings {
+    HproseInvokeSettings *_settings;
+    if (settings == nil) {
+        _settings = [[HproseInvokeSettings alloc] init];
+    }
+    else if ([settings isKindOfClass:[HproseInvokeSettings class]]) {
+        _settings = (HproseInvokeSettings *)settings;
+    }
+    else if ([settings isKindOfClass:[NSDictionary class]]) {
+        _settings =[[HproseInvokeSettings alloc] init:(NSDictionary *)settings];
+    }
+    else {
+        @throw [HproseException exceptionWithReason:@"settings must be a NSDictionary or HproseInvokeSettings object."];
+    }
+    _settings.async = YES;
+    return [self invoke:name withArgs:args settings:_settings];
 }
 
 HproseNextInvokeHandler getNextInvokeHandler(HproseNextInvokeHandler next, HproseInvokeHandler handler) {
@@ -470,12 +500,12 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
 
 @implementation HproseClient(PrivateMethods)
 
-- (id) syncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings {
+- (id) syncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings {
     HproseClientContext *context = [[HproseClientContext alloc] init:self settings:settings];
     return invokeHandler(name, args, context);
 }
 
-- (id) asyncInvoke:(NSString *)name withArgs:(NSArray *)args settings:(HproseInvokeSettings *)settings {
+- (id) asyncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings {
     Promise *promise = [Promise promise];
     if (settings.delegate != nil && settings.selector != NULL) {
         NSMethodSignature *methodSignature = [settings.delegate methodSignatureForSelector:settings.selector];
