@@ -12,13 +12,12 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Oct 13, 2016                             *
+ * LastModified: Dec 3, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import "Promise.h"
-#import "libkern/OSAtomic.h"
 
 @implementation NSArray (NSArrayFunctional)
 
@@ -283,9 +282,11 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     __block Promise * promise = [Promise promise];
     void(^allHandler)(id element, NSUInteger i)  = ^(id element, NSUInteger i) {
         [[Promise toPromise:element] done: ^(id value) {
-            result[i] = value;
-            if (OSAtomicAdd64(-1, &count) == 0) {
-                [promise resolve:result];
+            @synchronized (promise) {
+                result[i] = value;
+                if (--count == 0) {
+                    [promise resolve:result];
+                }
             }
         } fail:^(id e) {
             [promise reject:e];
@@ -317,10 +318,12 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
         [[Promise toPromise:array[i]] done:^(id value) {
             [promise resolve: value];
         } fail:^(id e) {
-            if (OSAtomicAdd64(-1, &count) == 0) {
-                [promise reject:[NSException exceptionWithName:@"RuntimeException"
-                                                        reason:@"any(): all promises failed"
-                                                      userInfo:nil]];
+            @synchronized (promise) {
+                if (--count == 0) {
+                    [promise reject:[NSException exceptionWithName:@"RuntimeException"
+                                                            reason:@"any(): all promises failed"
+                                                          userInfo:nil]];
+                }
             }
         }];
     }
@@ -396,7 +399,8 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     }
     else {
         @synchronized(_subscribers) {
-            if (OSAtomicCompareAndSwap32(PENDING, FULFILLED, &_state)) {
+            if (_state == PENDING) {
+                _state = FULFILLED;
                 _result = result;
                 while ([_subscribers count] > 0) {
                     Subscriber * subscriber = [_subscribers objectAtIndex:0];
@@ -410,7 +414,8 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 - (void) reject:(id)reason {
     @synchronized(_subscribers) {
-        if (OSAtomicCompareAndSwap32(PENDING, REJECTED, &_state)) {
+        if (_state == PENDING) {
+            _state = REJECTED;
             _reason = reason;
             while ([_subscribers count] > 0) {
                 Subscriber * subscriber = [_subscribers objectAtIndex:0];
