@@ -860,9 +860,10 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
             return decode((NSData *)response, args, context);
         }];
     }
-    else {
+    if ([response isKindOfClass:[NSData class]]) {
         return decode((NSData *)response, args, context);
     }
+    return response;
 }
 
 - (Promise *) getAutoId {
