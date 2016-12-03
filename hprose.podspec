@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "hprose"
-  s.version      = "2.0.1"
+  s.version      = "2.0.2"
   s.summary      = "Hprose for Objective-C"
 
   s.description  = <<-DESC
@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
     This project is the implementation of Hprose for Objective-C.
                    DESC
 
-  s.homepage     = "https://github.com/andot/hprose"
+  s.homepage     = "https://github.com/hprose/hprose-objc"
 
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -96,7 +96,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v2.0.1" }
+  s.source       = { :git => "https://github.com/hprose/hprose-objc.git", :tag => "v2.0.2" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
