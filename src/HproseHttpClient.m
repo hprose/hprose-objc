@@ -287,7 +287,7 @@
                  [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
     }
     if (ret == nil) {
-        NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", error.code, error.localizedDescription];
+        NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", (long)error.code, error.localizedDescription];
         return [HproseException exceptionWithReason:errmsg];
     }
     return ret;
@@ -308,7 +308,7 @@
         context.userData[@"httpHeader"] = ((NSHTTPURLResponse *)response).allHeaderFields;
         dispatch_async(HPROSE_ASYNC_QUEUE, ^{
             if (data == nil) {
-                NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", error.code, error.localizedDescription];
+                NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", (long)error.code, error.localizedDescription];
                 errorCallback([HproseException exceptionWithReason:errmsg]);
             }
             else {
