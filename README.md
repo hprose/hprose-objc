@@ -48,4 +48,4 @@ pod "hprose"
 
 ## License
 
-Hprose is available under the MIT license. See the LICENSE file for more info.
+Hprose is available under the MIT license. See the LICENSE.md file for more info.
