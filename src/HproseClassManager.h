@@ -12,7 +12,7 @@
  *                                                        *
  * hprose class manager header for Objective-C.           *
  *                                                        *
- * LastModified: Dec 4, 2016                             *
+ * LastModified: Dec 4, 2016                              *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
