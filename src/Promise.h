@@ -12,7 +12,7 @@
  *                                                        *
  * Promise header for Objective-C.                        *
  *                                                        *
- * LastModified: Jul 4, 2016                              *
+ * LastModified: Dec 21, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -110,6 +110,6 @@ typedef enum {
 - (Promise *) reduce:(id (^)(id prev, id element, NSUInteger index))handler init:(id)value;
 - (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler;
 - (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler init:(id)value;
-
+- (void) wait;
 @end
 

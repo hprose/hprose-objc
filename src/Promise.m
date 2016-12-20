@@ -12,7 +12,7 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Dec 3, 2016                              *
+ * LastModified: Dec 21, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -460,7 +460,6 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self done:onfulfill fail:nil];
 }
 
-
 - (Promise *) catch:(id (^)(id))onreject with:(BOOL (^)(id))test {
     if (test != nil) {
         return [self then:nil catch:^id(id reason) {
@@ -623,6 +622,14 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self then:^id(NSArray *array) {
         return [Promise reduceRight:handler with:array init:value];
     }];
+}
+
+- (void) wait {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    [self always:^(id result) {
+        dispatch_semaphore_signal(sem);
+    }];
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 }
 
 @end
