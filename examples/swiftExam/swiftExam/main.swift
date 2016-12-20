@@ -35,6 +35,7 @@ for user in users {
 
 @objc protocol Hello {
     func hello(_ name:String, _ callback: HproseCallback, _ errorBlock: HproseErrorCallback) -> Void
+    func hello(_ name:String) -> String
     func sum(_ a:Int, _ b:Int, _ c:Int) -> NSNumber
     func swapKeyAndValue(_ dict: [String: String]) -> [String: String]
     func getUserList() -> Array<User>;
@@ -48,7 +49,7 @@ proxy.hello("async world", {(result, args) in
     print(error!)
 })
 
-print(client.invoke("hello", withArgs: ["sync world"]));
+print(proxy.hello("sync world"));
 
 print(proxy.sum(1, 2, 3))
 
