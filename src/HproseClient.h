@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client header for Objective-C.                  *
  *                                                        *
- * LastModified: Dec 3, 2016                              *
+ * LastModified: Dec 20, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -31,11 +31,8 @@
 
 @optional
 
-- (id) sendSync:(NSData *)data context:(HproseClientContext *)context;
+- (Promise *) sendAndReceive:(NSData *)data context:(HproseClientContext *)context;
 
-- (oneway void) sendAsync:(NSData *)data context:(HproseClientContext *)context
-                receiveAsync:(void (^)(NSData *))receiveCallback
-                error:(void (^)(NSException *))errorCallback;
 @end
 
 @interface HproseFilterHandlerManager : NSObject {
