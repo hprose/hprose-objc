@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Dec 3, 2016                              *
+ * LastModified: Dec 21, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -133,37 +133,6 @@
     return request;
 }
 
-//- (id) sendSync:(NSData *)data context:(HproseClientContext *)context {
-//    NSURLRequest *request = [self createRequest:data context:context];
-//    __block NSHTTPURLResponse *response;
-//    __block NSError *error;
-//    __block NSData *ret;
-//    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-//    NSURLSessionDataTask *task = [_session dataTaskWithRequest:request
-//                                             completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
-//        response = (NSHTTPURLResponse *)resp;
-//        error = err;
-//        ret = data;
-//        dispatch_semaphore_signal(sem);
-//    }];
-//    [task resume];
-//    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-//    
-//    NSInteger statusCode = response.statusCode;
-//    context.userData[@"httpHeader"] = response.allHeaderFields;
-//    if (statusCode != 200 && statusCode != 0) {
-//        return [HproseException exceptionWithReason:
-//                [NSString stringWithFormat:@"%d: %@",
-//                 (int)statusCode,
-//                 [NSHTTPURLResponse localizedStringForStatusCode:statusCode]]];
-//    }
-//    if (ret == nil) {
-//        NSString *errmsg = [NSString stringWithFormat:@"%ld: %@", (long)error.code, error.localizedDescription];
-//        return [HproseException exceptionWithReason:errmsg];
-//    }
-//    return ret;
-//}
-
 - (Promise *) sendAndReceive:(NSData *)data context:(HproseClientContext *)context {
     NSURLRequest *request = [self createRequest:data context:context];
     Promise *result = [Promise promise];
@@ -171,16 +140,14 @@
                                              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         context.userData[@"httpHeader"] = ((NSHTTPURLResponse *)response).allHeaderFields;
         NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
-        if (statusCode != 200 && statusCode != 0) {
+        if (error != nil) {
+            [result reject:error];
+        }
+        else if (statusCode != 200 && statusCode != 0) {
             NSString *errmsg = [NSString stringWithFormat:@"%d: %@",
                                 (int)statusCode,
                                 [NSHTTPURLResponse localizedStringForStatusCode:statusCode]];
             [result reject:[HproseException exceptionWithReason: errmsg]];
-        }
-        else if (data == nil) {
-            NSString *errmsg = [NSString stringWithFormat:@"%ld: %@",
-                                (long)error.code, error.localizedDescription];
-            [result reject:[HproseException exceptionWithReason:errmsg]];
         }
         else {
             [result resolve:data];

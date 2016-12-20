@@ -82,7 +82,7 @@
 
 - (id) syncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
 - (id) asyncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
-- (oneway void) errorHandler:(NSString *)name withException:(NSException *)e settings:(HproseInvokeSettings *)settings;
+- (oneway void) errorHandler:(NSString *)name withException:(id)e settings:(HproseInvokeSettings *)settings;
 
 - (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context;
 - (NSData *) inputFilter:(NSData *)response context:(HproseClientContext *)context;
@@ -90,7 +90,6 @@
 - (id) invokeHandler:(NSString *)name withArgs:(NSArray *)args context:(HproseClientContext *)context;
 - (id) beforeFilterHandler:(NSData *)request context:(HproseClientContext *)context;
 - (id) afterFilterHandler:(NSData *)request context:(HproseClientContext *)context;
-- (id) sendAndReceive:(NSData *)request context:(HproseClientContext *)context;
 - (id) retry:(NSData *)request context:(HproseClientContext *)context;
 
 - (Promise *) getAutoId;
@@ -636,7 +635,7 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
     return promise;
 }
 
-- (oneway void) errorHandler:(NSString *)name withException:(NSException *)e settings:(HproseInvokeSettings *)settings {
+- (oneway void) errorHandler:(NSString *)name withException:(id)e settings:(HproseInvokeSettings *)settings {
     if (settings.errorCallback) {
         settings.errorCallback(name, e);
     }
@@ -644,7 +643,7 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
         settings.errorBlock(name, e);
     }
     else if (settings.delegate != nil && settings.errorSelector != NULL && [settings.delegate respondsToSelector:settings.errorSelector]) {
-        ((void (*)(id, SEL, NSString *, NSException *))objc_msgSend)(settings.delegate, settings.errorSelector, name, e);
+        ((void (*)(id, SEL, NSString *, id))objc_msgSend)(settings.delegate, settings.errorSelector, name, e);
     }
     else if (_errorCallback) {
         _errorCallback(name, e);
@@ -653,7 +652,7 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
         _errorHandler(name, e);
     }
     else if (_delegate != nil && _onError != NULL && [_delegate respondsToSelector:_onError]) {
-        ((void (*)(id, SEL, NSString *, NSException *))objc_msgSend)(_delegate, _onError, name, e);
+        ((void (*)(id, SEL, NSString *, id))objc_msgSend)(_delegate, _onError, name, e);
     }
 }
 
@@ -871,7 +870,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
     }
     HproseTopic *topic = [self getTopic:name id:clientId];
     if (topic == nil) {
-        void (^cb)(NSException *) = ^(NSException *e) {
+        void (^cb)(id) = ^(id e) {
             HproseTopic *topic = [self getTopic:name id:clientId];
             if (topic != nil) {
                 HproseInvokeSettings *settings = [[HproseInvokeSettings alloc] init];
@@ -881,15 +880,8 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
                 settings.resultClass = resultClass;
                 settings.timeout = timeout;
                 settings.async = YES;
-                @try {
-                    Promise *result = [self invoke:name withArgs:@[clientId] settings:settings];
-                    [result done:topic.handler fail:cb];
-                }
-                @catch (NSException *e) {
-                    settings = nil;
-                    topic = nil;
-                    cb(e);
-                }
+                Promise *result = [self invoke:name withArgs:@[clientId] settings:settings];
+                [result done:topic.handler fail:cb];
             }
         };
         topic = [[HproseTopic alloc] init];
