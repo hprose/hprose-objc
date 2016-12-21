@@ -1,0 +1,426 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9B19A41F1E0AD26A00C1BB2E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A41E1E0AD26A00C1BB2E /* main.m */; };
+		9B19A4221E0AD26A00C1BB2E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4211E0AD26A00C1BB2E /* AppDelegate.m */; };
+		9B19A4251E0AD26A00C1BB2E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4241E0AD26A00C1BB2E /* ViewController.m */; };
+		9B19A4281E0AD26A00C1BB2E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B19A4261E0AD26A00C1BB2E /* Main.storyboard */; };
+		9B19A42A1E0AD26A00C1BB2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B19A4291E0AD26A00C1BB2E /* Assets.xcassets */; };
+		9B19A42D1E0AD26A00C1BB2E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B19A42B1E0AD26A00C1BB2E /* LaunchScreen.storyboard */; };
+		9B19A4591E0AD2EC00C1BB2E /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4361E0AD2EC00C1BB2E /* GCDAsyncSocket.m */; };
+		9B19A45A1E0AD2EC00C1BB2E /* HproseClassManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4391E0AD2EC00C1BB2E /* HproseClassManager.m */; };
+		9B19A45B1E0AD2EC00C1BB2E /* HproseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A43B1E0AD2EC00C1BB2E /* HproseClient.m */; };
+		9B19A45C1E0AD2EC00C1BB2E /* HproseClientProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A43D1E0AD2EC00C1BB2E /* HproseClientProxy.m */; };
+		9B19A45D1E0AD2EC00C1BB2E /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A43F1E0AD2EC00C1BB2E /* HproseContext.m */; };
+		9B19A45E1E0AD2EC00C1BB2E /* HproseException.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4411E0AD2EC00C1BB2E /* HproseException.m */; };
+		9B19A45F1E0AD2EC00C1BB2E /* HproseFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4441E0AD2EC00C1BB2E /* HproseFormatter.m */; };
+		9B19A4601E0AD2EC00C1BB2E /* HproseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4471E0AD2EC00C1BB2E /* HproseHelper.m */; };
+		9B19A4611E0AD2EC00C1BB2E /* HproseHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4491E0AD2EC00C1BB2E /* HproseHttpClient.m */; };
+		9B19A4621E0AD2EC00C1BB2E /* HproseInvokeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A44C1E0AD2EC00C1BB2E /* HproseInvokeSettings.m */; };
+		9B19A4631E0AD2EC00C1BB2E /* HproseProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A44E1E0AD2EC00C1BB2E /* HproseProperty.m */; };
+		9B19A4641E0AD2EC00C1BB2E /* HproseReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4501E0AD2EC00C1BB2E /* HproseReader.m */; };
+		9B19A4651E0AD2EC00C1BB2E /* HproseSocketClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4531E0AD2EC00C1BB2E /* HproseSocketClient.m */; };
+		9B19A4661E0AD2EC00C1BB2E /* HproseWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4561E0AD2EC00C1BB2E /* HproseWriter.m */; };
+		9B19A4671E0AD2EC00C1BB2E /* Promise.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B19A4581E0AD2EC00C1BB2E /* Promise.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9B19A41A1E0AD26A00C1BB2E /* iphoneTcpExam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iphoneTcpExam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B19A41E1E0AD26A00C1BB2E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9B19A4201E0AD26A00C1BB2E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		9B19A4211E0AD26A00C1BB2E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		9B19A4231E0AD26A00C1BB2E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		9B19A4241E0AD26A00C1BB2E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		9B19A4271E0AD26A00C1BB2E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9B19A4291E0AD26A00C1BB2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9B19A42C1E0AD26A00C1BB2E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9B19A42E1E0AD26A00C1BB2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B19A4351E0AD2EC00C1BB2E /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = ../../../src/GCDAsyncSocket.h; sourceTree = "<group>"; };
+		9B19A4361E0AD2EC00C1BB2E /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = ../../../src/GCDAsyncSocket.m; sourceTree = "<group>"; };
+		9B19A4371E0AD2EC00C1BB2E /* Hprose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hprose.h; path = ../../../src/Hprose.h; sourceTree = "<group>"; };
+		9B19A4381E0AD2EC00C1BB2E /* HproseClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClassManager.h; path = ../../../src/HproseClassManager.h; sourceTree = "<group>"; };
+		9B19A4391E0AD2EC00C1BB2E /* HproseClassManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseClassManager.m; path = ../../../src/HproseClassManager.m; sourceTree = "<group>"; };
+		9B19A43A1E0AD2EC00C1BB2E /* HproseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClient.h; path = ../../../src/HproseClient.h; sourceTree = "<group>"; };
+		9B19A43B1E0AD2EC00C1BB2E /* HproseClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseClient.m; path = ../../../src/HproseClient.m; sourceTree = "<group>"; };
+		9B19A43C1E0AD2EC00C1BB2E /* HproseClientProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseClientProxy.h; path = ../../../src/HproseClientProxy.h; sourceTree = "<group>"; };
+		9B19A43D1E0AD2EC00C1BB2E /* HproseClientProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseClientProxy.m; path = ../../../src/HproseClientProxy.m; sourceTree = "<group>"; };
+		9B19A43E1E0AD2EC00C1BB2E /* HproseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../../../src/HproseContext.h; sourceTree = "<group>"; };
+		9B19A43F1E0AD2EC00C1BB2E /* HproseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseContext.m; path = ../../../src/HproseContext.m; sourceTree = "<group>"; };
+		9B19A4401E0AD2EC00C1BB2E /* HproseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseException.h; path = ../../../src/HproseException.h; sourceTree = "<group>"; };
+		9B19A4411E0AD2EC00C1BB2E /* HproseException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseException.m; path = ../../../src/HproseException.m; sourceTree = "<group>"; };
+		9B19A4421E0AD2EC00C1BB2E /* HproseFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseFilter.h; path = ../../../src/HproseFilter.h; sourceTree = "<group>"; };
+		9B19A4431E0AD2EC00C1BB2E /* HproseFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseFormatter.h; path = ../../../src/HproseFormatter.h; sourceTree = "<group>"; };
+		9B19A4441E0AD2EC00C1BB2E /* HproseFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseFormatter.m; path = ../../../src/HproseFormatter.m; sourceTree = "<group>"; };
+		9B19A4451E0AD2EC00C1BB2E /* HproseHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHandlers.h; path = ../../../src/HproseHandlers.h; sourceTree = "<group>"; };
+		9B19A4461E0AD2EC00C1BB2E /* HproseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHelper.h; path = ../../../src/HproseHelper.h; sourceTree = "<group>"; };
+		9B19A4471E0AD2EC00C1BB2E /* HproseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseHelper.m; path = ../../../src/HproseHelper.m; sourceTree = "<group>"; };
+		9B19A4481E0AD2EC00C1BB2E /* HproseHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHttpClient.h; path = ../../../src/HproseHttpClient.h; sourceTree = "<group>"; };
+		9B19A4491E0AD2EC00C1BB2E /* HproseHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseHttpClient.m; path = ../../../src/HproseHttpClient.m; sourceTree = "<group>"; };
+		9B19A44A1E0AD2EC00C1BB2E /* HproseInvoker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvoker.h; path = ../../../src/HproseInvoker.h; sourceTree = "<group>"; };
+		9B19A44B1E0AD2EC00C1BB2E /* HproseInvokeSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvokeSettings.h; path = ../../../src/HproseInvokeSettings.h; sourceTree = "<group>"; };
+		9B19A44C1E0AD2EC00C1BB2E /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseInvokeSettings.m; path = ../../../src/HproseInvokeSettings.m; sourceTree = "<group>"; };
+		9B19A44D1E0AD2EC00C1BB2E /* HproseProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseProperty.h; path = ../../../src/HproseProperty.h; sourceTree = "<group>"; };
+		9B19A44E1E0AD2EC00C1BB2E /* HproseProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseProperty.m; path = ../../../src/HproseProperty.m; sourceTree = "<group>"; };
+		9B19A44F1E0AD2EC00C1BB2E /* HproseReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseReader.h; path = ../../../src/HproseReader.h; sourceTree = "<group>"; };
+		9B19A4501E0AD2EC00C1BB2E /* HproseReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseReader.m; path = ../../../src/HproseReader.m; sourceTree = "<group>"; };
+		9B19A4511E0AD2EC00C1BB2E /* HproseResultMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseResultMode.h; path = ../../../src/HproseResultMode.h; sourceTree = "<group>"; };
+		9B19A4521E0AD2EC00C1BB2E /* HproseSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseSocketClient.h; path = ../../../src/HproseSocketClient.h; sourceTree = "<group>"; };
+		9B19A4531E0AD2EC00C1BB2E /* HproseSocketClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseSocketClient.m; path = ../../../src/HproseSocketClient.m; sourceTree = "<group>"; };
+		9B19A4541E0AD2EC00C1BB2E /* HproseTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseTags.h; path = ../../../src/HproseTags.h; sourceTree = "<group>"; };
+		9B19A4551E0AD2EC00C1BB2E /* HproseWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseWriter.h; path = ../../../src/HproseWriter.h; sourceTree = "<group>"; };
+		9B19A4561E0AD2EC00C1BB2E /* HproseWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseWriter.m; path = ../../../src/HproseWriter.m; sourceTree = "<group>"; };
+		9B19A4571E0AD2EC00C1BB2E /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Promise.h; path = ../../../src/Promise.h; sourceTree = "<group>"; };
+		9B19A4581E0AD2EC00C1BB2E /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Promise.m; path = ../../../src/Promise.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9B19A4171E0AD26A00C1BB2E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9B19A4111E0AD26A00C1BB2E = {
+			isa = PBXGroup;
+			children = (
+				9B19A41C1E0AD26A00C1BB2E /* iphoneTcpExam */,
+				9B19A41B1E0AD26A00C1BB2E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9B19A41B1E0AD26A00C1BB2E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9B19A41A1E0AD26A00C1BB2E /* iphoneTcpExam.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9B19A41C1E0AD26A00C1BB2E /* iphoneTcpExam */ = {
+			isa = PBXGroup;
+			children = (
+				9B19A4341E0AD2D800C1BB2E /* Hprose */,
+				9B19A4201E0AD26A00C1BB2E /* AppDelegate.h */,
+				9B19A4211E0AD26A00C1BB2E /* AppDelegate.m */,
+				9B19A4231E0AD26A00C1BB2E /* ViewController.h */,
+				9B19A4241E0AD26A00C1BB2E /* ViewController.m */,
+				9B19A4261E0AD26A00C1BB2E /* Main.storyboard */,
+				9B19A4291E0AD26A00C1BB2E /* Assets.xcassets */,
+				9B19A42B1E0AD26A00C1BB2E /* LaunchScreen.storyboard */,
+				9B19A42E1E0AD26A00C1BB2E /* Info.plist */,
+				9B19A41D1E0AD26A00C1BB2E /* Supporting Files */,
+			);
+			path = iphoneTcpExam;
+			sourceTree = "<group>";
+		};
+		9B19A41D1E0AD26A00C1BB2E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9B19A41E1E0AD26A00C1BB2E /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9B19A4341E0AD2D800C1BB2E /* Hprose */ = {
+			isa = PBXGroup;
+			children = (
+				9B19A4351E0AD2EC00C1BB2E /* GCDAsyncSocket.h */,
+				9B19A4361E0AD2EC00C1BB2E /* GCDAsyncSocket.m */,
+				9B19A4371E0AD2EC00C1BB2E /* Hprose.h */,
+				9B19A4381E0AD2EC00C1BB2E /* HproseClassManager.h */,
+				9B19A4391E0AD2EC00C1BB2E /* HproseClassManager.m */,
+				9B19A43A1E0AD2EC00C1BB2E /* HproseClient.h */,
+				9B19A43B1E0AD2EC00C1BB2E /* HproseClient.m */,
+				9B19A43C1E0AD2EC00C1BB2E /* HproseClientProxy.h */,
+				9B19A43D1E0AD2EC00C1BB2E /* HproseClientProxy.m */,
+				9B19A43E1E0AD2EC00C1BB2E /* HproseContext.h */,
+				9B19A43F1E0AD2EC00C1BB2E /* HproseContext.m */,
+				9B19A4401E0AD2EC00C1BB2E /* HproseException.h */,
+				9B19A4411E0AD2EC00C1BB2E /* HproseException.m */,
+				9B19A4421E0AD2EC00C1BB2E /* HproseFilter.h */,
+				9B19A4431E0AD2EC00C1BB2E /* HproseFormatter.h */,
+				9B19A4441E0AD2EC00C1BB2E /* HproseFormatter.m */,
+				9B19A4451E0AD2EC00C1BB2E /* HproseHandlers.h */,
+				9B19A4461E0AD2EC00C1BB2E /* HproseHelper.h */,
+				9B19A4471E0AD2EC00C1BB2E /* HproseHelper.m */,
+				9B19A4481E0AD2EC00C1BB2E /* HproseHttpClient.h */,
+				9B19A4491E0AD2EC00C1BB2E /* HproseHttpClient.m */,
+				9B19A44A1E0AD2EC00C1BB2E /* HproseInvoker.h */,
+				9B19A44B1E0AD2EC00C1BB2E /* HproseInvokeSettings.h */,
+				9B19A44C1E0AD2EC00C1BB2E /* HproseInvokeSettings.m */,
+				9B19A44D1E0AD2EC00C1BB2E /* HproseProperty.h */,
+				9B19A44E1E0AD2EC00C1BB2E /* HproseProperty.m */,
+				9B19A44F1E0AD2EC00C1BB2E /* HproseReader.h */,
+				9B19A4501E0AD2EC00C1BB2E /* HproseReader.m */,
+				9B19A4511E0AD2EC00C1BB2E /* HproseResultMode.h */,
+				9B19A4521E0AD2EC00C1BB2E /* HproseSocketClient.h */,
+				9B19A4531E0AD2EC00C1BB2E /* HproseSocketClient.m */,
+				9B19A4541E0AD2EC00C1BB2E /* HproseTags.h */,
+				9B19A4551E0AD2EC00C1BB2E /* HproseWriter.h */,
+				9B19A4561E0AD2EC00C1BB2E /* HproseWriter.m */,
+				9B19A4571E0AD2EC00C1BB2E /* Promise.h */,
+				9B19A4581E0AD2EC00C1BB2E /* Promise.m */,
+			);
+			name = Hprose;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9B19A4191E0AD26A00C1BB2E /* iphoneTcpExam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B19A4311E0AD26A00C1BB2E /* Build configuration list for PBXNativeTarget "iphoneTcpExam" */;
+			buildPhases = (
+				9B19A4161E0AD26A00C1BB2E /* Sources */,
+				9B19A4171E0AD26A00C1BB2E /* Frameworks */,
+				9B19A4181E0AD26A00C1BB2E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iphoneTcpExam;
+			productName = iphoneTcpExam;
+			productReference = 9B19A41A1E0AD26A00C1BB2E /* iphoneTcpExam.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9B19A4121E0AD26A00C1BB2E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = Hprose;
+				TargetAttributes = {
+					9B19A4191E0AD26A00C1BB2E = {
+						CreatedOnToolsVersion = 8.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9B19A4151E0AD26A00C1BB2E /* Build configuration list for PBXProject "iphoneTcpExam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9B19A4111E0AD26A00C1BB2E;
+			productRefGroup = 9B19A41B1E0AD26A00C1BB2E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9B19A4191E0AD26A00C1BB2E /* iphoneTcpExam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9B19A4181E0AD26A00C1BB2E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B19A42D1E0AD26A00C1BB2E /* LaunchScreen.storyboard in Resources */,
+				9B19A42A1E0AD26A00C1BB2E /* Assets.xcassets in Resources */,
+				9B19A4281E0AD26A00C1BB2E /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9B19A4161E0AD26A00C1BB2E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B19A45D1E0AD2EC00C1BB2E /* HproseContext.m in Sources */,
+				9B19A45F1E0AD2EC00C1BB2E /* HproseFormatter.m in Sources */,
+				9B19A4591E0AD2EC00C1BB2E /* GCDAsyncSocket.m in Sources */,
+				9B19A4671E0AD2EC00C1BB2E /* Promise.m in Sources */,
+				9B19A4631E0AD2EC00C1BB2E /* HproseProperty.m in Sources */,
+				9B19A45C1E0AD2EC00C1BB2E /* HproseClientProxy.m in Sources */,
+				9B19A4621E0AD2EC00C1BB2E /* HproseInvokeSettings.m in Sources */,
+				9B19A4641E0AD2EC00C1BB2E /* HproseReader.m in Sources */,
+				9B19A4251E0AD26A00C1BB2E /* ViewController.m in Sources */,
+				9B19A4651E0AD2EC00C1BB2E /* HproseSocketClient.m in Sources */,
+				9B19A4611E0AD2EC00C1BB2E /* HproseHttpClient.m in Sources */,
+				9B19A4221E0AD26A00C1BB2E /* AppDelegate.m in Sources */,
+				9B19A45E1E0AD2EC00C1BB2E /* HproseException.m in Sources */,
+				9B19A45B1E0AD2EC00C1BB2E /* HproseClient.m in Sources */,
+				9B19A4661E0AD2EC00C1BB2E /* HproseWriter.m in Sources */,
+				9B19A4601E0AD2EC00C1BB2E /* HproseHelper.m in Sources */,
+				9B19A45A1E0AD2EC00C1BB2E /* HproseClassManager.m in Sources */,
+				9B19A41F1E0AD26A00C1BB2E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		9B19A4261E0AD26A00C1BB2E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9B19A4271E0AD26A00C1BB2E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		9B19A42B1E0AD26A00C1BB2E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9B19A42C1E0AD26A00C1BB2E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9B19A42F1E0AD26A00C1BB2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9B19A4301E0AD26A00C1BB2E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9B19A4321E0AD26A00C1BB2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = iphoneTcpExam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hprose.iphoneTcpExam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9B19A4331E0AD26A00C1BB2E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = iphoneTcpExam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hprose.iphoneTcpExam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9B19A4151E0AD26A00C1BB2E /* Build configuration list for PBXProject "iphoneTcpExam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B19A42F1E0AD26A00C1BB2E /* Debug */,
+				9B19A4301E0AD26A00C1BB2E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B19A4311E0AD26A00C1BB2E /* Build configuration list for PBXNativeTarget "iphoneTcpExam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B19A4321E0AD26A00C1BB2E /* Debug */,
+				9B19A4331E0AD26A00C1BB2E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9B19A4121E0AD26A00C1BB2E /* Project object */;
+}

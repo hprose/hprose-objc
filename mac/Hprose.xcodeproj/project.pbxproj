@@ -11,6 +11,10 @@
 		9B642B0E1CF6EB3A003C4946 /* HproseInvokeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */; };
 		9B642B121CFF4908003C4946 /* HproseHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B642B111CFF4908003C4946 /* HproseHandlers.h */; };
 		9B9AF6B710F607B20043DFBD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B9AF6B610F607B20043DFBD /* Foundation.framework */; };
+		9BA6EC471E07D9FE001C0C4C /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA6EC451E07D9FE001C0C4C /* GCDAsyncSocket.h */; };
+		9BA6EC481E07D9FE001C0C4C /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA6EC461E07D9FE001C0C4C /* GCDAsyncSocket.m */; };
+		9BA6EC4A1E07DB28001C0C4C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BA6EC491E07DB28001C0C4C /* CoreServices.framework */; };
+		9BA6EC4C1E07DB32001C0C4C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BA6EC4B1E07DB32001C0C4C /* Security.framework */; };
 		9BE497431CEED115001CBCA5 /* Promise.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE497411CEED115001CBCA5 /* Promise.h */; };
 		9BE497441CEED115001CBCA5 /* Promise.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE497421CEED115001CBCA5 /* Promise.m */; };
 		9BE87D2D1B08C7700053F1E8 /* HproseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE87D2C1B08C7700053F1E8 /* HproseContext.m */; };
@@ -48,6 +52,10 @@
 		9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseInvokeSettings.m; path = ../src/HproseInvokeSettings.m; sourceTree = "<group>"; };
 		9B642B111CFF4908003C4946 /* HproseHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHandlers.h; path = ../src/HproseHandlers.h; sourceTree = "<group>"; };
 		9B9AF6B610F607B20043DFBD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		9BA6EC451E07D9FE001C0C4C /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = ../src/GCDAsyncSocket.h; sourceTree = "<group>"; };
+		9BA6EC461E07D9FE001C0C4C /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = ../src/GCDAsyncSocket.m; sourceTree = "<group>"; };
+		9BA6EC491E07DB28001C0C4C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		9BA6EC4B1E07DB32001C0C4C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9BE497411CEED115001CBCA5 /* Promise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Promise.h; path = ../src/Promise.h; sourceTree = "<group>"; };
 		9BE497421CEED115001CBCA5 /* Promise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Promise.m; path = ../src/Promise.m; sourceTree = "<group>"; };
 		9BE87D291B08C0A90053F1E8 /* HproseContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HproseContext.h; path = ../src/HproseContext.h; sourceTree = "<group>"; };
@@ -85,6 +93,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BA6EC4C1E07DB32001C0C4C /* Security.framework in Frameworks */,
+				9BA6EC4A1E07DB28001C0C4C /* CoreServices.framework in Frameworks */,
 				9B9AF6B710F607B20043DFBD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,6 +125,8 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9BA6EC4B1E07DB32001C0C4C /* Security.framework */,
+				9BA6EC491E07DB28001C0C4C /* CoreServices.framework */,
 				9B9AF6B610F607B20043DFBD /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -130,6 +142,8 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9BA6EC451E07D9FE001C0C4C /* GCDAsyncSocket.h */,
+				9BA6EC461E07D9FE001C0C4C /* GCDAsyncSocket.m */,
 				9BE497411CEED115001CBCA5 /* Promise.h */,
 				9BE497421CEED115001CBCA5 /* Promise.m */,
 				D824A66018F79822004ED013 /* Hprose.h */,
@@ -192,6 +206,7 @@
 				D824A67C18F79822004ED013 /* HproseClientProxy.h in Headers */,
 				D824A67718F79822004ED013 /* Hprose.h in Headers */,
 				D824A68018F79822004ED013 /* HproseFilter.h in Headers */,
+				9BA6EC471E07D9FE001C0C4C /* GCDAsyncSocket.h in Headers */,
 				D824A68818F79822004ED013 /* HproseReader.h in Headers */,
 				D824A68118F79822004ED013 /* HproseHelper.h in Headers */,
 				9B642B121CFF4908003C4946 /* HproseHandlers.h in Headers */,
@@ -277,6 +292,7 @@
 				D824A68D18F79822004ED013 /* HproseWriter.m in Sources */,
 				D824A68918F79822004ED013 /* HproseReader.m in Sources */,
 				D824A67B18F79822004ED013 /* HproseClient.m in Sources */,
+				9BA6EC481E07D9FE001C0C4C /* GCDAsyncSocket.m in Sources */,
 				D824A68418F79822004ED013 /* HproseHttpClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

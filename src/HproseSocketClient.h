@@ -8,28 +8,33 @@
 \**********************************************************/
 /**********************************************************\
  *                                                        *
- * Hprose.h                                               *
+ * HproseSocketClient.h                                   *
  *                                                        *
- * hprose header for Objective-C.                         *
+ * hprose socket client header for Objective-C.           *
  *                                                        *
- * LastModified: Dec 21, 2016                             *
+ * LastModified: Dec 20, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
-#import "Promise.h"
-#import "HproseTags.h"
-#import "HproseReader.h"
-#import "HproseWriter.h"
-#import "HproseFormatter.h"
-#import "HproseException.h"
-#import "HproseHelper.h"
-#import "HproseClassManager.h"
-#import "HproseResultMode.h"
-#import "HproseContext.h"
-#import "HproseFilter.h"
-#import "HproseInvokeSettings.h"
-#import "HproseHandlers.h"
+#import <Foundation/Foundation.h>
 #import "HproseClient.h"
-#import "HproseHttpClient.h"
-#import "HproseSocketClient.h"
+
+#ifdef UIKIT_EXTERN
+#define HPROSE_ASYNC_QUEUE dispatch_get_main_queue()
+#else
+#define HPROSE_ASYNC_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+#endif
+
+@interface HproseSocketClient: HproseClient {
+    id _fdtrans;
+    id _hdtrans;
+}
+
+@property (readonly) NSURL *url;
+@property BOOL ipv4Preferred;
+@property NSTimeInterval connectTimeout;
+@property NSTimeInterval idleTimeout;
+@property NSDictionary *tlsSettings;
+@property NSUInteger maxPoolSize;
+@end
