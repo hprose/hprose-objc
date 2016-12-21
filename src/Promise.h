@@ -110,6 +110,6 @@ typedef enum {
 - (Promise *) reduce:(id (^)(id prev, id element, NSUInteger index))handler init:(id)value;
 - (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler;
 - (Promise *) reduceRight:(id (^)(id prev, id element, NSUInteger index))handler init:(id)value;
-- (void) wait;
+- (Promise *) wait;
 @end
 

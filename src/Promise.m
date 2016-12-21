@@ -624,12 +624,13 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     }];
 }
 
-- (void) wait {
+- (Promise *) wait {
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     [self always:^(id result) {
         dispatch_semaphore_signal(sem);
     }];
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    return self;
 }
 
 @end
