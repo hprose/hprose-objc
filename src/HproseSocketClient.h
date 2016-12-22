@@ -12,7 +12,7 @@
  *                                                        *
  * hprose socket client header for Objective-C.           *
  *                                                        *
- * LastModified: Dec 20, 2016                             *
+ * LastModified: Dec 22, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -32,6 +32,7 @@
 }
 
 @property (readonly) NSURL *url;
+@property BOOL fullDuplex;
 @property BOOL ipv4Preferred;
 @property NSTimeInterval connectTimeout;
 @property NSTimeInterval idleTimeout;

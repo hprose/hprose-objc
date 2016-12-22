@@ -12,7 +12,7 @@
  *                                                        *
  * hprose socket client for Objective-C.                  *
  *                                                        *
- * LastModified: Dec 20, 2016                             *
+ * LastModified: Dec 22, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -278,16 +278,105 @@
 
 @end
 
-//@interface HalfDuplexSocketConnection : SocketConnection {
-//}
-//
-//- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
-//
-//- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
-//
-//- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err;
-//
-//@end
+@interface HalfDuplexSocketConnection : SocketConnection {
+}
+
+@property (readonly) NSMutableArray<SocketConnection *> *pool;
+@property (readonly) NSMutableArray<SocketRequest *> *requests;
+@property Promise *result;
+
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
+
+- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
+
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err;
+
+@end
+
+@implementation HalfDuplexSocketConnection
+
+- (id) init:(HproseSocketClient *)client trans:(SocketTransporter *)trans error:(NSError **)error {
+    if (self = [super init:client error:error]) {
+        _requests = trans.requests;
+        _pool = trans.pool;
+    }
+    return self;
+}
+
+- (void) sendNext {
+    SocketRequest *request = nil;
+    @synchronized (_requests) {
+        if (_requests.count > 0) {
+            request = _requests.lastObject;
+            [_requests removeLastObject];
+        }
+        else {
+            @synchronized (_pool) {
+                if (![_pool containsObject:self]) {
+                    [_pool addObject:self];
+                }
+            }
+        }
+    }
+    if (request != nil) {
+        [self send:request];
+    }
+}
+
+- (void) send:(SocketRequest *)request {
+    NSTimeInterval timeout = request.context.settings.timeout;
+    if (timeout > 0) {
+        [[request.result timeout:timeout] fail:^(id error) {
+            if ([error isKindOfClass:[NSException class]]) {
+                if ([[error reason] isEqualToString:@"timeout"]) {
+                    [self.sock disconnect];
+                    @synchronized (_pool) {
+                        if (![_pool containsObject:self]) {
+                            [_pool addObject:self];
+                        }
+                    }
+                }
+            }
+        }];
+    }
+    _result = request.result;
+    uint8_t buf[4];
+    uint32_t len = (uint32_t)request.data.length;
+    buf[0] = len >> 24 & 0xff;
+    buf[1] = len >> 16 & 0xff;
+    buf[2] = len >> 8  & 0xff;
+    buf[3] = len       & 0xff;
+    [self.sock writeData:[NSData dataWithBytes:buf length:4] withTimeout:-1 tag:TAG_REQUEST_HEADER];
+    [self.sock writeData:request.data withTimeout:-1 tag:TAG_REQUEST_BODY];
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+    if (tag == TAG_RESPONSE_HEADER) {
+        uint8_t buf[8];
+        [data getBytes:buf length:8];
+        uint32_t length = (uint32_t)(buf[0]) << 24 |
+                          (uint32_t)(buf[1]) << 16 |
+                          (uint32_t)(buf[2]) << 8  |
+                          (uint32_t)(buf[3]);
+        [sock readDataToLength:length withTimeout:-1 tag:TAG_RESPONSE_BODY];
+    }
+    else {
+        [_result resolve:data];
+        [self sendNext];
+    }
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag {
+    if (tag == TAG_REQUEST_BODY) {
+        [sock readDataToLength:4 withTimeout:-1 tag:TAG_RESPONSE_HEADER];
+    }
+}
+
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err {
+    [_result reject:err];
+}
+
+@end
 
 @implementation SocketTransporter
 
@@ -307,15 +396,6 @@
     _pool = nil;
 }
 
-@end
-
-@interface FullDuplexSocketTransporter : SocketTransporter {
-}
-
-@end
-
-@implementation FullDuplexSocketTransporter
-
 - (SocketConnection *) fetch:(NSError **)error {
     if (self.pool.count > 0) {
         SocketConnection *conn = self.pool.lastObject;
@@ -329,6 +409,15 @@
     return nil;
 }
 
+@end
+
+@interface FullDuplexSocketTransporter : SocketTransporter {
+}
+
+@end
+
+@implementation FullDuplexSocketTransporter
+
 - (Promise *) sendAndReceive:(NSData *)data context:(HproseClientContext *)context {
     FullDuplexSocketConnection *conn;
     NSError *error = nil;
@@ -336,6 +425,36 @@
     if (error != nil) return [Promise error:error];
     if ((conn == nil) && (self.size < self.client.maxPoolSize)) {
         conn = [[FullDuplexSocketConnection alloc] init:self.client trans:self error:&error];
+        if (error != nil) return [Promise error:error];
+        self.size++;
+    }
+    Promise *result = [Promise promise];
+    SocketRequest *request = [[SocketRequest alloc] init:data context:context result:result];
+    if (conn != nil) {
+        [conn send:request];
+    }
+    else {
+        [self.requests addObject:request];
+    }
+    return result;
+}
+
+@end
+
+@interface HalfDuplexSocketTransporter : SocketTransporter {
+}
+
+@end
+
+@implementation HalfDuplexSocketTransporter
+
+- (Promise *) sendAndReceive:(NSData *)data context:(HproseClientContext *)context {
+    HalfDuplexSocketConnection *conn;
+    NSError *error = nil;
+    conn = (HalfDuplexSocketConnection *)[self fetch:&error];
+    if (error != nil) return [Promise error:error];
+    if ((conn == nil) && (self.size < self.client.maxPoolSize)) {
+        conn = [[HalfDuplexSocketConnection alloc] init:self.client trans:self error:&error];
         if (error != nil) return [Promise error:error];
         self.size++;
     }
@@ -361,12 +480,12 @@
         _idleTimeout = 30000;
         _tlsSettings = nil;
         _maxPoolSize = 10;
+        _fullDuplex = NO;
         _fdtrans = nil;
         _hdtrans = nil;
     }
     return self;
 }
-
 
 @dynamic uri;
 @dynamic uriList;
@@ -382,12 +501,22 @@
 
 - (Promise *) sendAndReceive:(NSData *)data context:(HproseClientContext *)context {
     Promise *result;
-    FullDuplexSocketTransporter *fdtrans = (FullDuplexSocketTransporter *)_fdtrans;
-    if ((fdtrans == nil) || (fdtrans.uri != self.uri)) {
-        fdtrans = [[FullDuplexSocketTransporter alloc] init:self];
-        _fdtrans = fdtrans;
+    if (_fullDuplex) {
+        FullDuplexSocketTransporter *fdtrans = (FullDuplexSocketTransporter *)_fdtrans;
+        if ((fdtrans == nil) || (fdtrans.uri != self.uri)) {
+            fdtrans = [[FullDuplexSocketTransporter alloc] init:self];
+            _fdtrans = fdtrans;
+        }
+        result = [fdtrans sendAndReceive:data context:context];
     }
-    result = [fdtrans sendAndReceive:data context:context];
+    else {
+        HalfDuplexSocketTransporter *hdtrans = (HalfDuplexSocketTransporter *)_fdtrans;
+        if ((hdtrans == nil) || (hdtrans.uri != self.uri)) {
+            hdtrans = [[HalfDuplexSocketTransporter alloc] init:self];
+            _hdtrans = hdtrans;
+        }
+        result = [hdtrans sendAndReceive:data context:context];
+    }
     if (context.settings.oneway) {
         [result resolve:nil];
     }
