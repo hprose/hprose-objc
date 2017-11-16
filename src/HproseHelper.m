@@ -12,7 +12,7 @@
  *                                                        *
  * hprose helper class for Objective-C.                   *
  *                                                        *
- * LastModified: Jul 15, 2015                             *
+ * LastModified: Dec 23, 2015                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -35,23 +35,11 @@
     NSInteger totalLength = [self read:buffer maxLength:length];
     while (totalLength < length) {
         NSInteger readLength = [self read:buffer + totalLength maxLength:length - totalLength];
-        if (readLength <= 0) {
-            NSError *error = [self streamError];
-            if (error == nil) {
-                @throw [NSException exceptionWithName:@"NSReadBufferException"
-                                               reason:@"Stream read error"
-                                             userInfo:nil];
-
-            }
-            else {
-                @throw [NSException exceptionWithName:@"NSReadBufferException"
-                                               reason:[error localizedFailureReason]
-                                             userInfo:[error userInfo]];
-
-            }
+        if (readLength > 0) {
+            totalLength += readLength;
         }
         else {
-            totalLength += readLength;
+            return;
         }
     }
 }
@@ -68,21 +56,11 @@
     NSInteger totalLength = [self write:buffer maxLength:length];
     while (totalLength < length) {
         NSInteger writtenLength = [self write:buffer + totalLength maxLength:length - totalLength];
-        if (writtenLength <= 0) {
-            NSError *error = [self streamError];
-            if (error == nil) {
-                @throw [NSException exceptionWithName:@"NSWriteBufferException"
-                                               reason:@"Stream write error"
-                                             userInfo:nil];
-            }
-            else {
-                @throw [NSException exceptionWithName:@"NSWriteBufferException"
-                                               reason:[error localizedFailureReason]
-                                             userInfo:[error userInfo]];
-            }
+        if (writtenLength > 0) {
+            totalLength += writtenLength;
         }
         else {
-            totalLength += writtenLength;
+            return;
         }
     }
 }

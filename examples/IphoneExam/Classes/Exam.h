@@ -11,6 +11,7 @@
 
 @protocol Exam
 
+-(oneway Promise *) hello:(NSString *)name;
 -(void) hello:(NSString *)name selector:(SEL)selector delegate:(id)delegate;
 -(void) sum:(int)a and:(int)b selector:(SEL)selector delegate:(id)delegate;
 -(void) sum:(double)a and:(double)b and:(double)c selector:(SEL)selector delegate:(id)delegate;

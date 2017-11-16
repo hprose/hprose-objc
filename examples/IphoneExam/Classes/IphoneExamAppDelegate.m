@@ -26,7 +26,7 @@
     [window makeKeyAndVisible];
     client = [HproseHttpClient client:@[@"http://www.hprose.com/example/index.php", @"http://www.hprose.com/example/index.php"]];
     [client setDelegate:self];
-    [client setOnError:@selector(errorHandler:withException:)];
+    [client setOnError:@selector(errorHandler:withError:)];
     [client setFilter:[LogFilter new]];
     client.idempontent = YES;
     client.failswitch = YES;
@@ -35,10 +35,10 @@
     return YES;
 }
 
--(void)errorHandler:(NSString *)name withException:(NSException *)e {
+-(void)errorHandler:(NSString *)name withError:(NSError *)e {
     UIAlertView *alert = nil;
     alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error on: %@", name]
-                 message:[e reason]
+                 message:[e localizedDescription]
                 delegate:self
        cancelButtonTitle:@"OK" 
        otherButtonTitles:nil];

@@ -12,7 +12,7 @@
  *                                                        *
  * hprose reader class for Objective-C.                   *
  *                                                        *
- * LastModified: Nov 14, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -24,17 +24,22 @@
 #import "HproseHelper.h"
 #import "HproseReader.h"
 
-HproseException* unexpectedTag(int tag, char expectTags[]) {
+NSError * unserialize_error(NSString *errMsg) {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg
+                                                         forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithDomain:HproseErrorDomain code:HproseUnserializeError userInfo:userInfo];
+}
+
+NSError* unexpectedTag(int tag, char expectTags[]) {
     if (tag == -1) {
-        return [HproseException exceptionWithReason:@"No byte found in stream"];
+        return unserialize_error(@"No byte found in stream");
     }
     if (expectTags) {
-        return [HproseException exceptionWithReason:[NSString stringWithFormat:
-                                                     @"Tag '%s' expected, but '%c' found in stream", expectTags, tag]];
+        return unserialize_error([NSString stringWithFormat:
+                                  @"Tag '%s' expected, but '%c' found in stream", expectTags, tag]);
     }
-    return [HproseException exceptionWithReason:[NSString stringWithFormat:
-                                                 @"Unexpected serialize tag '%c' in stream", tag]];
-
+    return unserialize_error([NSString stringWithFormat:
+                             @"Unexpected serialize tag '%c' in stream", tag]);
 }
 
 @interface HproseRawReader (PrivateMethods)
@@ -108,8 +113,10 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
         case HproseTagError:
             [self readRaw:ostream];
             break;
+        default:
+            error = unexpectedTag(tag, NULL);
+            break;
     }
-    @throw unexpectedTag(tag, NULL);
 }
 - (void) readNumberRaw:(NSOutputStream *)ostream {
     int tag;
@@ -156,7 +163,8 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
             break;
         }
         default:
-            @throw [HproseException exceptionWithReason:@"Bad utf-8 encoding"];
+            error = unserialize_error(@"Bad utf-8 encoding");
+            break;
     }
 }
 - (void) readBytesRaw:(NSOutputStream *)ostream {
@@ -217,13 +225,14 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
                     ++i;
                     break;
                 }
-                // no break here!! here need throw exception.
+                // no break here!! here need return error.
             }
             default:
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithString:
-                         ((tag < 0) ? @"end of stream" : @"bad utf-8 encoding")]];
-                break;
+                error = unserialize_error([NSString stringWithString:
+                                           ((tag < 0) ?
+                                            @"end of stream" :
+                                            @"bad utf-8 encoding")]);
+                return;
         }
     }
     [ostream writeByte:[stream readByte]];
@@ -249,8 +258,18 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 
 @synthesize stream;
 
+@dynamic error;
+
+- (NSError *) error {
+    if (error != nil) {
+        return error;
+    }
+    return stream.streamError;
+}
+
 - (id) initWithStream:(NSInputStream *)dataStream {
     if ((self = [super init])) {
+        error = nil;
         [self setStream:dataStream];
     }
     return self;
@@ -273,7 +292,6 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 - (void) readRaw:(NSOutputStream *)ostream {
     [self readRaw:ostream withTag:[stream readByte]];
 }
-
 
 @end
 
@@ -330,9 +348,9 @@ HproseException* unexpectedTag(int tag, char expectTags[]) {
 @interface HproseReader(PrivateMethods)
 
 - (NSString *) tagToString:(int) tag;
-- (HproseException *) castExceptionFrom:(NSString *)from to:(NSString *)to;
-- (HproseException *) castExceptionFromClass:(Class)cls to:(NSString *)to;
-- (HproseException *) castExceptionFrom:(NSString *)from toClass:(Class)cls;
+- (NSError *) castErrorFrom:(NSString *)from to:(NSString *)to;
+- (NSError *) castErrorFromClass:(Class)cls to:(NSString *)to;
+- (NSError *) castErrorFrom:(NSString *)from toClass:(Class)cls;
 - (NSString *) readUntil:(int)tag;
 - (int8_t) readI8:(int)tag;
 - (int16_t) readI16:(int)tag;
@@ -436,25 +454,32 @@ static double NaN, Infinity, NegInfinity;
         case HproseTagClass: return @"Class";
         case HproseTagObject: return @"Object";
         case HproseTagRef: return @"Object Reference";
-        case HproseTagError: @throw [HproseException exceptionWithReason:[self readString]];
+        case HproseTagError: error = unserialize_error([self readString]); break;
+        default: error = unexpectedTag(tag, NULL); break;
     }
-    @throw unexpectedTag(tag, NULL);
+    return @"";
 }
 
-- (HproseException *) castExceptionFrom:(NSString *)from to:(NSString *)to {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat: @"Can't change %@ to %@", from, to]];
+- (NSError *) castErrorFrom:(NSString *)from to:(NSString *)to {
+    return unserialize_error([NSString stringWithFormat:
+                              @"Can't change %@ to %@", from, to]);
 }
 
-- (HproseException *) castExceptionFromClass:(Class)cls to:(NSString *)to {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat: @"Can't change %s to %@", class_getName(cls), to]];
+- (NSError *) castErrorFromClass:(Class)cls to:(NSString *)to {
+    return unserialize_error([NSString stringWithFormat:
+                              @"Can't change %s to %@", class_getName(cls), to]);
 }
 
-- (HproseException *) castExceptionFrom:(NSString *)from toClass:(Class)cls {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat: @"Can't change %@ to %s", from, class_getName(cls)]];
+- (NSError *) castErrorFrom:(NSString *)from toClass:(Class)cls {
+    return unserialize_error([NSString stringWithFormat:
+                              @"Can't change %@ to %s", from, class_getName(cls)]);
 }
 
-- (HproseException *) castExceptionFromClass:(Class)fromClass toClass:(Class)toClass {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat: @"Can't change %s to %s", class_getName(fromClass), class_getName(toClass)]];
+- (NSError *) castErrorFromClass:(Class)fromClass toClass:(Class)toClass {
+    return unserialize_error([NSString stringWithFormat:
+                              @"Can't change %s to %s",
+                              class_getName(fromClass),
+                              class_getName(toClass)]);
 }
 
 - (NSString *) readUntil:(int)tag {
@@ -660,10 +685,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (int8_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int8_t"];
+            error = [self castErrorFromClass:[ref class] to:@"int8_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int8_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"int8_t"];
+            break;
     }
+    return 0;
 }
 
 - (int16_t) readInt16WithTag:(int)tag {
@@ -693,10 +722,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (int16_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int16_t"];
+            error = [self castErrorFromClass:[ref class] to:@"int16_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int16_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"int16_t"];
+            break;
     }
+    return 0;
 }
 
 - (int32_t) readInt32WithTag:(int)tag {
@@ -726,10 +759,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int32_t"];
+            error = [self castErrorFromClass:[ref class] to:@"int32_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int32_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"int32_t"];
+            break;
     }
+    return 0;
 }
 
 - (int64_t) readInt64WithTag:(int)tag {
@@ -759,10 +796,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref longLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"int64_t"];
+            error = [self castErrorFromClass:[ref class] to:@"int64_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"int64_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"int64_t"];
+            break;
     }
+    return 0;
 }
 
 - (uint8_t) readUInt8WithTag:(int)tag {
@@ -792,10 +833,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint8_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint8_t"];
+            error = [self castErrorFromClass:[ref class] to:@"uint8_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint8_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"uint8_t"];
+            break;
     }
+    return 0;
 }
 
 - (uint16_t) readUInt16WithTag:(int)tag {
@@ -825,10 +870,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint16_t)[ref intValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint16_t"];
+            error = [self castErrorFromClass:[ref class] to:@"uint16_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint16_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"uint16_t"];
+            break;
     }
+    return 0;
 }
 
 - (uint32_t) readUInt32WithTag:(int)tag {
@@ -858,10 +907,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return (uint32_t)[ref longLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint32_t"];
+            error = [self castErrorFromClass:[ref class] to:@"uint32_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint32_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"uint32_t"];
+            break;
     }
+    return 0;
 }
 
 - (uint64_t) readUInt64WithTag:(int)tag {
@@ -891,10 +944,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [[[NSNumberFormatter new] numberFromString:ref] unsignedLongLongValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"uint64_t"];
+            error = [self castErrorFromClass:[ref class] to:@"uint64_t"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"uint64_t"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"uint64_t"];
+            break;
     }
+    return 0;
 }
 
 - (float) readFloatWithTag:(int)tag {
@@ -925,10 +982,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref floatValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"float"];
+            error = [self castErrorFromClass:[ref class] to:@"float"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"float"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"float"];
+            break;
     }
+    return 0;
 }
 
 - (double) readDoubleWithTag:(int)tag {
@@ -964,10 +1025,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [ref timeIntervalSince1970];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"double"];
+            error = [self castErrorFromClass:[ref class] to:@"double"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"double"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"double"];
+            break;
     }
+    return 0;
 }
 
 - (BOOL) readBooleanWithTag:(int)tag {
@@ -1003,14 +1068,18 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref boolValue];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"BOOL"];
+            error = [self castErrorFromClass:[ref class] to:@"BOOL"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"BOOL"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"BOOL"];
+            break;
     }
+    return NO;
 }
 
 - (unichar) readUTF8CharWithoutTag {
-    unichar u;
+    unichar u = 0;
     int c = [stream readByte];
     switch (c >> 4) {
         case 0:
@@ -1043,7 +1112,7 @@ static double NaN, Infinity, NegInfinity;
             break;
         }
         default:
-            @throw [HproseException exceptionWithReason:@"Bad utf-8 encoding"];
+            error = unserialize_error(@"Bad utf-8 encoding");
     }
     return u;
 }
@@ -1075,10 +1144,14 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSString class]]) {
                 return [ref characterAtIndex:0];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"unichar"];
+            error = [self castErrorFromClass:[ref class] to:@"unichar"];
+            break;
         }
-        default: @throw [self castExceptionFrom:[self tagToString:tag] to:@"unichar"];
+        default:
+            error = [self castErrorFrom:[self tagToString:tag] to:@"unichar"];
+            break;
     }
+    return 0;
 }
 
 - (NSString *) readUTF8CharAsString {
@@ -1190,13 +1263,14 @@ static double NaN, Infinity, NegInfinity;
                     ++i;
                     break;
                 }
-                // no break here!! here need throw exception.
+                // no break here!! here need return error.
             default:
                 free(bytes);
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithString:
-                         (c < 0 ? @"end of stream" : @"bad utf-8 encoding")]];
-                break;
+                error = unserialize_error([NSString stringWithString:
+                                           (c < 0 ?
+                                            @"end of stream" :
+                                            @"bad utf-8 encoding")]);
+                return [cls data];
         }
     }
     [self checkTag:HproseTagQuote];
@@ -1248,13 +1322,14 @@ static double NaN, Infinity, NegInfinity;
                         break;
                     }
                 }
-                // no break here!! here need throw exception.
+                // no break here!! here need return error.
             default:
                 free(buffer);
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithString:
-                         ((c < 0) ? @"end of stream" : @"bad utf-8 encoding")]];
-                break;
+                error = unserialize_error([NSString stringWithString:
+                                           ((c < 0) ?
+                                            @"end of stream" :
+                                            @"bad utf-8 encoding")]);
+                return [cls string];
         }
     }
     [self checkTag:HproseTagQuote];
@@ -1540,9 +1615,8 @@ static double NaN, Infinity, NegInfinity;
             ((void (*)(id, SEL, const char *))setterImp)(obj, setter, [value UTF8String]);
             break;
         default:
-            @throw [HproseException exceptionWithReason:
-                    [NSString stringWithFormat:
-                     @"Not support this property: %@", [property name]]];
+            error = unserialize_error([NSString stringWithFormat:
+                                       @"Not support this property: %@", [property name]]);
             break;
     }
 }
@@ -1655,9 +1729,13 @@ static double NaN, Infinity, NegInfinity;
         case HproseTagRef:
             return [self readRef];
         case HproseTagError:
-            @throw [HproseException exceptionWithReason:[self readString]];
+            error = unserialize_error([self readString]);
+            break;
+        default:
+            error = unexpectedTag(tag, NULL);
+            break;
     }
-    @throw unexpectedTag(tag, NULL);
+    return [NSNull null];
 }
 
 - (id) unserialize:(Class)cls {
@@ -1843,10 +1921,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return @([ref timeIntervalSince1970]);
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSNumber"];
+            error = [self castErrorFromClass:[ref class] to:@"NSNumber"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSNumber"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSNumber"];
+            return nil;
     }
 }
 
@@ -1867,7 +1947,8 @@ static double NaN, Infinity, NegInfinity;
         case _C_DBL: return @([self readDouble]);
         case _C_BOOL: return @([self readBoolean]);
     }
-    @throw [HproseException exceptionWithReason:[NSString stringWithFormat:@"Not support this property: %c", type]];
+    error = unserialize_error([NSString stringWithFormat:@"Not support this property: %c", type]);
+    return nil;
 }
 
 - (NSDate *) readDate {
@@ -1907,10 +1988,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSDate"];
+            error = [self castErrorFromClass:[ref class] to:@"NSDate"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSDate"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSDate"];
+            return nil;
     }
 }
 
@@ -1933,10 +2016,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSData class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSData"];
+            error = [self castErrorFromClass:[ref class] to:@"NSData"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSData"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSData"];
+            return nil;
     }
 }
 
@@ -1962,10 +2047,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isMemberOfClass:[NSData class]]) {
                 return [NSMutableData dataWithBytes:[ref bytes] length:[ref length]];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMutableData"];
+            error = [self castErrorFromClass:[ref class] to:@"NSMutableData"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMutableData"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSMutableData"];
+            return nil;
     }
 }
 
@@ -2016,10 +2103,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [[NSDateFormatter new] stringFromDate:ref];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSString"];
+            error = [self castErrorFromClass:[ref class] to:@"NSString"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSString"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSString"];
+            return nil;
     }
 }
 
@@ -2073,10 +2162,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDate class]]) {
                 return [NSMutableString stringWithString:[[NSDateFormatter new] stringFromDate:ref]];
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMutableString"];
+            error = [self castErrorFromClass:[ref class] to:@"NSMutableString"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMutableString"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSMutableString"];
+            return nil;
     }
 }
 
@@ -2099,10 +2190,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSUUID class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSUUID"];
+            error = [self castErrorFromClass:[ref class] to:@"NSUUID"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSUUID"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSUUID"];
+            return nil;
     }
 }
 
@@ -2118,10 +2211,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSArray class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSArray"];
+            error = [self castErrorFromClass:[ref class] to:@"NSArray"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSArray"];
+            @throw [self castErrorFrom:[self tagToString:tag] to:@"NSArray"];
+            return nil;
     }
 }
 
@@ -2137,10 +2232,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSSet class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSSet"];
+            error = [self castErrorFromClass:[ref class] to:@"NSSet"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSSet"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSSet"];
+            return nil;
     }
 }
 
@@ -2156,10 +2253,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSHashTable class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSHashTable"];
+            error = [self castErrorFromClass:[ref class] to:@"NSHashTable"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSHashTable"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSHashTable"];
+            return nil;
     }
 }
 
@@ -2182,10 +2281,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSDictionary class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSDictionary"];
+            error = [self castErrorFromClass:[ref class] to:@"NSDictionary"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSDictionary"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSDictionary"];
+            return nil;
     }
 }
 
@@ -2208,10 +2309,12 @@ static double NaN, Infinity, NegInfinity;
             if ([ref isKindOfClass:[NSMapTable class]]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] to:@"NSMapTable"];
+            error = [self castErrorFromClass:[ref class] to:@"NSMapTable"];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] to:@"NSMapTable"];
+            error = [self castErrorFrom:[self tagToString:tag] to:@"NSMapTable"];
+            return nil;
     }
 }
 
@@ -2232,10 +2335,12 @@ static double NaN, Infinity, NegInfinity;
             if (cls == Nil || [ref isKindOfClass:cls]) {
                 return ref;
             }
-            @throw [self castExceptionFromClass:[ref class] toClass:cls];
+            error = [self castErrorFromClass:[ref class] toClass:cls];
+            return nil;
         }
         default:
-            @throw [self castExceptionFrom:[self tagToString:tag] toClass:cls];
+            error = [self castErrorFrom:[self tagToString:tag] toClass:cls];
+            return nil;
     }
 }
 

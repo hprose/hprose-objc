@@ -12,7 +12,7 @@
  *                                                        *
  * hprose writer class for Objective-C.                   *
  *                                                        *
- * LastModified: Jun 6, 2015                              *
+ * LastModified: Dec 23, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -23,6 +23,13 @@
 #import "HproseProperty.h"
 #import "HproseHelper.h"
 #import "HproseWriter.h"
+
+
+NSError * serialize_error(NSString *errMsg) {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg
+                                                         forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithDomain:HproseErrorDomain code:HproseSerializeError userInfo:userInfo];
+}
 
 @interface HproseWriter(PrivateMethods)
 
@@ -87,8 +94,8 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
             break;
         case _C_LNG:
             (sizeof(long) == 4) ?
-            [self writeInt32:((long (*)(id, SEL))getterImp)(o, getter)] :
-            [self writeInt64:((long (*)(id, SEL))getterImp)(o, getter)];
+            [self writeInt32:(int32_t)((long (*)(id, SEL))getterImp)(o, getter)] :
+            [self writeInt64:(int64_t)((long (*)(id, SEL))getterImp)(o, getter)];
             break;
         case _C_LNG_LNG:
             [self writeInt64:((long long (*)(id, SEL))getterImp)(o, getter)];
@@ -104,8 +111,8 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
             break;
         case _C_ULNG:
             (sizeof(unsigned long) == 4) ?
-            [self writeUInt32:((unsigned long (*)(id, SEL))getterImp)(o, getter)] :
-            [self writeUInt64:((unsigned long (*)(id, SEL))getterImp)(o, getter)];
+            [self writeUInt32:(uint32_t)((unsigned long (*)(id, SEL))getterImp)(o, getter)] :
+            [self writeUInt64:(uint64_t)((unsigned long (*)(id, SEL))getterImp)(o, getter)];
             break;
         case _C_ULNG_LNG:
             [self writeUInt64:((unsigned long long (*)(id, SEL))getterImp)(o, getter)];
@@ -123,9 +130,8 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
             [self writeString:@(((const char * (*)(id, SEL))getterImp)(o, getter))];
             break;
         default:
-            @throw [HproseException exceptionWithReason:
-                    [NSString stringWithFormat:
-                     @"Not support this property: %@", [property name]]];
+            error = serialize_error([NSString stringWithFormat:
+                                     @"Not support this property: %@", [property name]]);
             break;
     }
 }
@@ -396,6 +402,15 @@ static uint8_t minInt64Buf[20] = {'-', '9', '2', '2', '3', '3', '7', '2', '0', '
 
 @synthesize stream;
 
+@dynamic error;
+
+- (NSError *) error {
+    if (error != nil) {
+        return error;
+    }
+    return stream.streamError;
+}
+
 static NSTimeZone *utcTimeZone;
 static NSDateFormatter *gDateFormatter;
 static NSDateFormatter *gTimeFormatter;
@@ -430,6 +445,7 @@ static Class classOfNSCFBoolean;
 
 - (id) initWithStream:(NSOutputStream *)dataStream simple:(BOOL)b {
     if (self = [super init]) {
+        error = nil;
         [self setStream:dataStream];
         classref = [NSMutableArray new];
         refer = b ? [HproseFakeWriterRefer new] : [HproseRealWriterRefer new];
@@ -649,8 +665,8 @@ static Class classOfNSCFBoolean;
                 break;
             case _C_LNG:
                 (sizeof(long) == 4) ?
-                [self writeInt32:[n longValue]] :
-                [self writeInt64:[n longValue]];
+                [self writeInt32:(int32_t)[n longValue]] :
+                [self writeInt64:(int64_t)[n longValue]];
                 break;
             case _C_LNG_LNG:
                 [self writeInt64:[n longLongValue]];
@@ -666,8 +682,8 @@ static Class classOfNSCFBoolean;
                 break;
             case _C_ULNG:
                 (sizeof(unsigned long) == 4) ?
-                [self writeUInt32:[n unsignedLongValue]] :
-                [self writeUInt64:[n unsignedLongValue]];
+                [self writeUInt32:(uint32_t)[n unsignedLongValue]] :
+                [self writeUInt64:(uint64_t)[n unsignedLongValue]];
                 break;
             case _C_ULNG_LNG:
                 [self writeUInt64:[n unsignedLongLongValue]];
@@ -682,9 +698,8 @@ static Class classOfNSCFBoolean;
                 [self writeBoolean:[n boolValue]];
                 break;
             default:
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithFormat:
-                         @"Not support this type: %s", type]];
+                error = serialize_error([NSString stringWithFormat:
+                                         @"Not support this type: %s", type]);
                 break;
         }
     }

@@ -18,6 +18,4 @@
 
 -(void) showCallback;
 
--(void) errorHandler:(NSString *)name withException:(NSException *)e;
-
 @end

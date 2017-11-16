@@ -17,7 +17,6 @@
  *                                                        *
 \**********************************************************/
 
-#import "HproseException.h"
 #import "HproseSocketClient.h"
 #import "GCDAsyncSocket.h"
 
@@ -119,8 +118,8 @@
 - (void) recycle {
     [self clean];
     _timer = [Promise promise];
-    [[_timer timeout:_idleTimeout] fail:^(NSException *error) {
-        if ([[error reason] isEqualToString:@"timeout"]) {
+    [[_timer timeout:_idleTimeout] fail:^(NSError *error) {
+        if ([error code] == PromiseRuntimeError) {
             [_sock disconnect];
         }
     }];
@@ -199,15 +198,13 @@
     NSNumber *send_id = [NSNumber numberWithUnsignedLong:nextid];
     NSTimeInterval timeout = request.context.settings.timeout;
     if (timeout > 0) {
-        [[request.result timeout:timeout] fail:^(id error) {
-            if ([error isKindOfClass:[NSException class]]) {
-                if ([[error reason] isEqualToString:@"timeout"]) {
-                    [_results removeObjectForKey:send_id];
-                    _count--;
-                    [self sendNext];
-                    if (_count == 0) {
-                        [self recycle];
-                    }
+        [[request.result timeout:timeout] fail:^(NSError *error) {
+            if ([error code] == PromiseRuntimeError) {
+                [_results removeObjectForKey:send_id];
+                _count--;
+                [self sendNext];
+                if (_count == 0) {
+                    [self recycle];
                 }
             }
         }];
@@ -326,14 +323,12 @@
 - (void) send:(SocketRequest *)request {
     NSTimeInterval timeout = request.context.settings.timeout;
     if (timeout > 0) {
-        [[request.result timeout:timeout] fail:^(id error) {
-            if ([error isKindOfClass:[NSException class]]) {
-                if ([[error reason] isEqualToString:@"timeout"]) {
-                    [self.sock disconnect];
-                    @synchronized (_pool) {
-                        if (![_pool containsObject:self]) {
-                            [_pool addObject:self];
-                        }
+        [[request.result timeout:timeout] fail:^(NSError *error) {
+            if ([error code] == PromiseRuntimeError) {
+                [self.sock disconnect];
+                @synchronized (_pool) {
+                    if (![_pool containsObject:self]) {
+                        [_pool addObject:self];
                     }
                 }
             }

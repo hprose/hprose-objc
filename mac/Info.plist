@@ -5,15 +5,15 @@
 	<key>CFBundleGetInfoString</key>
 	<string>Hprose for Objective-C</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.hprose.hprose-objc</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleName</key>
 	<string>Hprose</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.2</string>
+	<string>2.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>8</string>
+	<string>9</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright hprose.com. All rights reserved.</string>
 </dict>

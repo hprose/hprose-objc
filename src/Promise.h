@@ -12,7 +12,7 @@
  *                                                        *
  * Promise header for Objective-C.                        *
  *                                                        *
- * LastModified: Dec 21, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -24,6 +24,17 @@
 #else
 #define PROMISE_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 #endif
+
+extern NSString *const PromiseErrorDomain;
+
+typedef NS_ENUM(NSInteger, PromiseError) {
+    PromiseNoError = 0,                  // Never used
+    PromiseIllegalArgumentError,         // Illegal argument was passed
+    PromiseTimeoutError,                 // Timeout Error
+    PromiseRuntimeError,                 // Runtime Error
+    PromiseTypeError,                    // Type Error
+    PromiseExceptionError,               // Error converted from NSException
+};
 
 @interface NSArray<ObjectType> (NSArrayFunctional)
 
@@ -53,7 +64,7 @@ typedef enum {
 
 @property (readonly, getter=getState) PromiseState state;
 @property (readonly) id result;
-@property (readonly) id reason;
+@property (readonly) NSError * reason;
 
 - (id) init:(id (^)(void)) computation;
 
@@ -82,13 +93,13 @@ typedef enum {
 - (PromiseState) getState;
 - (void) resolve:(id)result;
 - (void) reject:(id)reason;
-- (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject;
+- (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(NSError *))onreject;
 - (Promise *) then:(id (^)(id))onfulfill;
-- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject;
+- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(NSError *))onreject;
 - (Promise *) done:(void (^)(id))onfulfill;
-- (Promise *) catch:(id (^)(id))onreject with:(BOOL (^)(id))test;
-- (Promise *) catch:(id (^)(id))onreject;
-- (Promise *) fail:(void (^)(id))onreject;
+- (Promise *) catch:(id (^)(NSError *))onreject with:(BOOL (^)(NSError *))test;
+- (Promise *) catch:(id (^)(NSError *))onreject;
+- (Promise *) fail:(void (^)(NSError *))onreject;
 - (Promise *) whenComplete:(void (^)())action;
 - (Promise *) complete:(id (^)(id))oncomplete;
 - (Promise *) always:(void (^)(id))oncomplete;

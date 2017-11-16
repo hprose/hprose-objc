@@ -21,8 +21,8 @@
 
 @interface HproseFormatter : NSObject;
 
-+ (NSData *) serialize:(id)obj;
-+ (NSData *) serialize:(id)obj simple:(BOOL)simple;
++ (id) serialize:(id)obj;
++ (id) serialize:(id)obj simple:(BOOL)simple;
 
 + (id) unserialize:(NSData *)data;
 + (id) unserialize:(NSData *)data withClass:(Class)cls;

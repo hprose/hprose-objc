@@ -12,7 +12,7 @@
  *                                                        *
  * hprose reader class header for Objective-C.            *
  *                                                        *
- * LastModified: Apr 12, 2014                             *
+ * LastModified: Dec 23, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -21,9 +21,11 @@
 
 @interface HproseRawReader : NSObject {
     @protected
+    NSError *error;
     NSInputStream *stream;
 }
 
+@property (readonly) NSError *error;
 @property NSInputStream *stream;
 
 - (id) initWithStream:(NSInputStream *)dataStream;

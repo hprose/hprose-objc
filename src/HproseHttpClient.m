@@ -12,7 +12,7 @@
  *                                                        *
  * hprose http client for Objective-C.                    *
  *                                                        *
- * LastModified: Dec 21, 2016                             *
+ * LastModified: Dec 24, 2016                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -144,10 +144,12 @@
             [result reject:error];
         }
         else if (statusCode != 200 && statusCode != 0) {
-            NSString *errmsg = [NSString stringWithFormat:@"%d: %@",
-                                (int)statusCode,
-                                [NSHTTPURLResponse localizedStringForStatusCode:statusCode]];
-            [result reject:[HproseException exceptionWithReason: errmsg]];
+            NSString *status = [NSHTTPURLResponse localizedStringForStatusCode:statusCode];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: status
+                                                                 forKey:NSLocalizedDescriptionKey];
+            [result reject: [NSError errorWithDomain:HproseErrorDomain
+                                                code:statusCode
+                                            userInfo:userInfo]];
         }
         else {
             [result resolve:data];

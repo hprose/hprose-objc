@@ -27,6 +27,14 @@
 #import "HproseClient.h"
 #import "HproseClientProxy.h"
 
+NSError * invoke_error(NSString *errMsg) {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg
+                                                         forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithDomain:HproseErrorDomain
+                               code:HproseInvokeError
+                           userInfo:userInfo];
+}
+
 @implementation HproseClientContext
 
 - (id) init:(HproseClient *)client settings:(HproseInvokeSettings *)settings {
@@ -82,7 +90,7 @@
 
 - (id) syncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
 - (id) asyncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings;
-- (oneway void) errorHandler:(NSString *)name withException:(id)e settings:(HproseInvokeSettings *)settings;
+- (oneway void) errorHandler:(NSString *)name error:(id)e settings:(HproseInvokeSettings *)settings;
 
 - (NSData *) outputFilter:(NSData *)request context:(HproseClientContext *)context;
 - (NSData *) inputFilter:(NSData *)response context:(HproseClientContext *)context;
@@ -169,7 +177,10 @@ static HproseInvokeSettings *autoIdSettings;
             [self setUriList:uri];
         }
         else {
-            @throw [HproseException exceptionWithReason:@"uri must be an object of NSString or NSArray."];
+            @throw [NSException
+                    exceptionWithName:NSInvalidArgumentException
+                    reason:@"uri must be an object of NSString or NSArray."
+                    userInfo:nil];
         }
     }
     return self;
@@ -265,7 +276,10 @@ static HproseInvokeSettings *autoIdSettings;
         _settings =[[HproseInvokeSettings alloc] init:(NSDictionary *)settings];
     }
     else {
-        @throw [HproseException exceptionWithReason:@"settings must be a NSDictionary or HproseInvokeSettings object."];
+        @throw [NSException
+                exceptionWithName:NSInvalidArgumentException
+                reason:@"settings must be a NSDictionary or HproseInvokeSettings object."
+                userInfo:nil];
     }
     if (_settings.delegate == nil) _settings.delegate = _delegate;
     if (_settings.delegate != nil) {
@@ -282,7 +296,7 @@ static HproseInvokeSettings *autoIdSettings;
             }
         }
         if (_settings.errorSelector == NULL) {
-            _settings.errorSelector = sel_registerName("errorHandler:withException:");
+            _settings.errorSelector = sel_registerName("errorHandler:error:");
             if (![_settings.delegate respondsToSelector:_settings.selector]) {
                 _settings.errorSelector = NULL;
             }
@@ -332,7 +346,10 @@ static HproseInvokeSettings *autoIdSettings;
         _settings =[[HproseInvokeSettings alloc] init:(NSDictionary *)settings];
     }
     else {
-        @throw [HproseException exceptionWithReason:@"settings must be a NSDictionary or HproseInvokeSettings object."];
+        @throw [NSException
+                exceptionWithName:NSInvalidArgumentException
+                reason:@"settings must be a NSDictionary or HproseInvokeSettings object."
+                userInfo:nil];
     }
     _settings.async = YES;
     return [self invoke:name withArgs:args settings:_settings];
@@ -510,31 +527,24 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
 }
 
 - (id) asyncInvoke:(NSString *)name args:(NSArray *)args settings:(HproseInvokeSettings *)settings {
-    Promise *promise = [Promise promise];
     if (settings.delegate != nil && settings.selector != NULL) {
         NSMethodSignature *methodSignature = [settings.delegate methodSignatureForSelector:settings.selector];
         if (methodSignature == nil) {
-            HproseException *exception = [HproseException exceptionWithReason:
-                                          [NSString stringWithFormat:
-                                           @"Not support this callback: %@, the delegate doesn't respond to the selector.",
-                                           NSStringFromSelector(settings.selector)]];
-            [self errorHandler:name
-                 withException:exception
-                      settings:settings];
-            [promise reject:exception];
-            return promise;
+            @throw [NSException
+                    exceptionWithName:NSInvalidArgumentException
+                    reason:[NSString stringWithFormat:
+                            @"Not support this callback: %@, the delegate doesn't respond to the selector.",
+                            NSStringFromSelector(settings.selector)]
+                    userInfo:nil];
         }
         NSUInteger n = [methodSignature numberOfArguments];
         if (n < 2 || n > 4) {
-            HproseException *exception = [HproseException exceptionWithReason:
-                                          [NSString stringWithFormat:
-                                           @"Not support this callback: %@, number of arguments is wrong.",
-                                           NSStringFromSelector(settings.selector)]];
-            [self errorHandler:name
-                 withException:exception
-                      settings:settings];
-            [promise reject:exception];
-            return promise;
+            @throw [NSException
+                    exceptionWithName:NSInvalidArgumentException
+                    reason:[NSString stringWithFormat:
+                            @"Not support this callback: %@, number of arguments is wrong.",
+                            NSStringFromSelector(settings.selector)]
+                    userInfo:nil];
         }
         if (n > 2) {
             const char *types = [methodSignature getArgumentTypeAtIndex:2];
@@ -550,92 +560,82 @@ void delTopic(NSMutableDictionary *topics, NSString *clientId, void (^callback)(
                 settings.resultType = types[0];
             }
             else {
-                HproseException *exception =[HproseException exceptionWithReason:
-                                             [NSString stringWithFormat:@"Not support this type: %s", types]];
-                [self errorHandler:name
-                     withException:exception
-                          settings:settings];
-                [promise reject:exception];
-                return promise;
+                @throw [NSException
+                        exceptionWithName:NSInvalidArgumentException
+                        reason:[NSString stringWithFormat:@"Not support this type: %s", types]
+                        userInfo:nil];
             }
         }
     }
     HproseClientContext *context = [[HproseClientContext alloc] init:self settings:settings];
-    @try {
-        if (context.settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
-            args = [args mutableCopy];
+    if (context.settings.byref && ![args isKindOfClass:[NSMutableArray class]]) {
+        args = [args mutableCopy];
+    }
+    Promise *result = invokeHandler(name, args, context);
+    [[result done:^(id result) {
+        HproseInvokeSettings *settings = context.settings;
+        if (settings.callback) {
+            settings.callback(result, args);
         }
-        Promise *result = invokeHandler(name, args, context);
-        [[result done:^(id result) {
-            HproseInvokeSettings *settings = context.settings;
-            if (settings.callback) {
-                settings.callback(result, args);
-            }
-            else if (settings.block) {
-                settings.block(result, args);
-            }
-            else if (settings.delegate != nil && settings.selector != NULL) {
-                id delegate = settings.delegate;
-                SEL selector = settings.selector;
-                NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
-                NSUInteger n = [methodSignature numberOfArguments];
-                switch (n) {
-                    case 2: ((void (*)(id, SEL))objc_msgSend)(delegate, selector); break;
-                    case 3: {
-                        switch (settings.resultType) {
-                            case _C_ID: ((void (*)(id, SEL, id))objc_msgSend)(delegate, selector, result); break;
-                            case _C_CHR: ((void (*)(id, SEL, char))objc_msgSend)(delegate, selector, [result charValue]); break;
-                            case _C_UCHR: ((void (*)(id, SEL, unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
-                            case _C_SHT: ((void (*)(id, SEL, short))objc_msgSend)(delegate, selector, [result shortValue]); break;
-                            case _C_USHT: ((void (*)(id, SEL, unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
-                            case _C_INT: ((void (*)(id, SEL, int))objc_msgSend)(delegate, selector, [result intValue]); break;
-                            case _C_UINT: ((void (*)(id, SEL, unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
-                            case _C_LNG: ((void (*)(id, SEL, long))objc_msgSend)(delegate, selector, [result longValue]); break;
-                            case _C_ULNG: ((void (*)(id, SEL, unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
-                            case _C_LNG_LNG: ((void (*)(id, SEL, long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
-                            case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
-                            case _C_FLT: ((void (*)(id, SEL, float))objc_msgSend)(delegate, selector, [result floatValue]); break;
-                            case _C_DBL: ((void (*)(id, SEL, double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
-                            case _C_BOOL: ((void (*)(id, SEL, BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
-                            case _C_CHARPTR: ((void (*)(id, SEL, const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
-                        }
-                        break;
+        else if (settings.block) {
+            settings.block(result, args);
+        }
+        else if (settings.delegate != nil && settings.selector != NULL) {
+            id delegate = settings.delegate;
+            SEL selector = settings.selector;
+            NSMethodSignature *methodSignature = [delegate methodSignatureForSelector:selector];
+            NSUInteger n = [methodSignature numberOfArguments];
+            switch (n) {
+                case 2: ((void (*)(id, SEL))objc_msgSend)(delegate, selector); break;
+                case 3: {
+                    switch (settings.resultType) {
+                        case _C_ID: ((void (*)(id, SEL, id))objc_msgSend)(delegate, selector, result); break;
+                        case _C_CHR: ((void (*)(id, SEL, char))objc_msgSend)(delegate, selector, [result charValue]); break;
+                        case _C_UCHR: ((void (*)(id, SEL, unsigned char))objc_msgSend)(delegate, selector, [result unsignedCharValue]); break;
+                        case _C_SHT: ((void (*)(id, SEL, short))objc_msgSend)(delegate, selector, [result shortValue]); break;
+                        case _C_USHT: ((void (*)(id, SEL, unsigned short))objc_msgSend)(delegate, selector, [result unsignedShortValue]); break;
+                        case _C_INT: ((void (*)(id, SEL, int))objc_msgSend)(delegate, selector, [result intValue]); break;
+                        case _C_UINT: ((void (*)(id, SEL, unsigned int))objc_msgSend)(delegate, selector, [result unsignedIntValue]); break;
+                        case _C_LNG: ((void (*)(id, SEL, long))objc_msgSend)(delegate, selector, [result longValue]); break;
+                        case _C_ULNG: ((void (*)(id, SEL, unsigned long))objc_msgSend)(delegate, selector, [result unsignedLongValue]); break;
+                        case _C_LNG_LNG: ((void (*)(id, SEL, long long))objc_msgSend)(delegate, selector, [result longLongValue]); break;
+                        case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long))objc_msgSend)(delegate, selector, [result unsignedLongLongValue]); break;
+                        case _C_FLT: ((void (*)(id, SEL, float))objc_msgSend)(delegate, selector, [result floatValue]); break;
+                        case _C_DBL: ((void (*)(id, SEL, double))objc_msgSend)(delegate, selector, [result doubleValue]); break;
+                        case _C_BOOL: ((void (*)(id, SEL, BOOL))objc_msgSend)(delegate, selector, [result boolValue]); break;
+                        case _C_CHARPTR: ((void (*)(id, SEL, const char *))objc_msgSend)(delegate, selector, [result UTF8String]); break;
                     }
-                    case 4: {
-                        switch (settings.resultType) {
-                            case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, args); break;
-                            case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
-                            case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
-                            case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
-                            case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
-                            case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
-                            case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
-                            case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
-                            case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
-                            case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
-                            case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
-                            case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
-                            case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
-                            case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
-                            case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
-                        }
-                        break;
+                    break;
+                }
+                case 4: {
+                    switch (settings.resultType) {
+                        case _C_ID: ((void (*)(id, SEL, id, NSArray *))objc_msgSend)(delegate, selector, result, args); break;
+                        case _C_CHR: ((void (*)(id, SEL, char, NSArray *))objc_msgSend)(delegate, selector, [result charValue], args); break;
+                        case _C_UCHR: ((void (*)(id, SEL, unsigned char, NSArray *))objc_msgSend)(delegate, selector, [result unsignedCharValue], args); break;
+                        case _C_SHT: ((void (*)(id, SEL, short, NSArray *))objc_msgSend)(delegate, selector, [result shortValue], args); break;
+                        case _C_USHT: ((void (*)(id, SEL, unsigned short, NSArray *))objc_msgSend)(delegate, selector, [result unsignedShortValue], args); break;
+                        case _C_INT: ((void (*)(id, SEL, int, NSArray *))objc_msgSend)(delegate, selector, [result intValue], args); break;
+                        case _C_UINT: ((void (*)(id, SEL, unsigned int, NSArray *))objc_msgSend)(delegate, selector, [result unsignedIntValue], args); break;
+                        case _C_LNG: ((void (*)(id, SEL, long, NSArray *))objc_msgSend)(delegate, selector, [result longValue], args); break;
+                        case _C_ULNG: ((void (*)(id, SEL, unsigned long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongValue], args); break;
+                        case _C_LNG_LNG: ((void (*)(id, SEL, long long, NSArray *))objc_msgSend)(delegate, selector, [result longLongValue], args); break;
+                        case _C_ULNG_LNG: ((void (*)(id, SEL, unsigned long long, NSArray *))objc_msgSend)(delegate, selector, [result unsignedLongLongValue], args); break;
+                        case _C_FLT: ((void (*)(id, SEL, float, NSArray *))objc_msgSend)(delegate, selector, [result floatValue], args); break;
+                        case _C_DBL: ((void (*)(id, SEL, double, NSArray *))objc_msgSend)(delegate, selector, [result doubleValue], args); break;
+                        case _C_BOOL: ((void (*)(id, SEL, BOOL, NSArray *))objc_msgSend)(delegate, selector, [result boolValue], args); break;
+                        case _C_CHARPTR: ((void (*)(id, SEL, const char *, NSArray *))objc_msgSend)(delegate, selector, [result UTF8String], args); break;
                     }
+                    break;
                 }
             }
-        }] fail:^(id e) {
-            [self errorHandler:name withException:e settings:context.settings];
-        }];
-        return result;
-    }
-    @catch (NSException *e) {
-        [self errorHandler:name withException:e settings:context.settings];
-        [promise reject:e];
-    }
-    return promise;
+        }
+    }] fail:^(id e) {
+        [self errorHandler:name error:e settings:context.settings];
+    }];
+    return result;
 }
 
-- (oneway void) errorHandler:(NSString *)name withException:(id)e settings:(HproseInvokeSettings *)settings {
+- (oneway void) errorHandler:(NSString *)name error:(id)e settings:(HproseInvokeSettings *)settings {
     if (settings.errorCallback) {
         settings.errorCallback(name, e);
     }
@@ -756,8 +756,12 @@ NSData * encode(NSString *name, NSArray *args, HproseClientContext *context) {
     }
 }
 
-HproseException * wrongResponse(NSData *data) {
-    return [HproseException exceptionWithReason:[NSString stringWithFormat:@"Wrong Response: %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]];
+NSError * wrongResponse(NSData *data) {
+    NSString *errMsg = [NSString stringWithFormat:
+                        @"Wrong Response: %@",
+                        [[NSString alloc] initWithData:data
+                                              encoding:NSUTF8StringEncoding]];
+    return invoke_error(errMsg);
 }
 
 id decode(NSData *data, NSArray *args, HproseClientContext *context) {
@@ -766,7 +770,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
         return nil;
     }
     if (data.length == 0) {
-        return [HproseException exceptionWithReason:@"EOF"];
+        return invoke_error(@"EOF");
     }
     int tag = ((uint8_t *)data.bytes)[data.length - 1];
     if (tag != HproseTagEnd) {
@@ -812,7 +816,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
             }
         }
         else if (tag == HproseTagError) {
-            return [HproseException exceptionWithReason:[reader readString]];
+            return invoke_error([reader readString]);
         }
         if (tag != HproseTagEnd) {
             return wrongResponse(data);
@@ -908,7 +912,7 @@ id decode(NSData *data, NSArray *args, HproseClientContext *context) {
         @catch (NSException *exception) {
             topic = nil;
             cb = nil;
-            [self errorHandler:name withException:exception settings:[[HproseInvokeSettings alloc] init]];
+            [self errorHandler:name error:exception settings:[[HproseInvokeSettings alloc] init]];
         }
     }
     else if (![topic.callbacks containsObject:callback]) {

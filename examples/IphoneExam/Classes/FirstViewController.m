@@ -62,11 +62,10 @@
 }
 
 -(IBAction) hello2Click:(id)sender {
-    [[delegate client] invoke:@"hello" withArgs:@[[text text]] settings:@{@"block":^(id result, NSArray * args) {
+    Promise *promise = [[delegate exam] hello:[text text]];
+    [promise done:^(id result) {
         [label setText:(NSString *)result];
-    }, @"errorBlock":^(NSString *name, NSException *e) {
-        [label setText:e.reason];
-    }}];
+    }];
 }
 
 -(void) helloCallback:(NSString *)result {

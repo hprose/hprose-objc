@@ -12,7 +12,7 @@
  *                                                        *
  * hprose client proxy for Objective-C.                   *
  *                                                        *
- * LastModified: Jun 5, 2016                              *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -237,8 +237,10 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
                         break;
                     }
                     default:
-                        @throw [HproseException exceptionWithReason:
-                                [NSString stringWithFormat:@"Not support this type: %s", type]];
+                        @throw [NSException
+                                exceptionWithName:NSParseErrorException
+                                reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                                userInfo:nil];
                         break;
                 }
                 break;
@@ -353,15 +355,19 @@ NSMutableArray *getArguments(NSUInteger count, NSMethodSignature *methodSignatur
                         break;
                     }
                     default:
-                        @throw [HproseException exceptionWithReason:
-                                [NSString stringWithFormat:@"Not support this type: %s", type]];
+                        @throw [NSException
+                                exceptionWithName:NSParseErrorException
+                                reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                                userInfo:nil];
                         break;
                 }
                 break;
             }
             default:
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithFormat:@"Not support this type: %s", type]];
+                @throw [NSException
+                        exceptionWithName:NSParseErrorException
+                        reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                        userInfo:nil];
                 break;
         }
         [args addObject:arg];
@@ -491,8 +497,10 @@ void setArguments(NSUInteger count, NSMethodSignature *methodSignature, NSInvoca
                         break;
                     }
                     default:
-                        @throw [HproseException exceptionWithReason:
-                                [NSString stringWithFormat:@"Not support this type: %s", type]];
+                        @throw [NSException
+                                exceptionWithName:NSParseErrorException
+                                reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                                userInfo:nil];
                         break;
                 }
                 break;
@@ -592,15 +600,19 @@ void setArguments(NSUInteger count, NSMethodSignature *methodSignature, NSInvoca
                         break;
                     }
                     default:
-                        @throw [HproseException exceptionWithReason:
-                                [NSString stringWithFormat:@"Not support this type: %s", type]];
+                        @throw [NSException
+                                exceptionWithName:NSParseErrorException
+                                reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                                userInfo:nil];
                         break;
                 }
                 break;
             }
             default:
-                @throw [HproseException exceptionWithReason:
-                        [NSString stringWithFormat:@"Not support this type: %s", type]];
+                @throw [NSException
+                        exceptionWithName:NSParseErrorException
+                        reason:[NSString stringWithFormat:@"Not support this type: %s", type]
+                        userInfo:nil];
                 break;
         }
     }
@@ -686,8 +698,10 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
             break;
         }
         default:
-            @throw [HproseException exceptionWithReason:
-                    [NSString stringWithFormat:@"Not support this type: %c", type]];
+            @throw [NSException
+                    exceptionWithName:NSParseErrorException
+                    reason:[NSString stringWithFormat:@"Not support this type: %c", type]
+                    userInfo:nil];
             break;
     }
 }
@@ -992,7 +1006,20 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
     else {
         type = [methodSignature methodReturnType];
         char t = type[0];
-        id result;
+        switch (t) {
+            case 'r':
+            case 'n':
+            case 'N':
+            case 'o':
+            case 'O':
+            case 'R':
+            case 'V':
+                if (t == 'V' && type[1] == _C_ID) {
+                    settings.resultClass = [Promise class];
+                }
+                t = type[1];
+                break;
+        }
         if (t == _C_ID) {
             if (strlen(type) > 3) {
                 NSString *className = [@(type)
@@ -1001,23 +1028,10 @@ void setReturnValue(char type, __unsafe_unretained id result, NSInvocation *anIn
                 settings.resultClass = objc_getClass([className UTF8String]);
             }
         }
-        else {
-            switch (t) {
-                case 'r':
-                case 'n':
-                case 'N':
-                case 'o':
-                case 'O':
-                case 'R':
-                case 'V':
-                    t = type[1];
-                    break;
-            }
-        }
         settings.resultType = t;
-        result = [_client invoke:name
-                        withArgs:args
-                        settings:settings];
+        id result = [_client invoke:name
+                           withArgs:args
+                           settings:settings];
         if (byref) {
             setArguments(count, methodSignature, anInvocation, args);
         }

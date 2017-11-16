@@ -12,12 +12,14 @@
  *                                                        *
  * Promise for Objective-C.                               *
  *                                                        *
- * LastModified: Dec 21, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
 #import "Promise.h"
+
+NSString *const PromiseErrorDomain = @"PromiseErrorDomain";
 
 @implementation NSArray (NSArrayFunctional)
 
@@ -103,20 +105,36 @@
 
 @end
 
+NSError * promise_error(PromiseError code, NSString *errMsg) {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errMsg
+                                                         forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithDomain:PromiseErrorDomain code:code userInfo:userInfo];
+}
+
+NSError * promise_exception_to_error(NSException *e) {
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              e.name, NSLocalizedDescriptionKey,
+                              e.reason, NSLocalizedFailureReasonErrorKey,
+                              nil];
+    return [NSError errorWithDomain:PromiseErrorDomain code:PromiseExceptionError userInfo:userInfo];
+}
+
 void promise_call(Promise * next, id(^callback)(id), id x) {
     dispatch_async(PROMISE_QUEUE, ^{
         @try {
             id result = callback(x);
-            if ([result isKindOfClass:[NSException class]] ||
-                [result isKindOfClass:[NSError class]]) {
+            if ([result isKindOfClass:[NSException class]]) {
+                [next reject:promise_exception_to_error(result)];
+            }
+            else if ([result isKindOfClass:[NSError class]]) {
                 [next reject:result];
             }
             else {
                 [next resolve:result];
             }
         }
-        @catch (id e) {
-            [next reject:e];
+        @catch (NSException *e) {
+            [next reject:promise_exception_to_error(e)];
         }
     });
 }
@@ -178,16 +196,18 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
         dispatch_async(PROMISE_QUEUE, ^{
             @try {
                 id result = computation();
-                if ([result isKindOfClass:[NSException class]] ||
-                    [result isKindOfClass:[NSError class]]) {
+                if ([result isKindOfClass:[NSException class]]) {
+                    [promise reject:promise_exception_to_error(result)];
+                }
+                else if ([result isKindOfClass:[NSError class]]) {
                     [promise reject:result];
                 }
                 else {
                     [promise resolve:result];
                 }
             }
-            @catch (id e) {
-                [promise reject:e];
+            @catch (NSException *e) {
+                [promise reject:promise_exception_to_error(e)];
             }
         });
     }
@@ -234,16 +254,18 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
         dispatch_source_cancel(timer);
         @try {
             id result = computation();
-            if ([result isKindOfClass:[NSException class]] ||
-                [result isKindOfClass:[NSError class]]) {
+            if ([result isKindOfClass:[NSException class]]) {
+                [promise reject:promise_exception_to_error(result)];
+            }
+            else if ([result isKindOfClass:[NSError class]]) {
                 [promise reject:result];
             }
             else {
                 [promise resolve:result];
             }
         }
-        @catch (id e) {
-            [promise reject:e];
+        @catch (NSException *e) {
+            [promise reject:promise_exception_to_error(e)];
         }
     });
     dispatch_resume(timer);
@@ -253,16 +275,18 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 + (Promise *) sync:(id (^)(void))computation {
     @try {
         id result = computation();
-        if ([result isKindOfClass:[NSException class]] ||
-            [result isKindOfClass:[NSError class]]) {
+        if ([result isKindOfClass:[NSException class]]) {
+            return [Promise error:promise_exception_to_error(result)];
+        }
+        else if ([result isKindOfClass:[NSError class]]) {
             return [Promise error:result];
         }
         else {
             return [Promise value:result];
         }
     }
-    @catch (id e) {
-        return [Promise error:e];
+    @catch (NSException *e) {
+        return [Promise error:promise_exception_to_error(e)];
     }
 }
 
@@ -309,9 +333,10 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 + (Promise *) any:(NSArray *)array {
     NSUInteger n = [array count];
-    if (n == 0) return [Promise error:[NSException exceptionWithName:@"IllegalArgumentException"
-                                                              reason:@"any(): array must not be empty"
-                                                            userInfo:nil]];
+    if (n == 0) {
+        return [Promise error: promise_error(PromiseIllegalArgumentError,
+                                             @"any(): array must not be empty")];
+    }
     __block int64_t count = n;
     __block Promise * promise = [Promise promise];
     for (NSUInteger i = 0; i < n; ++i) {
@@ -320,9 +345,8 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
         } fail:^(id e) {
             @synchronized (promise) {
                 if (--count == 0) {
-                    [promise reject:[NSException exceptionWithName:@"RuntimeException"
-                                                            reason:@"any(): all promises failed"
-                                                          userInfo:nil]];
+                    [promise reject:promise_error(PromiseRuntimeError,
+                                                  @"any(): all promises failed")];
                 }
             }
         }];
@@ -390,9 +414,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 - (void) resolve:(id)result {
     if (result == self) {
-        [self reject:[NSException exceptionWithName:@"TypeException"
-                                               reason:@"Self resolution"
-                                             userInfo:nil]];
+        [self reject:promise_error(PromiseTypeError, @"Self resolution")];
     }
     else if ([Promise isPromise:result]) {
         [result fill:self];
@@ -426,7 +448,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     }
 }
 
-- (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(id))onreject {
+- (Promise *) then:(id (^)(id))onfulfill catch:(id (^)(NSError *))onreject {
     Promise * next = [Promise promise];
     @synchronized(_subscribers) {
         if (_state == FULFILLED) {
@@ -446,11 +468,11 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self then:onfulfill catch:nil];
 }
 
-- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(id))onreject {
+- (Promise *) done:(void (^)(id))onfulfill fail:(void (^)(NSError *))onreject {
     return [self then: (onfulfill == nil) ? nil : ^id(id result) {
         onfulfill(result);
         return nil;
-    } catch: (onreject == nil) ? nil : ^id(id reason) {
+    } catch: (onreject == nil) ? nil : ^id(NSError * reason) {
         onreject(reason);
         return nil;
     }];
@@ -460,9 +482,9 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self done:onfulfill fail:nil];
 }
 
-- (Promise *) catch:(id (^)(id))onreject with:(BOOL (^)(id))test {
+- (Promise *) catch:(id (^)(NSError *))onreject with:(BOOL (^)(NSError *))test {
     if (test != nil) {
-        return [self then:nil catch:^id(id reason) {
+        return [self then:nil catch:^id(NSError * reason) {
             if (test(reason)) {
                 return [self then:nil catch:onreject];
             }
@@ -472,11 +494,11 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self then:nil catch:onreject];
 }
 
-- (Promise *) catch:(id (^)(id))onreject {
+- (Promise *) catch:(id (^)(NSError *))onreject {
     return [self then:nil catch:onreject];
 }
 
-- (Promise *) fail:(void (^)(id))onreject {
+- (Promise *) fail:(void (^)(NSError *))onreject {
     return [self done:nil fail:onreject];
 }
 
@@ -484,7 +506,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     return [self then:^id(id result) {
         action();
         return result;
-    } catch:^id(id reason) {
+    } catch:^id(NSError * reason) {
         action();
         return reason;
     }];
@@ -501,7 +523,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 - (void) fill:(Promise *)promise {
     [self done:^(id result) {
         [promise resolve:result];
-    } fail:^(id reason) {
+    } fail:^(NSError * reason) {
         [promise reject:reason];
     }];
 }
@@ -513,9 +535,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
         if (reason == nil) {
-            [promise reject:[NSException exceptionWithName:@"TimeoutException"
-                                                   reason:@"timeout"
-                                                 userInfo:nil]];
+            [promise reject:promise_error(PromiseTimeoutError, @"timeout")];
         }
         else {
             [promise reject:reason];
