@@ -12,7 +12,7 @@
  *                                                        *
  * hprose invoke settings header for Objective-C.         *
  *                                                        *
- * LastModified: Dec 21, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
@@ -21,10 +21,10 @@
 #import "HproseResultMode.h"
 
 typedef void (^HproseBlock)(id, NSArray *);
-typedef void (^HproseErrorBlock)(NSString *, id);
+typedef void (^HproseErrorBlock)(NSString *, NSError *);
 
 typedef void (*HproseCallback)(id, NSArray *);
-typedef void (*HproseErrorCallback)(NSString *, id);
+typedef void (*HproseErrorCallback)(NSString *, NSError *);
 
 @interface HproseInvokeSettings : NSObject {
 @private
