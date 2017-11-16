@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B5883FE1FBDDF9100952E54 /* HproseSocketClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B5883FC1FBDDF9100952E54 /* HproseSocketClient.m */; };
+		9B5883FF1FBDDF9100952E54 /* HproseSocketClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5883FD1FBDDF9100952E54 /* HproseSocketClient.h */; };
 		9B642B0D1CF6EB3A003C4946 /* HproseInvokeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */; };
 		9B642B0E1CF6EB3A003C4946 /* HproseInvokeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */; };
 		9B642B121CFF4908003C4946 /* HproseHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B642B111CFF4908003C4946 /* HproseHandlers.h */; };
@@ -48,6 +50,8 @@
 
 /* Begin PBXFileReference section */
 		8DC2EF5B0486A6940098B216 /* Hprose.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Hprose.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B5883FC1FBDDF9100952E54 /* HproseSocketClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseSocketClient.m; path = ../src/HproseSocketClient.m; sourceTree = "<group>"; };
+		9B5883FD1FBDDF9100952E54 /* HproseSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseSocketClient.h; path = ../src/HproseSocketClient.h; sourceTree = "<group>"; };
 		9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseInvokeSettings.h; path = ../src/HproseInvokeSettings.h; sourceTree = "<group>"; };
 		9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HproseInvokeSettings.m; path = ../src/HproseInvokeSettings.m; sourceTree = "<group>"; };
 		9B642B111CFF4908003C4946 /* HproseHandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HproseHandlers.h; path = ../src/HproseHandlers.h; sourceTree = "<group>"; };
@@ -162,6 +166,8 @@
 				D824A66B18F79822004ED013 /* HproseHelper.m */,
 				D824A66C18F79822004ED013 /* HproseHttpClient.h */,
 				D824A66D18F79822004ED013 /* HproseHttpClient.m */,
+				9B5883FD1FBDDF9100952E54 /* HproseSocketClient.h */,
+				9B5883FC1FBDDF9100952E54 /* HproseSocketClient.m */,
 				D824A66E18F79822004ED013 /* HproseInvoker.h */,
 				9B642B0B1CF6EB3A003C4946 /* HproseInvokeSettings.h */,
 				9B642B0C1CF6EB3A003C4946 /* HproseInvokeSettings.m */,
@@ -207,6 +213,7 @@
 				D824A67718F79822004ED013 /* Hprose.h in Headers */,
 				D824A68018F79822004ED013 /* HproseFilter.h in Headers */,
 				9BA6EC471E07D9FE001C0C4C /* GCDAsyncSocket.h in Headers */,
+				9B5883FF1FBDDF9100952E54 /* HproseSocketClient.h in Headers */,
 				D824A68818F79822004ED013 /* HproseReader.h in Headers */,
 				D824A68118F79822004ED013 /* HproseHelper.h in Headers */,
 				9B642B121CFF4908003C4946 /* HproseHandlers.h in Headers */,
@@ -246,7 +253,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0910;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Hprose" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -293,6 +300,7 @@
 				D824A68918F79822004ED013 /* HproseReader.m in Sources */,
 				D824A67B18F79822004ED013 /* HproseClient.m in Sources */,
 				9BA6EC481E07D9FE001C0C4C /* GCDAsyncSocket.m in Sources */,
+				9B5883FE1FBDDF9100952E54 /* HproseSocketClient.m in Sources */,
 				D824A68418F79822004ED013 /* HproseHttpClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,12 +358,18 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -381,12 +395,18 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

@@ -8,6 +8,7 @@
 //  https://github.com/robbiehanson/CocoaAsyncSocket
 //
 
+#if !TARGET_OS_WATCH
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
 #import <Security/SecureTransport.h>
@@ -1217,3 +1218,4 @@ typedef NS_ENUM(NSInteger, GCDAsyncSocketError) {
 
 @end
 NS_ASSUME_NONNULL_END
+#endif

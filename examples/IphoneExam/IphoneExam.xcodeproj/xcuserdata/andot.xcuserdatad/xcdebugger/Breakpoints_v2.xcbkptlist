@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "121"
             endingLineNumber = "121"
-            landmarkName = "getArguments()"
+            landmarkName = "getArguments"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -79,7 +79,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "705"
             endingLineNumber = "705"
-            landmarkName = "setReturnValue()"
+            landmarkName = "setReturnValue"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

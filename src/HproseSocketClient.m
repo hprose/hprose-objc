@@ -12,11 +12,12 @@
  *                                                        *
  * hprose socket client for Objective-C.                  *
  *                                                        *
- * LastModified: Dec 22, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
+#if !TARGET_OS_WATCH
 #import "HproseSocketClient.h"
 #import "GCDAsyncSocket.h"
 
@@ -87,7 +88,7 @@
         _connectTimeout = client.connectTimeout;
         _idleTimeout = client.idleTimeout;
         _ipv4Preferred = client.ipv4Preferred;
-        _sock = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:HPROSE_ASYNC_QUEUE];
+        _sock = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:[Promise dispatchQueue]];
         if ([self connect:error]) {
             return self;
         }
@@ -519,9 +520,4 @@
 }
 
 @end
-
-
-
-
-
-
+#endif

@@ -12,19 +12,14 @@
  *                                                        *
  * hprose socket client header for Objective-C.           *
  *                                                        *
- * LastModified: Dec 22, 2016                             *
+ * LastModified: Nov 16, 2017                             *
  * Author: Ma Bingyao <andot@hprose.com>                  *
  *                                                        *
 \**********************************************************/
 
+#if !TARGET_OS_WATCH
 #import <Foundation/Foundation.h>
 #import "HproseClient.h"
-
-#ifdef UIKIT_EXTERN
-#define HPROSE_ASYNC_QUEUE dispatch_get_main_queue()
-#else
-#define HPROSE_ASYNC_QUEUE dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-#endif
 
 @interface HproseSocketClient: HproseClient {
     id _fdtrans;
@@ -39,3 +34,4 @@
 @property NSDictionary *tlsSettings;
 @property NSUInteger maxPoolSize;
 @end
+#endif

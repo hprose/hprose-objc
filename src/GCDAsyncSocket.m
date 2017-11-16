@@ -7,7 +7,7 @@
 //
 //  https://github.com/robbiehanson/CocoaAsyncSocket
 //
-
+#if !TARGET_OS_WATCH
 #import "GCDAsyncSocket.h"
 
 #if TARGET_OS_IPHONE
@@ -8104,9 +8104,9 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 	BOOL r1, r2;
 	
 	LogVerbose(@"Enabling backgrouding on socket");
-	
-	r1 = CFReadStreamSetProperty(readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
-	r2 = CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+
+	r1 = CFReadStreamSetProperty(readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeBackground);
+	r2 = CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeBackground);
 	
 	if (!r1 || !r2)
 	{
@@ -8431,3 +8431,4 @@ static void CFWriteStreamCallback (CFWriteStreamRef stream, CFStreamEventType ty
 }
 
 @end	
+#endif
