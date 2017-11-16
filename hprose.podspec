@@ -148,8 +148,12 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.ios.deployment_target = "7.0"
   s.osx.deployment_target = "10.7"
+  s.ios.deployment_target = "7.0"
   s.watchos.deployment_target = '2.0'
   s.tvos.deployment_target = '9.0'
+
+  s.osx.frameworks = 'CoreServices', 'Security'
+  s.ios.frameworks = 'CFNetwork', 'Security'
+  s.tvos.frameworks = 'CFNetwork', 'Security'
 end
