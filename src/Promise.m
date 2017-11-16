@@ -120,7 +120,7 @@ NSError * promise_exception_to_error(NSException *e) {
 }
 
 void promise_call(Promise * next, id(^callback)(id), id x) {
-    dispatch_async(PROMISE_QUEUE, ^{
+    dispatch_async([Promise dispatchQueue], ^{
         @try {
             id result = callback(x);
             if ([result isKindOfClass:[NSException class]]) {
@@ -181,6 +181,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 @implementation Promise
 
+static dispatch_queue_t promise_queue = NULL;
 
 - (id) init {
     if (self = [super init]) {
@@ -193,7 +194,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 - (id) init:(id (^)(void))computation {
     if (self = [self init]) {
         __block Promise *promise = self;
-        dispatch_async(PROMISE_QUEUE, ^{
+        dispatch_async([Promise dispatchQueue], ^{
             @try {
                 id result = computation();
                 if ([result isKindOfClass:[NSException class]]) {
@@ -212,6 +213,17 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
         });
     }
     return self;
+}
+
++ (void) setDispatchQueue:(dispatch_queue_t)queue {
+    promise_queue = queue;
+}
+
++ (dispatch_queue_t) dispatchQueue {
+    if (promise_queue != NULL) {
+        return promise_queue;
+    }
+    return PROMISE_QUEUE;
 }
 
 + (Promise *) promise {
@@ -236,7 +248,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 + (Promise *) delayed:(NSTimeInterval)duration with:(id)value {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [Promise dispatchQueue]);
     dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -248,7 +260,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 + (Promise *) delayed:(NSTimeInterval)duration block:(id (^)(void))computation {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [Promise dispatchQueue]);
     dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -530,7 +542,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 
 - (Promise *) timeout:(NSTimeInterval)duration with:(id)reason {
     Promise * promise = [Promise promise];
-    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [Promise dispatchQueue]);
     dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
     dispatch_source_set_event_handler(timer, ^{
         dispatch_source_cancel(timer);
@@ -555,7 +567,7 @@ void promise_resolve(Promise * next, id(^onfulfill)(id), id x) {
 - (Promise *) delay:(NSTimeInterval)duration {
     Promise * promise = [Promise promise];
     [self done:^(id result) {
-        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, PROMISE_QUEUE);
+        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, [Promise dispatchQueue]);
         dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), 0, 0);
         dispatch_source_set_event_handler(timer, ^{
             dispatch_source_cancel(timer);

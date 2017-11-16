@@ -68,6 +68,8 @@ typedef enum {
 
 - (id) init:(id (^)(void)) computation;
 
++ (void) setDispatchQueue:(dispatch_queue_t)queue;
++ (dispatch_queue_t) dispatchQueue;
 + (Promise *) promise;
 + (Promise *) promise:(id (^)(void))computation;
 + (Promise *) value:(id)result;
