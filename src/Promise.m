@@ -514,7 +514,7 @@ static dispatch_queue_t promise_queue = NULL;
     return [self done:nil fail:onreject];
 }
 
-- (Promise *) whenComplete:(void  (^)())action {
+- (Promise *) whenComplete:(void (^)(void))action {
     return [self then:^id(id result) {
         action();
         return result;

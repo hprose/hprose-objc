@@ -102,7 +102,7 @@ typedef enum {
 - (Promise *) catch:(id (^)(NSError *))onreject with:(BOOL (^)(NSError *))test;
 - (Promise *) catch:(id (^)(NSError *))onreject;
 - (Promise *) fail:(void (^)(NSError *))onreject;
-- (Promise *) whenComplete:(void (^)())action;
+- (Promise *) whenComplete:(void (^)(void))action;
 - (Promise *) complete:(id (^)(id))oncomplete;
 - (Promise *) always:(void (^)(id))oncomplete;
 - (void) fill:(Promise *)promise;
